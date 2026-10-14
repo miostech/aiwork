@@ -480,8 +480,9 @@ window.CONFIG = {
     enviar('inscricao');
     rastrear('Lead');
     botao.firstChild.textContent = 'Carregando… ';
-    // segue para a segunda parte do cadastro levando os parâmetros do link (UTMs)
-    setTimeout(() => { location.href = C.paginaCadastro + location.search; }, 350);
+    // segue para a segunda parte do cadastro levando só os parâmetros de origem (UTMs)
+    const busca = new URLSearchParams(origem).toString();
+    setTimeout(() => { location.href = C.paginaCadastro + (busca ? '?' + busca : ''); }, 350);
   });
 })();
 </script>
