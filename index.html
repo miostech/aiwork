@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Curso Gratuito Work Academy</title>
+<meta name="description" content="Entenda como pessoas comuns fazem renda extra em dólar treinando robôs, usando apenas o celular. Assista ao vídeo e libere seu acesso gratuito.">
+<meta name="theme-color" content="#EAE0CB">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:wght@600;700;800&family=Caveat:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap">
+<!--
+  COMO EDITAR ESTA PÁGINA
+  1. Tempo de liberação do formulário, próxima página e webhook: bloco CONFIG no final do arquivo.
+  2. Vídeo: procure "VÍDEO" e cole o código do seu player no lugar indicado.
+  3. Textos: edite direto no HTML abaixo.
+  4. Pixel do Meta / Google: cole o código logo abaixo desta linha.
+-->
+<style>
+/* Layout: coluna única sobre papel creme — título, vídeo vertical e, ao final do vídeo, o formulário que leva para cadastro.html */
+:root {
+  /* Página */
+  --bg: #EAE0CB;
+  --bg-top: #F4ECDB;
+  --bg-bottom: #E3D8C0;
+  --bg-soft: #F2EADA;
+  --ink: #0C0B0A;
+  --ink-soft: #4A453B;
+  --accent: #FF4D9E;
+  --accent-2: #A6D7F2;
+  --line: rgba(12, 11, 10, 0.12);
+  --shadow: rgba(12, 11, 10, 0.55);
+
+  /* Cartão de cadastro */
+  --fn-primary: #B04668;
+  --fn-primary-hover: #983A59;
+  --fn-primary-soft: #F7E0E6;
+  --fn-accent: #D99577;
+  --fn-ink: #2A1D22;
+  --fn-muted: #6E5A60;
+  --fn-surface: #FFFFFF;
+  --fn-wash: #FDF6F4;
+  --fn-border: #F4E1DA;
+  --fn-border-strong: #E3C8BF;
+  --fn-error: #C0233A;
+  --fn-on-primary: #FFFFFF;
+
+  --font-display: "Anton", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --font-accent: "Caveat", "Segoe Script", cursive;
+  --font-fn-display: "Bitter", Georgia, "Times New Roman", serif;
+  --font-fn-body: "DM Sans", system-ui, -apple-system, sans-serif;
+
+  --radius: 22px;
+  --maxw: 720px;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image: radial-gradient(130% 120% at 50% -10%, var(--bg-top) 0%, var(--bg) 58%, var(--bg-bottom) 100%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Textura e brilhos do fundo */
+.grain {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.aura { position: fixed; z-index: 0; pointer-events: none; border-radius: 50%; opacity: 0.5; }
+.aura--pink {
+  width: 60vw; height: 60vw; max-width: 540px; max-height: 540px; top: -16vw; right: -18vw;
+  background: radial-gradient(circle, rgba(255, 77, 158, 0.45), transparent 78%);
+}
+.aura--blue {
+  width: 55vw; height: 55vw; max-width: 500px; max-height: 500px; bottom: -18vw; left: -20vw;
+  background: radial-gradient(circle, rgba(166, 215, 242, 0.55), transparent 78%);
+}
+
+.stage {
+  position: relative; z-index: 1;
+  max-width: var(--maxw); margin-inline: auto;
+  padding-inline: clamp(18px, 5vw, 32px);
+  padding-block: clamp(18px, 5vw, 30px) 56px;
+}
+
+/* ── Topo ─────────────────────────────── */
+.topbar { display: flex; align-items: center; justify-content: space-between; }
+.logo {
+  font-family: var(--font-display); font-size: clamp(1.2rem, 5vw, 1.5rem);
+  letter-spacing: 0.01em; line-height: 1; color: var(--ink);
+  text-decoration: none; text-transform: uppercase;
+}
+.logo__accent { color: var(--accent); }
+
+/* ── Vídeo de vendas ──────────────────── */
+.vsl { margin-top: clamp(26px, 8vw, 44px); }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px; max-width: 100%; margin: 0;
+  background: var(--ink); color: var(--bg-soft);
+  font-weight: 600; font-size: 0.72rem; line-height: 1.25; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 9px 15px; border-radius: 18px;
+}
+.eyebrow__dot {
+  flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  animation: ping 1.9s ease-out infinite;
+}
+.title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(2.4rem, 10.5vw, 4.7rem); line-height: 0.96; letter-spacing: -0.005em;
+  text-transform: uppercase; color: var(--ink);
+  margin: clamp(16px, 4vw, 22px) 0 clamp(12px, 3vw, 16px);
+  text-wrap: balance; overflow-wrap: break-word;
+}
+.hl { color: var(--accent); background: none; }
+.subtitle {
+  margin: 0; max-width: 36ch;
+  font-size: clamp(1.02rem, 4.3vw, 1.22rem); font-weight: 500; line-height: 1.5; color: var(--ink-soft);
+}
+.subtitle strong { font-weight: 800; color: var(--ink); }
+
+.video {
+  position: relative; margin: clamp(24px, 6.5vw, 36px) auto 0; max-width: 400px;
+  border-radius: var(--radius); overflow: hidden; background: var(--ink);
+  box-shadow: 0 22px 48px -20px var(--shadow), 0 0 0 1px var(--line);
+}
+.video__placeholder {
+  aspect-ratio: 9 / 16; max-width: 100%;
+  display: grid; place-items: center; align-content: center; gap: 12px; padding: 24px;
+  text-align: center; color: var(--bg-soft);
+  background: linear-gradient(160deg, #2B2823 0%, #1A1916 55%, #0C0B0A 100%);
+}
+.video__play {
+  width: 74px; height: 74px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--accent); color: #FFFFFF;
+  box-shadow: 0 12px 28px -8px rgba(255, 77, 158, 0.8);
+}
+.video__placeholder strong { font-size: 1.05rem; font-weight: 700; }
+.video__note { font-size: 0.82rem; opacity: 0.7; max-width: 24ch; }
+
+.locked {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  margin: clamp(18px, 5vw, 24px) 0 0; text-align: center;
+  font-weight: 600; font-size: 0.9rem; color: var(--ink-soft); opacity: 0.85;
+}
+
+/* ── Área do cadastro ─────────────────── */
+.formzone { margin-top: clamp(28px, 7vw, 42px); scroll-margin-top: 16px; }
+.formzone.is-in { animation: formIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.formzone__cue {
+  width: 42px; height: 42px; border-radius: 50%; margin: 0 auto 12px;
+  display: grid; place-items: center; color: #FFFFFF; background: var(--accent);
+  box-shadow: 0 10px 22px -8px rgba(255, 77, 158, 0.8);
+  animation: bob 1.6s ease-in-out infinite;
+}
+.formzone__kicker {
+  margin: 0; font-family: var(--font-accent); font-weight: 700;
+  font-size: clamp(1.5rem, 6vw, 1.9rem); line-height: 1;
+  color: var(--accent); text-align: center; transform: rotate(-3deg);
+}
+.formzone__title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(1.85rem, 8vw, 2.9rem); line-height: 1;
+  text-transform: uppercase; text-align: center; color: var(--ink);
+  margin: 8px 0 12px; text-wrap: balance;
+}
+.formzone__desc {
+  display: grid; gap: 10px;
+  max-width: 40ch; margin: 0 auto clamp(16px, 4vw, 22px);
+  font-size: clamp(1.08rem, 4.2vw, 1.22rem); font-weight: 600; line-height: 1.45;
+  text-align: center; color: var(--ink-soft); text-wrap: balance;
+}
+.formzone__desc p { margin: 0; }
+.formzone__desc .hl { font-weight: 800; }
+.formzone__desc-end { color: var(--ink); font-weight: 700; }
+
+/* ── Cartão de cadastro ───────────────── */
+.formcard {
+  background: var(--fn-surface); border-radius: var(--radius); overflow: hidden;
+  padding: clamp(20px, 5vw, 32px) clamp(16px, 5vw, 32px) clamp(22px, 5vw, 32px);
+  box-shadow: 0 24px 56px -22px rgba(12, 11, 10, 0.5), 0 0 0 1px var(--line);
+  font-family: var(--font-fn-body); color: var(--fn-ink); line-height: 1.5;
+  scroll-margin-top: 16px;
+}
+
+.step { display: grid; gap: 18px; }
+.step:not([hidden]) { animation: stepIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Campos */
+.fields { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 600; color: var(--fn-ink); }
+.field input {
+  width: 100%; font: inherit; font-size: 16px; color: var(--fn-ink);
+  padding: 13px 16px; border: 1px solid var(--fn-border-strong); border-radius: 12px; background: var(--fn-wash);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.field input::placeholder { color: #A8959B; }
+.field input:focus { outline: none; background: var(--fn-surface); border-color: var(--fn-primary); box-shadow: 0 0 0 4px var(--fn-primary-soft); }
+.field input[aria-invalid="true"] { border-color: var(--fn-error); }
+.field__error { margin: 0; font-size: 13px; font-weight: 500; color: var(--fn-error); }
+.field__error:empty { display: none; }
+
+/* Botões */
+.actions { display: grid; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; min-height: 56px; padding: 14px 22px;
+  border: 0; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 17px; font-weight: 700; text-decoration: none; text-align: center;
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s, opacity 0.15s, border-color 0.15s;
+}
+.btn:focus-visible { outline: 3px solid var(--fn-ink); outline-offset: 3px; }
+.btn--primary {
+  background: linear-gradient(135deg, var(--fn-primary) 0%, var(--fn-accent) 100%);
+  color: var(--fn-on-primary);
+  box-shadow: 0 12px 26px -12px rgba(176, 70, 104, 0.85);
+}
+.btn--primary:hover { box-shadow: 0 16px 30px -12px rgba(176, 70, 104, 0.95); transform: translateY(-1px); }
+.btn--primary:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.fineprint { margin: 0; font-size: 13px; color: var(--fn-muted); text-align: center; }
+
+/* ── Rodapé ───────────────────────────── */
+.foot {
+  margin-top: 52px; padding-top: 22px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px;
+  font-size: 0.8rem; font-weight: 500; color: var(--ink-soft);
+}
+.foot__links { display: flex; gap: 18px; }
+.foot a { color: var(--ink); text-decoration: none; opacity: 0.8; }
+.foot a:hover { opacity: 1; text-decoration: underline; }
+
+/* ── Animações ────────────────────────── */
+.rise { animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 90ms); }
+@keyframes rise   { from { opacity: 0; transform: translateY(16px); } }
+@keyframes formIn { from { opacity: 0; transform: translateY(28px) scale(0.985); } }
+@keyframes stepIn { from { opacity: 0; transform: translateX(12px); } }
+@keyframes ping   { 0% { box-shadow: 0 0 0 0 rgba(255, 77, 158, 0.7); } 70%, 100% { box-shadow: 0 0 0 10px rgba(255, 77, 158, 0); } }
+@keyframes bob    { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+@media (min-width: 720px) {
+  .stage { padding-block: 38px 72px; }
+  .subtitle { font-size: 1.25rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="aura aura--pink" aria-hidden="true"></div>
+<div class="aura aura--blue" aria-hidden="true"></div>
+
+<main class="stage">
+
+  <header class="topbar rise" style="--i:0">
+    <a class="logo" href="#" aria-label="Início"><span>Work</span> <span class="logo__accent">Academy</span></a>
+  </header>
+
+  <section class="vsl" aria-labelledby="titulo">
+    <p class="eyebrow rise" style="--i:1"><span class="eyebrow__dot" aria-hidden="true"></span>Assista até o final</p>
+
+    <h1 class="title rise" id="titulo" style="--i:2">Copie e cole meu método oculto pra faturar <mark class="hl">mais de 1000 dólares extras todos os meses</mark></h1>
+
+    <p class="subtitle rise" style="--i:3">Entenda como pessoas <strong>COMUNS</strong> fazem renda extra em dólar todos os dias treinando robôs, mesmo sem precisar aparecer, sem experiência e usando apenas o celular. Assista ao vídeo, preencha seus dados ao final do vídeo e comece a ganhar <strong>HOJE!</strong></p>
+
+    <figure class="video rise" id="video" style="--i:4">
+      <!-- ═══════════ VÍDEO ═══════════
+           Apague o <div class="video__placeholder"> abaixo e cole no lugar
+           o código de incorporação do seu vídeo (VTurb, Panda, YouTube, Vimeo...). -->
+      <div class="video__placeholder">
+        <span class="video__play" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+        </span>
+        <strong>Seu vídeo aparece aqui</strong>
+        <span class="video__note">Cole o código do player no lugar deste bloco</span>
+      </div>
+    </figure>
+
+    <p class="locked rise" id="locked" style="--i:5">🔒 Seu acesso aparece aqui assim que o vídeo terminar</p>
+
+    <!-- Aparece depois de CONFIG.liberarAposSegundos -->
+    <section class="formzone" id="inscricao" aria-labelledby="inscricao-titulo" aria-live="polite" hidden>
+      <div class="formzone__cue" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <p class="formzone__kicker">falta pouco</p>
+      <h2 class="formzone__title" id="inscricao-titulo">Garanta o seu acesso agora</h2>
+      <div class="formzone__desc">
+        <p>9 aulas práticas, com aproximadamente 40 minutos de conteúdo, mostrando <mark class="hl">PASSO A PASSO</mark> como começar no mercado de treinamento de Inteligência Artificial.</p>
+        <p>Conheça 3 empresas, aprenda como encontrar oportunidades e descubra como dar seus primeiros passos, mesmo sem experiência na área.</p>
+        <p class="formzone__desc-end">Tudo isso <mark class="hl">100% GRATUITO</mark> para você!</p>
+      </div>
+
+      <div class="formcard" id="card">
+        <!-- ═══ ETAPA 1 · Garanta sua vaga ═══ -->
+        <form class="step" id="step-1" data-step="1" novalidate>
+          <div class="fields">
+            <div class="field">
+              <label for="f-nome">Seu nome</label>
+              <input id="f-nome" name="nome" type="text" autocomplete="name" placeholder="Como você quer ser chamado(a)" aria-describedby="e-nome" required>
+              <p class="field__error" id="e-nome"></p>
+            </div>
+            <div class="field">
+              <label for="f-email">Seu melhor e-mail</label>
+              <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="nome@gmail.com" aria-describedby="e-email" required>
+              <p class="field__error" id="e-email"></p>
+            </div>
+            <div class="field">
+              <label for="f-whatsapp">WhatsApp com DDD</label>
+              <input id="f-whatsapp" name="whatsapp" type="tel" autocomplete="tel-national" inputmode="tel" placeholder="(11) 91234-5678" aria-describedby="e-whatsapp" required>
+              <p class="field__error" id="e-whatsapp"></p>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn btn--primary" type="submit">
+              Garantir minha vaga
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <p class="fineprint">🔒 Seus dados ficam protegidos e não são compartilhados.</p>
+          </div>
+        </form>
+
+      </div>
+    </section>
+  </section>
+
+  <footer class="foot">
+    <span data-marca>Work Academy</span>
+    <nav class="foot__links" aria-label="Links legais">
+      <a id="link-termos" href="#">Termos</a>
+      <a id="link-privacidade" href="#">Privacidade</a>
+    </nav>
+    <span>© <span id="ano">2026</span> <span data-marca>Work Academy</span> — Todos os direitos reservados.</span>
+  </footer>
+
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÃO — troque os valores abaixo pelos do seu curso
+// ═══════════════════════════════════════════════════════════════
+window.CONFIG = {
+  marca: 'Work Academy',
+
+  // Em quantos segundos o formulário aparece embaixo do vídeo.
+  // Use o momento do vídeo em que você chama para o cadastro (ex.: 9 min = 540). 0 = aparece na hora.
+  liberarAposSegundos: 8,
+
+  // Para onde a pessoa vai depois de preencher o formulário.
+  paginaCadastro: 'cadastro.html',
+
+  // Endereço que recebe os dados de cada inscrito (webhook do Make, Zapier, n8n...). Vazio = não envia.
+  // Use o mesmo endereço no CONFIG da cadastro.html.
+  enviarDadosPara: '',
+
+  linkTermos: '#',
+  linkPrivacidade: '#',
+};
+</script>
+<script>
+(function () {
+  'use strict';
+
+  const C = window.CONFIG;
+  const KEY = 'inscricao-curso-gratuito';   // a página cadastro.html lê os dados daqui
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  // ── Dados salvos no navegador da pessoa (seguem para a página de cadastro)
+  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function clear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+
+  // ── Parâmetros do link (utm_source, utm_campaign...). ?liberar mostra o formulário na hora; ?reiniciar zera tudo.
+  const params = {};
+  try { new URLSearchParams(location.search).forEach((v, k) => { params[k] = v; }); } catch (e) {}
+
+  let state = load();
+  if ('reiniciar' in params) { clear(); state = {}; }
+  state.lead = state.lead || {};
+  const origem = {};
+  Object.keys(params).forEach((k) => { if (k !== 'liberar' && k !== 'reiniciar') origem[k] = params[k]; });
+  if (Object.keys(origem).length) state.origem = Object.assign({}, state.origem, origem);
+  save();
+
+  // ── Textos e links da configuração
+  $$('[data-marca]').forEach((el) => { el.textContent = C.marca; });
+  $('#link-termos').href = C.linkTermos;
+  $('#link-privacidade').href = C.linkPrivacidade;
+  $('#ano').textContent = new Date().getFullYear();
+
+  // ── Envio dos dados e eventos de pixel
+  function enviar(evento) {
+    if (!C.enviarDadosPara) return;
+    const dados = Object.assign(
+      { evento: evento, data: new Date().toISOString(), pagina: location.origin + location.pathname },
+      state.origem, state.lead
+    );
+    try {
+      fetch(C.enviarDadosPara, { method: 'POST', mode: 'no-cors', keepalive: true, body: new URLSearchParams(dados) }).catch(() => {});
+    } catch (e) {}
+  }
+  function rastrear(evento) {
+    try { if (typeof window.fbq === 'function') window.fbq('track', evento); } catch (e) {}
+    try { if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead'); } catch (e) {}
+  }
+
+  // ── Formulário aparece depois do vídeo
+  const zona = $('#inscricao');
+  const aviso = $('#locked');
+  function liberar(animar) {
+    if (!zona.hidden) return;
+    zona.hidden = false;
+    aviso.hidden = true;
+    if (animar) zona.classList.add('is-in');
+    state.liberado = true;
+    save();
+  }
+  if (state.liberado || 'liberar' in params || C.liberarAposSegundos <= 0) liberar(false);
+  else setTimeout(() => liberar(true), C.liberarAposSegundos * 1000);
+
+  // ── Formulário
+  const form = $('#step-1');
+  const botao = $('button[type="submit"]', form);
+  const campos = { nome: $('#f-nome'), email: $('#f-email'), whatsapp: $('#f-whatsapp') };
+  Object.keys(campos).forEach((k) => { if (state.lead[k]) campos[k].value = state.lead[k]; });
+
+  function mascaraTelefone(v) {
+    const d = v.replace(/\D/g, '').slice(0, 11);
+    if (!d.length) return '';
+    if (d.length <= 2) return '(' + d;
+    if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  }
+  function marcarErro(input, msg) {
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    $('#' + input.getAttribute('aria-describedby')).textContent = msg || '';
+  }
+  campos.whatsapp.addEventListener('input', () => { campos.whatsapp.value = mascaraTelefone(campos.whatsapp.value); });
+  Object.values(campos).forEach((input) => {
+    input.addEventListener('input', () => { if (input.getAttribute('aria-invalid') === 'true') marcarErro(input, ''); });
+  });
+
+  let enviando = false;
+  form.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    if (enviando) return;
+    const nome = campos.nome.value.trim().replace(/\s+/g, ' ');
+    const email = campos.email.value.trim().toLowerCase();
+    const fone = campos.whatsapp.value.replace(/\D/g, '');
+    const checagens = [
+      [campos.nome, nome.length >= 2 ? '' : 'Digite seu nome.'],
+      [campos.email, EMAIL.test(email) ? '' : 'Digite um e-mail válido, como nome@gmail.com.'],
+      [campos.whatsapp, fone.length >= 10 ? '' : 'Digite seu WhatsApp com DDD, como (11) 91234-5678.'],
+    ];
+    let primeiroErro = null;
+    checagens.forEach(([input, msg]) => { marcarErro(input, msg); if (msg && !primeiroErro) primeiroErro = input; });
+    if (primeiroErro) { primeiroErro.focus(); return; }
+
+    enviando = true;
+    state.lead = { nome: nome, email: email, whatsapp: campos.whatsapp.value };
+    save();
+    enviar('inscricao');
+    rastrear('Lead');
+    botao.firstChild.textContent = 'Carregando… ';
+    // segue para a segunda parte do cadastro levando os parâmetros do link (UTMs)
+    setTimeout(() => { location.href = C.paginaCadastro + location.search; }, 350);
+  });
+})();
+</script>
+</body>
+</html>
