@@ -6,8 +6,12 @@
 //   ANTHROPIC_API_KEY  chave da API da Anthropic (obrigatória)
 //   NOME_INDICACAO     nome que precisa aparecer em "Indicado por" (padrão: Camila Mota)
 //   PLATAFORMA         nome da plataforma (padrão: Mimix)
+//   LIBERAR_SE_FALHAR  "false" para NÃO liberar o acesso quando a conferência der erro (padrão: libera)
+//
+// Quando aprova, devolve também o link de acesso pessoal à área do curso (veja api/_acesso.js).
 import Anthropic from "@anthropic-ai/sdk";
 import { betaJSONSchemaOutputFormat } from "@anthropic-ai/sdk/helpers/beta/json-schema";
+import { criarAcesso } from "./_acesso.js";
 
 const client = new Anthropic();
 
@@ -15,6 +19,7 @@ const NOME = process.env.NOME_INDICACAO || "Camila Mota";
 const PLATAFORMA = process.env.PLATAFORMA || "Mimix";
 const TIPOS = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const MAX_BYTES = 4 * 1024 * 1024;
+const LIBERAR_SE_FALHAR = process.env.LIBERAR_SE_FALHAR !== "false";
 
 const FORMATO = betaJSONSchemaOutputFormat({
   type: "object",
@@ -45,10 +50,18 @@ Responda com:
 function normalizar(texto) {
   return String(texto || "")
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/\p{M}/gu, "")
     .toLowerCase()
     .replace(/\s+/g, " ")
     .trim();
+}
+
+// Erro na conferência: libera o acesso (marcado com f: 1) para não perder o cadastro, a não ser
+// que LIBERAR_SE_FALHAR seja "false".
+function falhou(res, status, mensagem) {
+  const corpo = { erro: mensagem };
+  if (LIBERAR_SE_FALHAR) corpo.acesso = criarAcesso({ f: 1 });
+  return res.status(status).json(corpo);
 }
 
 export default async function handler(req, res) {
@@ -88,7 +101,7 @@ export default async function handler(req, res) {
     const resultado = resposta.parsed_output;
     if (resposta.stop_reason === "refusal" || !resultado) {
       console.error("Conferência sem resultado:", resposta.stop_reason);
-      return res.status(502).json({ erro: "Não foi possível analisar a imagem agora." });
+      return falhou(res, 502, "Não foi possível analisar a imagem agora.");
     }
 
     // Confere o nome aqui também, sem depender só da resposta do modelo.
@@ -101,17 +114,19 @@ export default async function handler(req, res) {
         : `Não encontramos o "Indicado por: ${NOME}" no seu print. Abra a aba Rede e tire o print mostrando esse campo.`;
     }
 
-    return res.status(200).json({ aprovado, indicadoPor: resultado.indicado_por, motivo });
+    const corpo = { aprovado, indicadoPor: resultado.indicado_por, motivo };
+    if (aprovado) corpo.acesso = criarAcesso();
+    return res.status(200).json(corpo);
   } catch (erro) {
     if (erro instanceof Anthropic.RateLimitError) {
       console.error("Limite de uso da API atingido:", erro.message);
-      return res.status(503).json({ erro: "Muitas conferências ao mesmo tempo. Tente de novo em instantes." });
+      return falhou(res, 503, "Muitas conferências ao mesmo tempo. Tente de novo em instantes.");
     }
     if (erro instanceof Anthropic.APIError) {
       console.error(`Erro da API (${erro.status}):`, erro.message);
-      return res.status(502).json({ erro: "Não foi possível analisar a imagem agora." });
+      return falhou(res, 502, "Não foi possível analisar a imagem agora.");
     }
     console.error("Erro inesperado:", erro);
-    return res.status(500).json({ erro: "Não foi possível analisar a imagem agora." });
+    return falhou(res, 500, "Não foi possível analisar a imagem agora.");
   }
 }

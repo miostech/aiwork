@@ -137,6 +137,16 @@ body {
 /* Confetes da etapa final */
 .confete { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
 
+/* Link de acesso pessoal (etapa final) */
+.acesso { display: grid; gap: 8px; }
+.acesso label { font-size: 14px; font-weight: 600; }
+.acesso__linha { display: flex; gap: 8px; }
+.acesso__linha input {
+  flex: 1; min-width: 0; padding: 12px 14px; font: inherit; font-size: 14px; color: var(--muted);
+  border: 1px solid var(--border-strong); border-radius: 12px; background: var(--white);
+}
+.acesso__linha .btn { width: auto; min-height: 46px; padding: 10px 18px; font-size: 15px; }
+
 /* Aviso */
 .callout {
   display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start;
@@ -393,12 +403,19 @@ body {
     <div class="texto">
       <p>Sua vaga está garantida e sua conta na <span data-plataforma>Mimix</span> está criada!</p>
       <p>Agora basta você acessar o curso completo pra aprender como começar a ganhar em dólar ainda hoje.</p>
-      <p>Suas informações de acesso foram enviadas para seu email.</p>
+    </div>
+
+    <div class="acesso" id="acesso-box" hidden>
+      <label for="link-acesso">Seu link de acesso ao curso</label>
+      <div class="acesso__linha">
+        <input id="link-acesso" type="text" readonly>
+        <button class="btn btn--secondary" id="btn-copiar" type="button">Copiar</button>
+      </div>
     </div>
 
     <div class="callout" role="note">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-      <p><strong>Não encontrou o email?</strong>Verifique sua caixa de SPAM e LIXEIRA.</p>
+      <p><strong>Guarde o seu link de acesso.</strong>Ele é pessoal e abre o curso em qualquer aparelho. Salve nos favoritos ou mande para você mesmo no WhatsApp.</p>
     </div>
 
     <div class="actions">
@@ -450,7 +467,7 @@ window.CONFIG = {
   // Link de outra imagem de exemplo para a validação (vazio = usa o print que já está na página).
   imagemExemploValidacao: '',
 
-  linkCurso: 'https://exemplo.com/curso',  // botão da última etapa (vazio = esconde o botão)
+  linkCurso: 'curso.html',  // área do curso; o link de acesso pessoal é colocado no final automaticamente
 
   // Endereço que recebe os dados de cada inscrito (webhook do Make, Zapier, n8n...). Vazio = não envia.
   // Use o mesmo endereço no CONFIG da index.html.
@@ -492,7 +509,37 @@ window.CONFIG = {
   const primeiroNome = (state.lead.nome || '').trim().split(/\s+/)[0];
   $$('[data-nome]').forEach((el) => { el.textContent = primeiroNome || 'aluno(a)'; });
   $('#btn-plataforma').href = C.plataforma.linkCadastro;
-  if (C.linkCurso) $('#btn-curso').href = C.linkCurso; else $('#btn-curso').hidden = true;
+  // Link da área do curso com o acesso pessoal recebido na validação (?acesso=...)
+  function linkCurso() {
+    if (!C.linkCurso) return '';
+    try {
+      const url = new URL(C.linkCurso, location.href);
+      if (state.acesso) url.searchParams.set('acesso', state.acesso);
+      return url.href;
+    } catch (e) {
+      return C.linkCurso + (state.acesso ? '?acesso=' + encodeURIComponent(state.acesso) : '');
+    }
+  }
+  function atualizarLinkCurso() {
+    const link = linkCurso();
+    $('#btn-curso').hidden = !link;
+    if (link) $('#btn-curso').href = link;
+    $('#acesso-box').hidden = !state.acesso;
+    $('#link-acesso').value = link;
+  }
+  atualizarLinkCurso();
+  $('#btn-copiar').addEventListener('click', () => {
+    const campo = $('#link-acesso');
+    const pronto = () => {
+      $('#btn-copiar').textContent = 'Copiado ✓';
+      setTimeout(() => { $('#btn-copiar').textContent = 'Copiar'; }, 2000);
+    };
+    try {
+      navigator.clipboard.writeText(campo.value).then(pronto, () => { campo.select(); });
+    } catch (e) {
+      campo.select();
+    }
+  });
   $('#link-termos').href = C.linkTermos;
   $('#link-privacidade').href = C.linkPrivacidade;
   $('#ano').textContent = new Date().getFullYear();
@@ -694,6 +741,7 @@ window.CONFIG = {
 
     const controle = new AbortController();
     const limite = setTimeout(() => controle.abort(), 45000);
+    let dados = {};
     try {
       const resposta = await fetch(ia.endereco, {
         method: 'POST',
@@ -701,16 +749,23 @@ window.CONFIG = {
         body: JSON.stringify({ imagem: imagem }),
         signal: controle.signal,
       });
-      const dados = await resposta.json().catch(() => ({}));
+      dados = await resposta.json().catch(() => ({}));
       if (typeof dados.aprovado === 'boolean' && (resposta.ok || resposta.status === 400 || resposta.status === 413)) {
-        return { aprovado: dados.aprovado, situacao: dados.aprovado ? 'aprovado' : 'recusado', motivo: dados.motivo || '' };
+        return {
+          aprovado: dados.aprovado,
+          situacao: dados.aprovado ? 'aprovado' : 'recusado',
+          motivo: dados.motivo || '',
+          acesso: dados.acesso || '',
+        };
       }
       throw new Error(dados.erro || 'HTTP ' + resposta.status);
     } catch (e) {
+      // Se a conferência falhar, o servidor pode liberar o acesso mesmo assim (LIBERAR_SE_FALHAR na Vercel)
       return {
-        aprovado: !!ia.liberarSeFalhar,
+        aprovado: !!dados.acesso || !!ia.liberarSeFalhar,
         situacao: 'erro',
         motivo: 'Não conseguimos verificar seu print agora. Tente de novo em alguns instantes.',
+        acesso: dados.acesso || '',
       };
     } finally {
       clearTimeout(limite);
@@ -726,8 +781,16 @@ window.CONFIG = {
     erroPrint.textContent = '';
 
     const resultado = await conferirPrint(arquivo);
-    enviar(resultado.aprovado ? 'validacao' : 'validacao_recusada',
-      { validacao_ia: resultado.situacao, motivo_ia: resultado.motivo || '' }, arquivo);
+    if (resultado.aprovado && resultado.acesso) {
+      state.acesso = resultado.acesso;
+      save();
+      atualizarLinkCurso();
+    }
+    enviar(resultado.aprovado ? 'validacao' : 'validacao_recusada', {
+      validacao_ia: resultado.situacao,
+      motivo_ia: resultado.motivo || '',
+      link_acesso: resultado.aprovado && state.acesso ? linkCurso() : '',
+    }, arquivo);
 
     continuar3.classList.remove('is-loading');
     continuar3.removeAttribute('aria-busy');

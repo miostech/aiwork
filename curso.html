@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Área do Aluno Work Academy</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FDF6F4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<!--
+  ÁREA DO CURSO
+  As aulas (títulos e vídeos do Panda) ficam no servidor, em api/_aulas.js.
+  Esta página só mostra as aulas para quem tem o link de acesso recebido na validação.
+-->
+<style>
+/* Layout: área do aluno com o vídeo da aula em destaque e a lista de aulas ao lado (embaixo no celular) */
+:root {
+  --bg: #FDF6F4;
+  --surface: #FFFAF8;
+  --white: #FFFFFF;
+  --primary: #B04668;
+  --primary-soft: #F7E0E6;
+  --accent: #D99577;
+  --ink: #2A1D22;
+  --muted: #6E5A60;
+  --border: #F4E1DA;
+  --border-strong: #E3C8BF;
+  --video-bg: #1E1619;
+  --ok: #2F7D55;
+  --ok-soft: #E2F2E9;
+
+  --font-logo: "Anton", "Arial Narrow", Impact, sans-serif;
+  --font-display: "Bitter", Georgia, "Times New Roman", serif;
+  --font-body: "DM Sans", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100dvh;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 1120px; margin-inline: auto;
+  padding-inline: 16px; padding-block: 20px 48px;
+  display: grid; gap: 24px;
+}
+
+/* ── Topo ─────────────────────────────── */
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo {
+  font-family: var(--font-logo); font-size: 22px; line-height: 1; letter-spacing: 0.01em;
+  text-transform: uppercase; color: var(--ink); text-decoration: none;
+}
+.logo span { color: var(--primary); }
+.topo__tag {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px; padding: 5px 12px;
+}
+
+/* ── Cartões e textos ─────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 28px;
+  box-shadow: 0 1px 0 rgba(42, 29, 34, 0.03), 0 18px 40px -30px rgba(42, 29, 34, 0.3);
+}
+.kicker { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); }
+.titulo {
+  margin: 0; font-family: var(--font-display); font-weight: 500;
+  font-size: clamp(26px, 5vw, 36px); line-height: 1.2; text-wrap: balance;
+}
+
+/* ── Estados (carregando / sem acesso / erro) ── */
+.estado {
+  max-width: 520px; width: 100%; margin: 8vh auto 0; padding: 36px 24px 30px;
+  display: grid; gap: 16px; justify-items: center; text-align: center;
+}
+.estado p { margin: 0; color: var(--muted); }
+.estado__icone {
+  width: 60px; height: 60px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--primary-soft); color: var(--primary);
+}
+.estado .actions { width: 100%; }
+.spinner {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 3px solid var(--primary-soft); border-top-color: var(--primary);
+  animation: girar 0.8s linear infinite;
+}
+
+/* ── Boas-vindas e progresso ──────────── */
+.curso { display: grid; gap: 24px; }
+.boas-vindas { display: grid; gap: 8px; }
+.progresso { display: grid; gap: 8px; max-width: 460px; margin-top: 6px; }
+.progresso__barra { height: 10px; border-radius: 999px; background: var(--primary-soft); overflow: hidden; }
+.progresso__barra span {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: inherit; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.progresso p { margin: 0; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.progresso strong { color: var(--ink); }
+
+/* ── Aula atual + lista ───────────────── */
+.layout { display: grid; gap: 20px; align-items: start; }
+@media (min-width: 920px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 350px; gap: 24px; }
+  .lista { position: sticky; top: 16px; max-height: calc(100dvh - 32px); overflow: auto; }
+}
+
+.aula { padding: 12px; display: grid; gap: 18px; min-width: 0; }
+.player {
+  position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9;
+  border-radius: 20px; overflow: hidden; background: var(--video-bg);
+}
+.player--vertical { aspect-ratio: 9 / 16; max-width: 420px; margin-inline: auto; }
+.player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player__vazio {
+  position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 10px;
+  padding: 24px; text-align: center; color: #F6ECEF;
+  background: linear-gradient(165deg, #3B2A31 0%, var(--video-bg) 70%);
+}
+.player__play {
+  width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--primary); color: var(--white); box-shadow: 0 12px 28px -10px rgba(176, 70, 104, 0.9);
+}
+.player__vazio span:last-child { font-size: 14px; opacity: 0.75; }
+
+.aula__info { display: grid; gap: 10px; padding: 0 8px 8px; }
+.aula__numero { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary); font-variant-numeric: tabular-nums; }
+.aula__titulo { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(21px, 3.6vw, 27px); line-height: 1.25; text-wrap: balance; }
+.aula__titulo:focus { outline: none; }
+.aula__descricao { margin: 0; color: var(--muted); max-width: 65ch; }
+
+.materiais { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+.materiais a {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--primary); font-weight: 600; text-decoration: none; overflow-wrap: anywhere;
+}
+.materiais a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.aula__acoes { display: grid; gap: 10px; margin-top: 6px; }
+@media (min-width: 560px) { .aula__acoes { grid-template-columns: 1fr 1fr; } }
+
+.lista { padding: 18px 12px 12px; display: grid; gap: 12px; }
+.lista__topo { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 0 8px; }
+.lista__topo h2 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 19px; }
+.lista__topo span { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lista ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.item {
+  width: 100%; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: center;
+  padding: 10px; border: 1px solid transparent; border-radius: 16px; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.item:hover { background: var(--white); border-color: var(--border); }
+.item:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.item[aria-current="true"] { background: var(--white); border-color: var(--primary); }
+.item__num {
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--primary-soft); color: var(--primary); font-weight: 700; font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.item.is-feita .item__num { background: var(--ok); color: var(--white); }
+.item__textos { min-width: 0; display: grid; gap: 2px; }
+.item__titulo {
+  font-size: 15px; font-weight: 600; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.item__meta { font-size: 13px; color: var(--muted); }
+
+/* ── Curso concluído ──────────────────── */
+.fim {
+  padding: 26px 22px; display: grid; gap: 10px; text-align: center; justify-items: center;
+  background: linear-gradient(135deg, var(--primary-soft) 0%, #FBE9DF 100%); border-color: var(--border-strong);
+}
+.fim p { margin: 0; color: var(--muted); max-width: 52ch; }
+.fim .btn { width: auto; }
+
+/* ── Botões ───────────────────────────── */
+.actions { display: grid; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; min-height: 52px; padding: 12px 22px;
+  border: 0; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 16px; font-weight: 600; text-decoration: none; text-align: center;
+  transition: transform 0.12s, box-shadow 0.15s, border-color 0.15s, color 0.15s, background 0.15s;
+}
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.btn--primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: var(--white);
+  box-shadow: 0 12px 26px -14px rgba(176, 70, 104, 0.85);
+}
+.btn--primary:hover { transform: translateY(-1px); }
+.btn--secondary { background: var(--white); color: var(--ink); border: 1px solid var(--border-strong); }
+.btn--secondary:hover { border-color: var(--primary); color: var(--primary); }
+.btn--secondary[aria-pressed="true"] { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.link { color: var(--primary); font-weight: 600; text-underline-offset: 3px; }
+
+.foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 13px; color: var(--muted); padding-top: 8px; }
+
+.confete { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+@keyframes girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="topo">
+    <a class="logo" href="#" aria-label="Início">Work <span>Academy</span></a>
+    <span class="topo__tag">Área do aluno</span>
+  </header>
+
+  <!-- Carregando -->
+  <section class="card estado" id="estado-carregando" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span>
+    <p>Carregando suas aulas…</p>
+  </section>
+
+  <!-- Sem link de acesso -->
+  <section class="card estado" id="estado-sem-acesso" hidden>
+    <span class="estado__icone" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </span>
+    <h1 class="titulo">Área exclusiva para alunos</h1>
+    <p>Para assistir às aulas, faça seu cadastro gratuito e valide sua conta na <span data-plataforma>Mimix</span>. Leva poucos minutos.</p>
+    <div class="actions">
+      <a class="btn btn--primary" id="btn-cadastro" href="index.html">Fazer meu cadastro gratuito</a>
+    </div>
+    <p>Já fez o cadastro? Abra o link de acesso que apareceu no final da validação.</p>
+    <p id="suporte" hidden>Perdeu o link? <a class="link" id="link-suporte" href="#" target="_blank" rel="noopener">Fale com o suporte</a></p>
+  </section>
+
+  <!-- Erro de conexão -->
+  <section class="card estado" id="estado-erro" hidden>
+    <span class="estado__icone" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+    </span>
+    <h1 class="titulo">Não conseguimos carregar as aulas</h1>
+    <p>Confira sua internet e tente de novo.</p>
+    <div class="actions">
+      <button class="btn btn--primary" id="btn-tentar" type="button">Tentar de novo</button>
+    </div>
+  </section>
+
+  <!-- Curso -->
+  <main id="curso" hidden>
+    <div class="curso">
+      <section class="boas-vindas">
+        <p class="kicker">Olá, <span id="aluno">aluno(a)</span>!</p>
+        <h1 class="titulo" id="curso-titulo">Curso gratuito</h1>
+        <div class="progresso">
+          <div class="progresso__barra" role="progressbar" aria-label="Progresso no curso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="barra"></span></div>
+          <p id="progresso-texto"><strong>0 de 0</strong> aulas concluídas</p>
+        </div>
+      </section>
+
+      <section class="card fim" id="fim" hidden>
+        <p class="kicker">Curso concluído</p>
+        <h2 class="titulo">Parabéns, você assistiu a todas as aulas! 🎉</h2>
+        <p>Agora é colocar em prática. Você pode rever qualquer aula quando quiser.</p>
+        <button class="btn btn--secondary" id="btn-rever" type="button">Rever a primeira aula</button>
+      </section>
+
+      <div class="layout">
+        <section class="card aula" aria-labelledby="aula-titulo">
+          <div class="player" id="player"></div>
+          <div class="aula__info">
+            <p class="aula__numero" id="aula-numero"></p>
+            <h2 class="aula__titulo" id="aula-titulo"></h2>
+            <p class="aula__descricao" id="aula-descricao"></p>
+            <ul class="materiais" id="materiais"></ul>
+            <div class="aula__acoes">
+              <button class="btn btn--secondary" id="btn-concluir" type="button" aria-pressed="false">Marcar como concluída</button>
+              <button class="btn btn--primary" id="btn-proxima" type="button">Próxima aula</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card lista" aria-labelledby="lista-titulo">
+          <div class="lista__topo">
+            <h2 id="lista-titulo">Aulas do curso</h2>
+            <span id="lista-contagem"></span>
+          </div>
+          <ol id="lista-aulas"></ol>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span>© <span id="ano">2026</span> <span data-marca>Work Academy</span></span>
+  </footer>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÃO — os títulos e vídeos das aulas ficam em api/_aulas.js
+// ═══════════════════════════════════════════════════════════════
+window.CONFIG = {
+  marca: 'Work Academy',
+  plataforma: 'Mimix',
+  enderecoAulas: '/api/aulas',   // função que entrega as aulas para quem tem acesso
+  paginaCadastro: 'index.html',  // para onde vai quem ainda não tem acesso
+  linkSuporte: '',               // link do WhatsApp do suporte (opcional; vazio = esconde)
+};
+</script>
+<script>
+(function () {
+  'use strict';
+
+  const C = window.CONFIG;
+  const KEY = 'inscricao-curso-gratuito';   // mesmo lugar do funil: nome da pessoa e link de acesso
+  const KEY_PROGRESSO = 'curso-progresso';
+  const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function ler(chave) { try { return JSON.parse(localStorage.getItem(chave)) || {}; } catch (e) { return {}; } }
+  function gravar(chave, valor) { try { localStorage.setItem(chave, JSON.stringify(valor)); } catch (e) {} }
+
+  const funil = ler(KEY);
+  const progresso = Object.assign({ concluidas: [], atual: null }, ler(KEY_PROGRESSO));
+
+  // ── Textos fixos
+  $$('[data-marca]').forEach((el) => { el.textContent = C.marca; });
+  $$('[data-plataforma]').forEach((el) => { el.textContent = C.plataforma; });
+  $('#btn-cadastro').href = C.paginaCadastro;
+  $('.logo').href = C.paginaCadastro;
+  $('#ano').textContent = new Date().getFullYear();
+  if (C.linkSuporte) { $('#link-suporte').href = C.linkSuporte; $('#suporte').hidden = false; }
+
+  function mostrar(estado) {
+    $('#estado-carregando').hidden = estado !== 'carregando';
+    $('#estado-sem-acesso').hidden = estado !== 'sem-acesso';
+    $('#estado-erro').hidden = estado !== 'erro';
+    $('#curso').hidden = estado !== 'curso';
+  }
+
+  // ── Link de acesso: vem no endereço (?acesso=...) e fica guardado neste aparelho
+  let acesso = null;
+  try {
+    const params = new URLSearchParams(location.search);
+    acesso = params.get('acesso');
+    if (acesso) {
+      funil.acesso = acesso;
+      gravar(KEY, funil);
+      params.delete('acesso');
+      const resto = params.toString();
+      history.replaceState(null, '', location.pathname + (resto ? '?' + resto : '') + location.hash);
+    }
+  } catch (e) {}
+  acesso = acesso || funil.acesso;
+
+  async function carregar() {
+    if (!acesso) { mostrar('sem-acesso'); return; }
+    mostrar('carregando');
+    try {
+      const resposta = await fetch(C.enderecoAulas, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acesso: acesso }),
+      });
+      if (resposta.status === 401) {
+        delete funil.acesso;
+        gravar(KEY, funil);
+        mostrar('sem-acesso');
+        return;
+      }
+      if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+      const dados = await resposta.json();
+      montarCurso(dados.curso);
+    } catch (e) {
+      mostrar('erro');
+    }
+  }
+  $('#btn-tentar').addEventListener('click', carregar);
+
+  // ── Curso
+  let curso = null;
+  let atual = 0;
+
+  function montarCurso(dados) {
+    curso = dados;
+    const primeiroNome = ((funil.lead && funil.lead.nome) || '').trim().split(/\s+/)[0];
+    $('#aluno').textContent = primeiroNome || 'aluno(a)';
+    $('#curso-titulo').textContent = curso.titulo;
+    $('#player').classList.toggle('player--vertical', curso.formatoVideo === '9/16');
+
+    const lista = $('#lista-aulas');
+    lista.replaceChildren();
+    curso.aulas.forEach((aula, i) => {
+      const li = document.createElement('li');
+      const botao = document.createElement('button');
+      botao.type = 'button';
+      botao.className = 'item';
+      botao.dataset.indice = i;
+      botao.innerHTML = '<span class="item__num" aria-hidden="true"></span><span class="item__textos"><span class="item__titulo"></span><span class="item__meta"></span></span>';
+      $('.item__titulo', botao).textContent = aula.titulo;
+      botao.addEventListener('click', () => abrirAula(i, true));
+      li.appendChild(botao);
+      lista.appendChild(li);
+    });
+
+    // Começa pela aula do link (#aula-3), pela última aberta ou pela primeira não concluída
+    const doLink = Number((location.hash.match(/^#aula-(\d+)$/) || [])[1]) - 1;
+    const primeiraPendente = curso.aulas.findIndex((_, i) => !progresso.concluidas.includes(i));
+    let inicio = doLink >= 0 ? doLink : (progresso.atual !== null ? progresso.atual : primeiraPendente);
+    if (!(inicio >= 0 && inicio < curso.aulas.length)) inicio = 0;
+
+    mostrar('curso');
+    abrirAula(inicio, false);
+  }
+
+  function abrirAula(i, rolar) {
+    atual = i;
+    progresso.atual = i;
+    gravar(KEY_PROGRESSO, progresso);
+    const aula = curso.aulas[i];
+    const total = curso.aulas.length;
+
+    const player = $('#player');
+    if (aula.video) {
+      const atualFrame = $('iframe', player);
+      if (!atualFrame || atualFrame.src !== aula.video) {
+        const frame = document.createElement('iframe');
+        frame.src = aula.video;
+        frame.title = aula.titulo;
+        frame.allow = 'accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen';
+        frame.allowFullscreen = true;
+        player.replaceChildren(frame);
+      }
+    } else {
+      player.innerHTML = '<div class="player__vazio"><span class="player__play" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span><strong>Vídeo em breve</strong><span>Esta aula ainda está sendo preparada.</span></div>';
+    }
+
+    $('#aula-numero').textContent = 'Aula ' + (i + 1) + ' de ' + total + (aula.duracao ? ' · ' + aula.duracao : '');
+    $('#aula-titulo').textContent = aula.titulo;
+    $('#aula-descricao').textContent = aula.descricao || '';
+    $('#aula-descricao').hidden = !aula.descricao;
+
+    const materiais = $('#materiais');
+    materiais.replaceChildren();
+    (aula.materiais || []).forEach((m) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = m.link;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg><span></span>';
+      $('span', a).textContent = m.titulo;
+      li.appendChild(a);
+      materiais.appendChild(li);
+    });
+
+    $('#btn-proxima').textContent = i === total - 1 ? 'Concluir curso' : 'Próxima aula';
+    try { history.replaceState(null, '', '#aula-' + (i + 1)); } catch (e) {}
+    atualizar();
+
+    if (rolar) {
+      const destino = $('.aula');
+      if (destino.getBoundingClientRect().top < 0 || window.innerWidth < 920) {
+        destino.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      }
+      const titulo = $('#aula-titulo');
+      titulo.setAttribute('tabindex', '-1');
+      titulo.focus({ preventScroll: true });
+    }
+  }
+
+  function atualizar() {
+    const total = curso.aulas.length;
+    const feitas = progresso.concluidas.filter((i) => i < total).length;
+    const pct = total ? Math.round((feitas / total) * 100) : 0;
+    $('#barra').style.width = pct + '%';
+    $('.progresso__barra').setAttribute('aria-valuenow', pct);
+    $('#progresso-texto').innerHTML = '<strong>' + feitas + ' de ' + total + '</strong> aulas concluídas';
+    $('#lista-contagem').textContent = feitas + '/' + total;
+    $('#fim').hidden = feitas < total;
+
+    const concluida = progresso.concluidas.includes(atual);
+    const botao = $('#btn-concluir');
+    botao.setAttribute('aria-pressed', concluida ? 'true' : 'false');
+    botao.textContent = concluida ? 'Aula concluída ✓' : 'Marcar como concluída';
+
+    $$('.item').forEach((item) => {
+      const i = Number(item.dataset.indice);
+      const feita = progresso.concluidas.includes(i);
+      item.classList.toggle('is-feita', feita);
+      if (i === atual) item.setAttribute('aria-current', 'true'); else item.removeAttribute('aria-current');
+      $('.item__num', item).innerHTML = feita
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+        : String(i + 1);
+      const aula = curso.aulas[i];
+      $('.item__meta', item).textContent = [feita ? 'Concluída' : (i === atual ? 'Assistindo agora' : ''), aula.duracao].filter(Boolean).join(' · ');
+    });
+  }
+
+  function marcar(i, feita) {
+    const ja = progresso.concluidas.includes(i);
+    if (feita && !ja) progresso.concluidas.push(i);
+    if (!feita && ja) progresso.concluidas = progresso.concluidas.filter((x) => x !== i);
+    gravar(KEY_PROGRESSO, progresso);
+  }
+
+  // Comemora quando a última aula que faltava é concluída
+  function comemorarSeTerminou(antes) {
+    const total = curso.aulas.length;
+    if (antes >= total || progresso.concluidas.length < total) return;
+    $('#fim').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    confete();
+  }
+
+  $('#btn-concluir').addEventListener('click', () => {
+    const antes = progresso.concluidas.length;
+    marcar(atual, !progresso.concluidas.includes(atual));
+    atualizar();
+    comemorarSeTerminou(antes);
+  });
+
+  $('#btn-proxima').addEventListener('click', () => {
+    const total = curso.aulas.length;
+    const antes = progresso.concluidas.length;
+    marcar(atual, true);
+    if (atual < total - 1) {
+      abrirAula(atual + 1, true);
+      comemorarSeTerminou(antes);
+      return;
+    }
+    atualizar();
+    if (progresso.concluidas.length === total && antes === total) {
+      $('#fim').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    }
+    comemorarSeTerminou(antes);
+  });
+
+  $('#btn-rever').addEventListener('click', () => abrirAula(0, true));
+
+  // ── Confetes ao concluir o curso (o mesmo efeito da etapa final do cadastro)
+  function confete() {
+    if (reduceMotion) return;
+    const tela = document.createElement('canvas');
+    tela.className = 'confete';
+    tela.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(tela);
+    const ctx = tela.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0;
+    function medir() {
+      W = window.innerWidth; H = window.innerHeight;
+      tela.width = W * dpr; tela.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    medir();
+    window.addEventListener('resize', medir);
+    const cores = ['#B04668', '#D99577', '#F59AB8', '#FFC94D', '#7DB7E8', '#9B6BD6', '#5CC8A1'];
+    const total = Math.round(Math.min(240, Math.max(120, W * 0.4)));
+    const pecas = Array.from({ length: total }, () => ({
+      x: Math.random() * W, y: -20 - Math.random() * H,
+      w: 6 + Math.random() * 6, h: 9 + Math.random() * 8,
+      vy: 2.2 + Math.random() * 3, vx: -1 + Math.random() * 2,
+      giro: Math.random() * Math.PI * 2, vgiro: -0.15 + Math.random() * 0.3,
+      balanco: Math.random() * Math.PI * 2,
+      cor: cores[Math.floor(Math.random() * cores.length)], redondo: Math.random() < 0.25,
+    }));
+    const DURACAO = 6000;
+    const inicio = performance.now();
+    function quadro(agora) {
+      const passou = agora - inicio;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalAlpha = passou > DURACAO - 1200 ? Math.max(0, (DURACAO - passou) / 1200) : 1;
+      pecas.forEach((p) => {
+        p.balanco += 0.06; p.x += p.vx + Math.sin(p.balanco) * 0.9; p.y += p.vy; p.giro += p.vgiro;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.giro); ctx.fillStyle = p.cor;
+        if (p.redondo) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill(); }
+        else { ctx.scale(1, Math.cos(p.balanco)); ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+        ctx.restore();
+      });
+      if (passou < DURACAO) requestAnimationFrame(quadro);
+      else { window.removeEventListener('resize', medir); tela.remove(); }
+    }
+    requestAnimationFrame(quadro);
+  }
+
+  carregar();
+})();
+</script>
+</body>
+</html>
