@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/:caminho*",
+      "has": [{ "type": "host", "value": "aiwork-sigma.vercel.app" }],
+      "destination": "https://www.iaacademy.bio/:caminho*",
+      "permanent": true
+    }
+  ]
+}
