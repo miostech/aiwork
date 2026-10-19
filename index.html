@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Curso Gratuito IA Academy</title>
-<meta name="description" content="Entenda como pessoas comuns fazem renda extra em dólar treinando robôs, usando apenas o celular. Assista ao vídeo e libere seu acesso gratuito.">
+<meta name="description" content="Receba em dólar, trabalhando de casa, treinando inteligência artificial. Veja no vídeo como entrar nesse mercado.">
 <meta name="theme-color" content="#EAE0CB">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:wght@600;700;800&family=Caveat:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap">
 <!--
   COMO EDITAR ESTA PÁGINA
-  1. Tempo de liberação do formulário, próxima página e webhook: bloco CONFIG no final do arquivo.
+  1. Tempo de liberação do formulário e próxima página: bloco CONFIG no final do arquivo.
   2. Vídeo: procure "VÍDEO" e cole o código do seu player no lugar indicado.
   3. Textos: edite direto no HTML abaixo.
   4. Pixel do Meta / Google: cole o código logo abaixo desta linha.
@@ -184,10 +184,22 @@ body {
 .formzone__desc p { margin: 0; }
 .formzone__desc .hl { font-weight: 800; }
 .formzone__desc-end { color: var(--ink); font-weight: 700; }
+.formzone__lista {
+  list-style: none; margin: 2px auto; padding: 0; max-width: 34ch;
+  display: grid; gap: 10px; text-align: left; text-wrap: pretty;
+}
+.formzone__lista li {
+  display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start;
+  font-size: clamp(1rem, 4vw, 1.12rem); font-weight: 600; line-height: 1.4; color: var(--ink);
+}
+.formzone__lista li::before {
+  content: ""; width: 24px; height: 24px; margin-top: 1px; border-radius: 50%;
+  background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
 
 /* ── Cartão de cadastro ───────────────── */
 .formcard {
-  background: var(--fn-surface); border-radius: var(--radius); overflow: hidden;
+  background: var(--fn-surface); border-radius: var(--radius); overflow: visible;
   padding: clamp(20px, 5vw, 32px) clamp(16px, 5vw, 32px) clamp(22px, 5vw, 32px);
   box-shadow: 0 24px 56px -22px rgba(12, 11, 10, 0.5), 0 0 0 1px var(--line);
   font-family: var(--font-fn-body); color: var(--fn-ink); line-height: 1.5;
@@ -210,6 +222,47 @@ body {
 .field input:focus { outline: none; background: var(--fn-surface); border-color: var(--fn-primary); box-shadow: 0 0 0 4px var(--fn-primary-soft); }
 .field input[aria-invalid="true"] { border-color: var(--fn-error); }
 .field__error { margin: 0; font-size: 13px; font-weight: 500; color: var(--fn-error); }
+
+/* WhatsApp com seletor de país (bandeira + código) */
+.telefone {
+  position: relative; display: flex; align-items: stretch;
+  border: 1px solid var(--fn-border-strong); border-radius: 12px; background: var(--fn-wash);
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.telefone:focus-within { background: var(--fn-surface); border-color: var(--fn-primary); box-shadow: 0 0 0 4px var(--fn-primary-soft); }
+.telefone.is-invalido { border-color: var(--fn-error); }
+.telefone__pais {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 0 10px 0 14px;
+  background: none; border: 0; border-right: 1px solid var(--fn-border-strong); border-radius: 12px 0 0 12px;
+  font: inherit; font-size: 16px; font-weight: 600; color: var(--fn-ink); cursor: pointer;
+}
+.telefone__pais:hover { background: rgba(176, 70, 104, 0.06); }
+.telefone__pais:focus-visible { outline: 2px solid var(--fn-primary); outline-offset: -2px; }
+.telefone__bandeira { font-size: 20px; line-height: 1; }
+.telefone__seta { color: var(--fn-muted); transition: transform 0.15s; }
+.telefone__pais[aria-expanded="true"] .telefone__seta { transform: rotate(180deg); }
+.field .telefone input { flex: 1; min-width: 0; border: 0; border-radius: 0 12px 12px 0; background: transparent; padding-left: 12px; }
+.field .telefone input:focus { background: transparent; box-shadow: none; }
+.paises {
+  position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 6px);
+  background: var(--fn-surface); border: 1px solid var(--fn-border-strong); border-radius: 16px;
+  box-shadow: 0 18px 40px -18px rgba(12, 11, 10, 0.35); overflow: hidden;
+}
+.paises__busca { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid var(--fn-border); color: var(--fn-muted); }
+.field .paises__busca input { border: 0; border-radius: 0; padding: 8px 0; background: transparent; box-shadow: none; }
+.paises__lista { max-height: 260px; overflow-y: auto; padding: 6px; overscroll-behavior: contain; }
+.paises__grupo { margin: 8px 10px 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fn-muted); }
+.pais {
+  width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: center;
+  padding: 9px 10px; border: 0; border-radius: 10px; background: none;
+  font: inherit; font-size: 15px; color: var(--fn-ink); text-align: left; cursor: pointer;
+}
+.pais:hover, .pais:focus-visible { background: var(--fn-wash); outline: none; }
+.pais[aria-selected="true"] { background: var(--fn-primary-soft); }
+.pais__bandeira { font-size: 20px; line-height: 1; }
+.pais__nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pais__codigo { color: var(--fn-muted); font-variant-numeric: tabular-nums; }
+.paises__vazio { margin: 10px; font-size: 14px; color: var(--fn-muted); }
 .field__error:empty { display: none; }
 
 /* Botões */
@@ -232,6 +285,7 @@ body {
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .fineprint { margin: 0; font-size: 13px; color: var(--fn-muted); text-align: center; }
+.aviso-ganhos { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--fn-muted); text-align: center; font-style: italic; }
 
 /* ── Rodapé ───────────────────────────── */
 .foot {
@@ -274,9 +328,9 @@ body {
   <section class="vsl" aria-labelledby="titulo">
     <p class="eyebrow rise" style="--i:1"><span class="eyebrow__dot" aria-hidden="true"></span>Assista até o final</p>
 
-    <h1 class="title rise" id="titulo" style="--i:2">Copie e cole meu método oculto pra faturar <mark class="hl">mais de 1000 dólares extras todos os meses</mark></h1>
+    <h1 class="title rise" id="titulo" style="--i:2">Receba em dólar, trabalhando de casa, <mark class="hl">treinando inteligência artificial</mark></h1>
 
-    <p class="subtitle rise" style="--i:3">Entenda como pessoas <strong>COMUNS</strong> fazem renda extra em dólar todos os dias treinando robôs, mesmo sem precisar aparecer, sem experiência e usando apenas o celular. Assista ao vídeo, preencha seus dados ao final do vídeo e comece a ganhar <strong>HOJE!</strong></p>
+    <p class="subtitle rise" style="--i:3">Empresas de IA pagam pessoas do mundo inteiro para avaliar e melhorar respostas de robôs. Veja no vídeo como entrar nesse mercado, com <strong>ganhos a partir de $4 por hora.</strong></p>
 
     <figure class="video rise" id="video" style="--i:4">
       <!-- ═══════════ VÍDEO ═══════════
@@ -298,12 +352,16 @@ body {
       <div class="formzone__cue" aria-hidden="true">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
       </div>
-      <p class="formzone__kicker">falta pouco</p>
-      <h2 class="formzone__title" id="inscricao-titulo">Garanta o seu acesso agora</h2>
+      <p class="formzone__kicker">Falta pouco</p>
+      <h2 class="formzone__title" id="inscricao-titulo">Garanta seu acesso gratuito</h2>
       <div class="formzone__desc">
-        <p>9 aulas práticas, com aproximadamente 40 minutos de conteúdo, mostrando <mark class="hl">PASSO A PASSO</mark> como começar no mercado de treinamento de Inteligência Artificial.</p>
-        <p>Conheça 3 empresas, aprenda como encontrar oportunidades e descubra como dar seus primeiros passos, mesmo sem experiência na área.</p>
-        <p class="formzone__desc-end">Tudo isso <mark class="hl">100% GRATUITO</mark> para você!</p>
+        <p>9 aulas práticas, com cerca de 40 minutos no total, mostrando <mark class="hl">passo a passo</mark> como começar a receber em dólar ajudando a treinar robôs de inteligência artificial.</p>
+        <ul class="formzone__lista">
+          <li>Conheça 3 empresas confiáveis pra você começar</li>
+          <li>Aprenda a encontrar e se candidatar às oportunidades</li>
+          <li>Dê os primeiros passos, mesmo sem experiência na área</li>
+        </ul>
+        <p class="formzone__desc-end"><mark class="hl">100% gratuito.</mark> Preencha seus dados abaixo:</p>
       </div>
 
       <div class="formcard" id="card">
@@ -321,17 +379,32 @@ body {
               <p class="field__error" id="e-email"></p>
             </div>
             <div class="field">
-              <label for="f-whatsapp">WhatsApp com DDD</label>
-              <input id="f-whatsapp" name="whatsapp" type="tel" autocomplete="tel-national" inputmode="tel" placeholder="(11) 91234-5678" aria-describedby="e-whatsapp" required>
+              <label for="f-whatsapp">WhatsApp</label>
+              <div class="telefone" id="telefone">
+                <button class="telefone__pais" id="btn-pais" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="paises" aria-label="País do telefone: Brasil +55. Trocar país">
+                  <span class="telefone__bandeira" id="pais-bandeira" aria-hidden="true">🇧🇷</span>
+                  <span id="pais-codigo">+55</span>
+                  <svg class="telefone__seta" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <input id="f-whatsapp" name="whatsapp" type="tel" autocomplete="tel-national" inputmode="tel" placeholder="(11) 91234-5678" aria-describedby="e-whatsapp" required>
+                <div class="paises" id="paises" hidden>
+                  <div class="paises__busca">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                    <input id="busca-pais" type="text" placeholder="Buscar país ou código" aria-label="Buscar país ou código" autocomplete="off">
+                  </div>
+                  <div class="paises__lista" id="lista-paises" role="listbox" aria-label="País do telefone"></div>
+                </div>
+              </div>
               <p class="field__error" id="e-whatsapp"></p>
             </div>
           </div>
           <div class="actions">
             <button class="btn btn--primary" type="submit">
-              Garantir minha vaga
+              Quero meu acesso gratuito
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
-            <p class="fineprint">🔒 Seus dados ficam protegidos e não são compartilhados.</p>
+            <p class="aviso-ganhos">Os ganhos variam conforme a plataforma, o idioma e a disponibilidade de tarefas.</p>
+            <p class="fineprint">🔒 Seus dados estão seguros. Não enviamos spam.</p>
           </div>
         </form>
 
@@ -364,9 +437,6 @@ window.CONFIG = {
   // Para onde a pessoa vai depois de preencher o formulário.
   paginaCadastro: 'cadastro.html',
 
-  // Endereço que recebe os dados de cada inscrito (webhook do Make, Zapier, n8n...). Vazio = não envia.
-  // Use o mesmo endereço no CONFIG da cadastro.html.
-  enviarDadosPara: '',
 
   linkTermos: '#',
   linkPrivacidade: '#',
@@ -405,17 +475,7 @@ window.CONFIG = {
   $('#link-privacidade').href = C.linkPrivacidade;
   $('#ano').textContent = new Date().getFullYear();
 
-  // ── Envio dos dados e eventos de pixel
-  function enviar(evento) {
-    if (!C.enviarDadosPara) return;
-    const dados = Object.assign(
-      { evento: evento, data: new Date().toISOString(), pagina: location.origin + location.pathname },
-      state.origem, state.lead
-    );
-    try {
-      fetch(C.enviarDadosPara, { method: 'POST', mode: 'no-cors', keepalive: true, body: new URLSearchParams(dados) }).catch(() => {});
-    } catch (e) {}
-  }
+  // ── Eventos de pixel (Meta / Google), se estiverem instalados na página
   function rastrear(evento) {
     try { if (typeof window.fbq === 'function') window.fbq('track', evento); } catch (e) {}
     try { if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead'); } catch (e) {}
@@ -439,27 +499,162 @@ window.CONFIG = {
   const form = $('#step-1');
   const botao = $('button[type="submit"]', form);
   const campos = { nome: $('#f-nome'), email: $('#f-email'), whatsapp: $('#f-whatsapp') };
-  Object.keys(campos).forEach((k) => { if (state.lead[k]) campos[k].value = state.lead[k]; });
+  if (state.lead.nome) campos.nome.value = state.lead.nome;
+  if (state.lead.email) campos.email.value = state.lead.email;
+  if (state.lead.whatsappDigitado) campos.whatsapp.value = state.lead.whatsappDigitado;
 
-  function mascaraTelefone(v) {
-    const d = v.replace(/\D/g, '').slice(0, 11);
-    if (!d.length) return '';
-    if (d.length <= 2) return '(' + d;
-    if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
-    if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
-    return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+  // ── País do WhatsApp. Códigos gerados da biblioteca libphonenumber (Google); nomes em português pelo navegador.
+  const CODIGOS_PAISES = 'AC247,AD376,AE971,AF93,AG1,AI1,AL355,AM374,AO244,AR54,AS1,AT43,AU61,AW297,AX358,AZ994,BA387,BB1,BD880,BE32,BF226,BG359,BH973,BI257,BJ229,BL590,BM1,BN673,BO591,BQ599,BR55,BS1,BT975,BW267,BY375,BZ501,CA1,CC61,CD243,CF236,CG242,CH41,CI225,CK682,CL56,CM237,CN86,CO57,CR506,CU53,CV238,CW599,CX61,CY357,CZ420,DE49,DJ253,DK45,DM1,DO1,DZ213,EC593,EE372,EG20,EH212,ER291,ES34,ET251,FI358,FJ679,FK500,FM691,FO298,FR33,GA241,GB44,GD1,GE995,GF594,GG44,GH233,GI350,GL299,GM220,GN224,GP590,GQ240,GR30,GT502,GU1,GW245,GY592,HK852,HN504,HR385,HT509,HU36,ID62,IE353,IL972,IM44,IN91,IO246,IQ964,IR98,IS354,IT39,JE44,JM1,JO962,JP81,KE254,KG996,KH855,KI686,KM269,KN1,KP850,KR82,KW965,KY1,KZ7,LA856,LB961,LC1,LI423,LK94,LR231,LS266,LT370,LU352,LV371,LY218,MA212,MC377,MD373,ME382,MF590,MG261,MH692,MK389,ML223,MM95,MN976,MO853,MP1,MQ596,MR222,MS1,MT356,MU230,MV960,MW265,MX52,MY60,MZ258,NA264,NC687,NE227,NF672,NG234,NI505,NL31,NO47,NP977,NR674,NU683,NZ64,OM968,PA507,PE51,PF689,PG675,PH63,PK92,PL48,PM508,PR1,PS970,PT351,PW680,PY595,QA974,RE262,RO40,RS381,RU7,RW250,SA966,SB677,SC248,SD249,SE46,SG65,SH290,SI386,SJ47,SK421,SL232,SM378,SN221,SO252,SR597,SS211,ST239,SV503,SX1,SY963,SZ268,TA290,TC1,TD235,TG228,TH66,TJ992,TK690,TL670,TM993,TN216,TO676,TR90,TT1,TV688,TW886,TZ255,UA380,UG256,US1,UY598,UZ998,VA39,VC1,VE58,VG1,VI1,VN84,VU678,WF681,WS685,XK383,YE967,YT262,ZA27,ZM260,ZW263';
+  const MAIS_USADOS = ['BR', 'PT', 'US', 'ES', 'MX', 'AR', 'CO', 'CL', 'PE', 'UY', 'PY', 'AO', 'MZ', 'GB', 'FR', 'IT', 'DE', 'CH', 'CA', 'JP'];
+  const nomesRegioes = (() => { try { return new Intl.DisplayNames(['pt-BR'], { type: 'region' }); } catch (e) { return null; } })();
+  const semAcento = (t) => String(t).normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const bandeira = (iso) => String.fromCodePoint(...[...iso].map((c) => 0x1F1E6 + c.charCodeAt(0) - 65));
+  const PAISES = CODIGOS_PAISES.split(',').map((item) => {
+    const iso = item.slice(0, 2);
+    let nome = iso;
+    try { nome = (nomesRegioes && nomesRegioes.of(iso)) || iso; } catch (e) {}
+    return { iso: iso, ddi: item.slice(2), nome: nome, bandeira: bandeira(iso), busca: semAcento(nome) };
+  }).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  const PAIS_POR_ISO = {};
+  PAISES.forEach((p) => { PAIS_POR_ISO[p.iso] = p; });
+
+  // País inicial: o escolhido antes, o do fuso horário do aparelho, o do idioma do navegador ou o Brasil
+  function paisInicial() {
+    if (PAIS_POR_ISO[state.lead.pais]) return state.lead.pais;
+    let fuso = '';
+    try { fuso = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    const fusosBR = ['Sao_Paulo', 'Fortaleza', 'Recife', 'Bahia', 'Belem', 'Manaus', 'Cuiaba', 'Campo_Grande', 'Porto_Velho', 'Boa_Vista', 'Rio_Branco', 'Araguaina', 'Maceio', 'Santarem', 'Noronha', 'Eirunepe'];
+    if (fusosBR.some((c) => fuso === 'America/' + c)) return 'BR';
+    if (['Europe/Lisbon', 'Atlantic/Madeira', 'Atlantic/Azores'].includes(fuso)) return 'PT';
+    const regiao = String(navigator.language || '').split('-')[1];
+    if (regiao && PAIS_POR_ISO[regiao.toUpperCase()]) return regiao.toUpperCase();
+    return 'BR';
   }
+  let pais = PAIS_POR_ISO[paisInicial()] || PAIS_POR_ISO.BR;
+
+  const EXEMPLOS = { BR: '(11) 91234-5678', PT: '912 345 678', US: '(201) 555-0123', CA: '(201) 555-0123' };
+  function formatarNumero(valor) {
+    const max = Math.max(4, 15 - pais.ddi.length);
+    const d = valor.replace(/\D/g, '').slice(0, pais.iso === 'BR' ? 11 : max);
+    if (!d.length) return '';
+    if (pais.iso === 'BR') {
+      if (d.length <= 2) return '(' + d;
+      if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+      if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+      return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+    }
+    if ((pais.iso === 'US' || pais.iso === 'CA') && d.length <= 10) {
+      if (d.length <= 3) return '(' + d;
+      if (d.length <= 6) return '(' + d.slice(0, 3) + ') ' + d.slice(3);
+      return '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6);
+    }
+    return d.replace(/(\d{3})(?=\d)/g, '$1 ');
+  }
+  function erroTelefone() {
+    const d = campos.whatsapp.value.replace(/\D/g, '');
+    if (pais.iso === 'BR') {
+      return d.length >= 10 && d.length <= 11 ? '' : 'Digite seu WhatsApp com DDD, como (11) 91234-5678.';
+    }
+    return d.length >= 6 && d.length + pais.ddi.length <= 15 ? '' : 'Digite seu WhatsApp completo, com o código de área.';
+  }
+  function aplicarPais(p, focar) {
+    pais = p;
+    $('#pais-bandeira').textContent = p.bandeira;
+    $('#pais-codigo').textContent = '+' + p.ddi;
+    $('#btn-pais').setAttribute('aria-label', 'País do telefone: ' + p.nome + ' +' + p.ddi + '. Trocar país');
+    campos.whatsapp.placeholder = EXEMPLOS[p.iso] || 'Número com código de área';
+    campos.whatsapp.value = formatarNumero(campos.whatsapp.value);
+    if (focar) campos.whatsapp.focus();
+  }
+  aplicarPais(pais, false);
+
+  // Lista de países com busca
+  const painel = $('#paises');
+  const buscaPais = $('#busca-pais');
+  const listaPaises = $('#lista-paises');
+  const btnPais = $('#btn-pais');
+  function opcaoPais(p) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pais';
+    b.setAttribute('role', 'option');
+    b.setAttribute('aria-selected', p.iso === pais.iso ? 'true' : 'false');
+    b.innerHTML = '<span class="pais__bandeira" aria-hidden="true"></span><span class="pais__nome"></span><span class="pais__codigo"></span>';
+    $('.pais__bandeira', b).textContent = p.bandeira;
+    $('.pais__nome', b).textContent = p.nome;
+    $('.pais__codigo', b).textContent = '+' + p.ddi;
+    b.addEventListener('click', () => { fecharPaises(false); aplicarPais(p, true); });
+    return b;
+  }
+  function tituloGrupo(texto) {
+    const el = document.createElement('p');
+    el.className = 'paises__grupo';
+    el.textContent = texto;
+    return el;
+  }
+  function mostrarPaises() {
+    const termo = semAcento(buscaPais.value.trim()).replace(/^\+/, '');
+    listaPaises.replaceChildren();
+    if (!termo) {
+      listaPaises.append(tituloGrupo('Mais usados'));
+      MAIS_USADOS.forEach((iso) => { if (PAIS_POR_ISO[iso]) listaPaises.append(opcaoPais(PAIS_POR_ISO[iso])); });
+      listaPaises.append(tituloGrupo('Todos os países'));
+      PAISES.forEach((p) => listaPaises.append(opcaoPais(p)));
+      return;
+    }
+    const achados = PAISES.filter((p) => p.busca.includes(termo) || p.ddi.startsWith(termo) || p.iso.toLowerCase() === termo);
+    if (!achados.length) {
+      const vazio = document.createElement('p');
+      vazio.className = 'paises__vazio';
+      vazio.textContent = 'Nenhum país encontrado.';
+      listaPaises.append(vazio);
+      return;
+    }
+    achados.forEach((p) => listaPaises.append(opcaoPais(p)));
+  }
+  function abrirPaises() {
+    buscaPais.value = '';
+    mostrarPaises();
+    painel.hidden = false;
+    btnPais.setAttribute('aria-expanded', 'true');
+    buscaPais.focus();
+  }
+  function fecharPaises(devolverFoco) {
+    painel.hidden = true;
+    btnPais.setAttribute('aria-expanded', 'false');
+    if (devolverFoco) btnPais.focus();
+  }
+  btnPais.addEventListener('click', () => { if (painel.hidden) abrirPaises(); else fecharPaises(true); });
+  buscaPais.addEventListener('input', mostrarPaises);
+  buscaPais.addEventListener('keydown', (ev) => {
+    const primeira = $('.pais', listaPaises);
+    if (ev.key === 'ArrowDown' && primeira) { ev.preventDefault(); primeira.focus(); }
+    else if (ev.key === 'Enter') { ev.preventDefault(); if (primeira) primeira.click(); }
+    else if (ev.key === 'Escape') { ev.preventDefault(); fecharPaises(true); }
+  });
+  listaPaises.addEventListener('keydown', (ev) => {
+    const opcoes = $$('.pais', listaPaises);
+    const i = opcoes.indexOf(document.activeElement);
+    if (ev.key === 'ArrowDown') { ev.preventDefault(); (opcoes[i + 1] || opcoes[i]).focus(); }
+    else if (ev.key === 'ArrowUp') { ev.preventDefault(); if (i <= 0) buscaPais.focus(); else opcoes[i - 1].focus(); }
+    else if (ev.key === 'Escape') { ev.preventDefault(); fecharPaises(true); }
+  });
+  document.addEventListener('click', (ev) => {
+    if (!painel.hidden && !$('#telefone').contains(ev.target)) fecharPaises(false);
+  });
+
   function marcarErro(input, msg) {
     input.setAttribute('aria-invalid', msg ? 'true' : 'false');
     $('#' + input.getAttribute('aria-describedby')).textContent = msg || '';
+    if (input === campos.whatsapp) $('#telefone').classList.toggle('is-invalido', !!msg);
   }
-  campos.whatsapp.addEventListener('input', () => { campos.whatsapp.value = mascaraTelefone(campos.whatsapp.value); });
+  campos.whatsapp.addEventListener('input', () => { campos.whatsapp.value = formatarNumero(campos.whatsapp.value); });
   Object.values(campos).forEach((input) => {
     input.addEventListener('input', () => { if (input.getAttribute('aria-invalid') === 'true') marcarErro(input, ''); });
   });
 
   let enviando = false;
-  form.addEventListener('submit', (ev) => {
+  form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     if (enviando) return;
     const nome = campos.nome.value.trim().replace(/\s+/g, ' ');
@@ -468,21 +663,28 @@ window.CONFIG = {
     const checagens = [
       [campos.nome, nome.length >= 2 ? '' : 'Digite seu nome.'],
       [campos.email, EMAIL.test(email) ? '' : 'Digite um e-mail válido, como nome@gmail.com.'],
-      [campos.whatsapp, fone.length >= 10 ? '' : 'Digite seu WhatsApp com DDD, como (11) 91234-5678.'],
+      [campos.whatsapp, erroTelefone()],
     ];
     let primeiroErro = null;
     checagens.forEach(([input, msg]) => { marcarErro(input, msg); if (msg && !primeiroErro) primeiroErro = input; });
     if (primeiroErro) { primeiroErro.focus(); return; }
 
     enviando = true;
-    state.lead = { nome: nome, email: email, whatsapp: campos.whatsapp.value };
+    // um formulário novo começa um cadastro novo (sem o andamento de outra pessoa neste aparelho)
+    // WhatsApp no formato internacional (+5511912345678), que já serve para abrir conversa no WhatsApp
+    const lead = { nome: nome, email: email, whatsapp: '+' + pais.ddi + fone, pais: pais.iso, whatsappDigitado: campos.whatsapp.value };
+    state = { lead: lead, origem: state.origem, liberado: true };
     save();
-    enviar('inscricao');
     rastrear('Lead');
+    const textoBotao = botao.firstChild.textContent;
     botao.firstChild.textContent = 'Carregando… ';
     // segue para a segunda parte do cadastro levando só os parâmetros de origem (UTMs)
     const busca = new URLSearchParams(origem).toString();
-    setTimeout(() => { location.href = C.paginaCadastro + (busca ? '?' + busca : ''); }, 350);
+    try {
+      location.href = C.paginaCadastro + (busca ? '?' + busca : '');
+    } catch (e) {}
+    // se a próxima página não abrir em alguns segundos, o botão volta ao normal para tentar de novo
+    setTimeout(() => { enviando = false; botao.firstChild.textContent = textoBotao; }, 5000);
   });
 })();
 </script>
