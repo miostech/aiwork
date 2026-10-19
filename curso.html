@@ -165,6 +165,11 @@ body {
 }
 .materiais a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+/* Chamada para o curso pago (campo "oferta" da aula em api/_aulas.js) */
+.oferta { display: grid; gap: 8px; margin-top: 6px; padding: 18px 18px 20px; border-radius: 18px; background: var(--primary-soft); border: 1px solid var(--border-strong); }
+.oferta__titulo { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 20px; line-height: 1.3; }
+.oferta__texto { margin: 0 0 6px; color: var(--muted); }
+
 .aula__acoes { display: grid; gap: 10px; margin-top: 6px; }
 @media (min-width: 560px) { .aula__acoes { grid-template-columns: 1fr 1fr; } }
 
@@ -299,10 +304,11 @@ body {
     <span class="estado__icone" aria-hidden="true">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
     </span>
-    <h1 class="titulo">Seu acesso ainda não está liberado</h1>
-    <p>Para assistir às aulas, faça seu cadastro gratuito e valide sua conta na <span data-plataforma>Hub</span>. Leva poucos minutos.</p>
+    <h1 class="titulo" id="sem-acesso-titulo">Seu acesso ainda não está liberado</h1>
+    <p id="sem-acesso-texto">Para assistir às aulas, faça seu cadastro gratuito e valide sua conta na <span data-plataforma>Hub</span>. Leva poucos minutos.</p>
     <div class="actions">
       <a class="btn btn--primary" id="btn-cadastro" href="index.html">Fazer meu cadastro gratuito</a>
+      <a class="btn btn--secondary" id="btn-outro-curso-sem-acesso" href="#" hidden></a>
     </div>
   </section>
 
@@ -324,6 +330,7 @@ body {
       <section class="boas-vindas">
         <p class="kicker">Olá, <span id="aluno">aluno(a)</span>!</p>
         <h1 class="titulo" id="curso-titulo">Curso gratuito</h1>
+        <a class="link" id="link-outro-curso" href="#" hidden></a>
         <div class="progresso">
           <div class="progresso__barra" role="progressbar" aria-label="Progresso no curso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="barra"></span></div>
           <p id="progresso-texto"><strong>0 de 0</strong> aulas concluídas</p>
@@ -345,6 +352,11 @@ body {
             <h2 class="aula__titulo" id="aula-titulo"></h2>
             <p class="aula__descricao" id="aula-descricao"></p>
             <ul class="materiais" id="materiais"></ul>
+            <div class="oferta" id="oferta" hidden>
+              <p class="oferta__titulo" id="oferta-titulo"></p>
+              <p class="oferta__texto" id="oferta-texto"></p>
+              <a class="btn btn--primary" id="oferta-botao" href="#"></a>
+            </div>
             <div class="aula__acoes">
               <button class="btn btn--secondary" id="btn-concluir" type="button" aria-pressed="false">Marcar como concluída</button>
               <button class="btn btn--primary" id="btn-proxima" type="button">Próxima aula</button>
@@ -380,6 +392,7 @@ window.CONFIG = {
   enderecoConfig: '/api/config-publica',  // endereço do Supabase e chave pública para o login
   enderecoNovaSenha: '/api/nova-senha',   // "Esqueci minha senha"
   paginaCadastro: 'index.html',  // para onde vai quem ainda não tem acesso
+  paginaVendas: '/aiwork',       // página de vendas do IA Work (curso pago)
   linkSuporte: '',               // link do WhatsApp do suporte (opcional; vazio = esconde)
 };
 </script>
@@ -390,7 +403,13 @@ window.CONFIG = {
 
   const C = window.CONFIG;
   const KEY = 'inscricao-curso-gratuito';   // mesmo lugar do funil: nome e e-mail da pessoa
-  const KEY_PROGRESSO = 'curso-progresso';
+  // Qual curso abrir: /curso.html (gratuito) ou /curso.html?curso=pago (IA Work). Cada um guarda o seu progresso.
+  const CURSO = new URLSearchParams(location.search).get('curso') === 'pago' ? 'pago' : 'gratuito';
+  const KEY_PROGRESSO = CURSO === 'pago' ? 'curso-progresso-pago' : 'curso-progresso';
+  const OUTRO = {
+    gratuito: { href: 'curso.html?curso=pago', curso: 'pago', texto: 'Ir para o IA Work →' },
+    pago: { href: 'curso.html', curso: 'gratuito', texto: '← Ir para o curso gratuito' },
+  }[CURSO];
   const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -409,6 +428,25 @@ window.CONFIG = {
   $('.logo').href = C.paginaCadastro;
   $('#ano').textContent = new Date().getFullYear();
   if (C.linkSuporte) { $('#link-suporte').href = C.linkSuporte; $('#suporte').hidden = false; }
+  if (CURSO === 'pago') {
+    $('#link-cadastro').textContent = 'Conheça o IA Work';
+    $('#link-cadastro').href = C.paginaVendas;
+    $('#sem-acesso-titulo').textContent = 'Seu acesso ao IA Work não está liberado';
+    $('#sem-acesso-texto').textContent = 'O IA Work é liberado assim que o pagamento é confirmado. Se você já comprou, saia e entre com o e-mail que usou no pagamento.';
+    $('#btn-cadastro').textContent = 'Conhecer o IA Work';
+    $('#btn-cadastro').href = C.paginaVendas;
+  }
+
+  // Atalho para o outro curso, quando o aluno tem acesso aos dois
+  function mostrarOutroCurso(cursos) {
+    const tem = (cursos || []).includes(OUTRO.curso);
+    [$('#link-outro-curso'), $('#btn-outro-curso-sem-acesso')].forEach((el) => {
+      el.href = OUTRO.href;
+      el.textContent = OUTRO.texto.replace(/[←→]\s?|\s?[←→]/g, '');
+      el.hidden = !tem;
+    });
+    $('#link-outro-curso').textContent = OUTRO.texto;
+  }
 
   function mostrar(estado) {
     $('#estado-carregando').hidden = estado !== 'carregando';
@@ -445,11 +483,18 @@ window.CONFIG = {
 
   async function carregarAulas(token) {
     mostrar('carregando');
-    const resposta = await fetch(C.enderecoAulas, { headers: { Authorization: 'Bearer ' + token } });
+    const endereco = C.enderecoAulas + (CURSO === 'pago' ? '?curso=pago' : '');
+    const resposta = await fetch(endereco, { headers: { Authorization: 'Bearer ' + token } });
     if (resposta.status === 401) { await sb.auth.signOut(); mostrar('login'); return; }
-    if (resposta.status === 403) { mostrar('sem-acesso'); return; }
+    if (resposta.status === 403) {
+      const negado = await resposta.json().catch(() => ({}));
+      mostrarOutroCurso(negado.cursos);
+      mostrar('sem-acesso');
+      return;
+    }
     if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
     const dados = await resposta.json();
+    mostrarOutroCurso(dados.cursos);
     nomeAluno = (dados.aluno && dados.aluno.nome) || '';
     montarCurso(dados.curso);
   }
@@ -621,6 +666,16 @@ window.CONFIG = {
       li.appendChild(a);
       materiais.appendChild(li);
     });
+
+    const oferta = aula.oferta;
+    $('#oferta').hidden = !(oferta && oferta.link);
+    if (oferta && oferta.link) {
+      $('#oferta-titulo').textContent = oferta.titulo || '';
+      $('#oferta-texto').textContent = oferta.texto || '';
+      $('#oferta-texto').hidden = !oferta.texto;
+      $('#oferta-botao').textContent = oferta.botao || 'Saiba mais';
+      $('#oferta-botao').href = oferta.link;
+    }
 
     $('#btn-proxima').textContent = i === total - 1 ? 'Concluir curso' : 'Próxima aula';
     try { history.replaceState(null, '', '#aula-' + (i + 1)); } catch (e) {}

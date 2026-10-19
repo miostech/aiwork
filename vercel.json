@@ -2,15 +2,35 @@
   "redirects": [
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "aiwork-sigma.vercel.app" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "aiwork-sigma.vercel.app"
+        }
+      ],
       "destination": "https://www.iaacademy.bio/",
       "permanent": true
     },
     {
       "source": "/:caminho*",
-      "has": [{ "type": "host", "value": "aiwork-sigma.vercel.app" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "aiwork-sigma.vercel.app"
+        }
+      ],
       "destination": "https://www.iaacademy.bio/:caminho*",
       "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/aiwork",
+      "destination": "/aiwork.html"
+    },
+    {
+      "source": "/aiwork/obrigado",
+      "destination": "/aiwork-obrigado.html"
     }
   ]
 }

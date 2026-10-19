@@ -56,10 +56,12 @@ export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito",
     }
   }
 
-  const { error: erroAluno } = await db.from("alunos").upsert(
-    { id: alunoId, nome: nome || null, email: emailNorm, whatsapp: whatsapp || null, senha_enviada_em: new Date().toISOString() },
-    { onConflict: "id" }
-  );
+  // Nome e WhatsApp só entram quando vêm preenchidos, para não apagar o que o aluno já tem.
+  // O nome de quem já é aluno não muda (na compra, o nome que chega é o do titular do cartão).
+  const dadosAluno = { id: alunoId, email: emailNorm, senha_enviada_em: new Date().toISOString() };
+  if (nome && !existente) dadosAluno.nome = nome;
+  if (whatsapp) dadosAluno.whatsapp = whatsapp;
+  const { error: erroAluno } = await db.from("alunos").upsert(dadosAluno, { onConflict: "id" });
   if (erroAluno) throw erroAluno;
 
   const { error: erroAcesso } = await db.from("acessos").upsert(
@@ -84,7 +86,8 @@ export async function trocarSenha(alunoId) {
 }
 
 // Endereço da área do curso com o domínio do site (nunca o .vercel.app).
-export function linkCurso() {
+// curso "pago" abre direto as aulas do IA Work.
+export function linkCurso(curso = "gratuito") {
   const base = (process.env.SITE_URL || "https://www.iaacademy.bio").replace(/\/+$/, "");
-  return base + "/curso.html";
+  return base + "/curso.html" + (curso === "pago" ? "?curso=pago" : "");
 }

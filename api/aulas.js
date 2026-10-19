@@ -1,8 +1,13 @@
-// Entrega as aulas do curso para quem está logado e tem acesso liberado.
+// Entrega as aulas de um curso para quem está logado e tem acesso liberado.
 // Usado pela curso.html, que manda o token do login no cabeçalho Authorization.
-// As aulas ficam em api/_aulas.js.
+//   GET /api/aulas              → curso gratuito (aulas em api/_aulas.js)
+//   GET /api/aulas?curso=pago   → IA Work (aulas em api/_aulas-iawork.js)
+// A resposta também diz quais cursos o aluno tem ("cursos"), para a página mostrar o atalho para o outro.
 import { banco } from "./_supabase.js";
-import { CURSO } from "./_aulas.js";
+import { CURSO as CURSO_GRATUITO } from "./_aulas.js";
+import { CURSO as CURSO_PAGO } from "./_aulas-iawork.js";
+
+const CURSOS = { gratuito: CURSO_GRATUITO, pago: CURSO_PAGO };
 
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {
@@ -11,6 +16,7 @@ export default async function handler(req, res) {
   }
   res.setHeader("Cache-Control", "no-store");
 
+  const curso = req.query && req.query.curso === "pago" ? "pago" : "gratuito";
   const token = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "").trim();
   if (!token) return res.status(401).json({ erro: "Faça login para ver as aulas." });
 
@@ -23,16 +29,15 @@ export default async function handler(req, res) {
     const { data: aluno, error: erroAluno } = await db
       .from("alunos").select("nome, bloqueado").eq("id", usuario.id).maybeSingle();
     if (erroAluno) throw erroAluno;
-    if (!aluno || aluno.bloqueado) return res.status(403).json({ erro: "Seu acesso não está liberado." });
+    if (!aluno || aluno.bloqueado) return res.status(403).json({ erro: "Seu acesso não está liberado.", cursos: [] });
 
-    const { data: acesso, error: erroAcesso } = await db
-      .from("acessos").select("id")
-      .eq("aluno_id", usuario.id).eq("curso", "gratuito").is("revogado_em", null)
-      .maybeSingle();
+    const { data: acessos, error: erroAcesso } = await db
+      .from("acessos").select("curso").eq("aluno_id", usuario.id).is("revogado_em", null);
     if (erroAcesso) throw erroAcesso;
-    if (!acesso) return res.status(403).json({ erro: "Seu acesso não está liberado." });
+    const cursos = (acessos || []).map((a) => a.curso).filter((c) => CURSOS[c]);
+    if (!cursos.includes(curso)) return res.status(403).json({ erro: "Seu acesso não está liberado.", cursos });
 
-    return res.status(200).json({ curso: CURSO, aluno: { nome: aluno.nome } });
+    return res.status(200).json({ curso: CURSOS[curso], aluno: { nome: aluno.nome }, cursos });
   } catch (erro) {
     console.error("Erro ao carregar as aulas:", erro);
     return res.status(500).json({ erro: "Não foi possível carregar as aulas agora." });

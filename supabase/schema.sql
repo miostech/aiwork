@@ -71,6 +71,27 @@ create table if not exists public.acessos (
   unique (aluno_id, curso)
 );
 
+-- ── Compras do curso pago (IA Work), registradas pelo aviso (webhook) do Stripe ──
+create table if not exists public.compras (
+  id               uuid primary key default gen_random_uuid(),
+  criado_em        timestamptz not null default now(),
+  atualizado_em    timestamptz not null default now(),
+  stripe_sessao    text not null unique,   -- id da sessão de pagamento (cs_...)
+  stripe_pagamento text,                   -- id do pagamento (pi_...), usado para achar a compra no reembolso
+  status           text not null check (status in ('aguardando', 'pago', 'falhou', 'reembolsado')),
+  email            text not null,
+  nome             text,
+  curso            text not null default 'pago',
+  valor            integer,                -- em centavos (49700 = R$ 497,00)
+  moeda            text,
+  desconto         integer,                -- desconto do cupom, em centavos
+  referencia       text,                   -- client_reference_id (id do lead que veio do curso gratuito)
+  aluno_id         uuid references public.alunos (id) on delete set null,
+  liberado_em      timestamptz             -- quando o acesso foi liberado e o e-mail com a senha enviado
+);
+create index if not exists compras_pagamento_idx on public.compras (stripe_pagamento);
+create index if not exists compras_email_idx on public.compras (lower(email));
+
 -- ── Atualiza "atualizado_em" dos leads sozinho ──
 create or replace function public.tocar_atualizado_em()
 returns trigger language plpgsql as $$
@@ -82,6 +103,11 @@ end $$;
 drop trigger if exists leads_atualizado_em on public.leads;
 create trigger leads_atualizado_em
   before update on public.leads
+  for each row execute function public.tocar_atualizado_em();
+
+drop trigger if exists compras_atualizado_em on public.compras;
+create trigger compras_atualizado_em
+  before update on public.compras
   for each row execute function public.tocar_atualizado_em();
 
 -- ── Conferência do cadastro na plataforma: 'nao_encontrado' tira o acesso ao curso gratuito, 'confirmado' devolve ──
@@ -110,6 +136,7 @@ alter table public.leads      enable row level security;
 alter table public.validacoes enable row level security;
 alter table public.alunos     enable row level security;
 alter table public.acessos    enable row level security;
+alter table public.compras    enable row level security;
 
 drop policy if exists "aluno lê o próprio cadastro" on public.alunos;
 create policy "aluno lê o próprio cadastro" on public.alunos
