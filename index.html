@@ -437,6 +437,8 @@ window.CONFIG = {
   // Para onde a pessoa vai depois de preencher o formulário.
   paginaCadastro: 'cadastro.html',
 
+  // Função que guarda cada inscrito no banco (Supabase).
+  enderecoLeads: '/api/lead',
 
   linkTermos: '#',
   linkPrivacidade: '#',
@@ -474,6 +476,26 @@ window.CONFIG = {
   $('#link-termos').href = C.linkTermos;
   $('#link-privacidade').href = C.linkPrivacidade;
   $('#ano').textContent = new Date().getFullYear();
+
+  // ── Guarda o inscrito no banco. Espera no máximo 4 s: se falhar, a pessoa segue mesmo assim
+  // (a validação do print cria o cadastro com os dados guardados no navegador).
+  async function guardarLead() {
+    const controle = new AbortController();
+    const limite = setTimeout(() => controle.abort(), 4000);
+    try {
+      const resposta = await fetch(C.enderecoLeads, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({ acao: 'criar', origem: state.origem || {} }, state.lead)),
+        signal: controle.signal,
+      });
+      const dados = await resposta.json().catch(() => ({}));
+      if (dados.lead) { state.leadId = dados.lead; save(); }
+    } catch (e) {
+    } finally {
+      clearTimeout(limite);
+    }
+  }
 
   // ── Eventos de pixel (Meta / Google), se estiverem instalados na página
   function rastrear(evento) {
@@ -678,6 +700,7 @@ window.CONFIG = {
     rastrear('Lead');
     const textoBotao = botao.firstChild.textContent;
     botao.firstChild.textContent = 'Carregando… ';
+    await guardarLead();
     // segue para a segunda parte do cadastro levando só os parâmetros de origem (UTMs)
     const busca = new URLSearchParams(origem).toString();
     try {

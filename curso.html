@@ -94,6 +94,26 @@ body {
   animation: girar 0.8s linear infinite;
 }
 
+/* ── Entrar (login) ───────────────────── */
+.entrar { text-align: left; justify-items: stretch; }
+.entrar .estado__icone, .entrar .titulo { justify-self: center; }
+.entrar .titulo, .entrar > p { text-align: center; }
+.formulario { display: grid; gap: 12px; }
+.campo { display: grid; gap: 6px; }
+.campo label { font-size: 14px; font-weight: 600; color: var(--ink); }
+.campo input {
+  width: 100%; font: inherit; font-size: 16px; color: var(--ink);
+  padding: 13px 16px; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--white);
+}
+.campo input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+.aviso-erro { margin: 0; padding: 10px 14px; border-radius: 12px; background: #FDEDEF; border: 1px solid #F3C4CB; color: #B4233A; font-size: 14px; }
+.aviso-ok { margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--ok-soft); border: 1px solid #BFE3CD; color: var(--ok); font-size: 14px; }
+.aviso-erro:empty, .aviso-ok:empty { display: none; }
+.link-botao { justify-self: center; background: none; border: 0; padding: 6px 8px; font: inherit; font-size: 15px; font-weight: 600; color: var(--primary); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.topo__acoes { display: flex; align-items: center; gap: 10px; }
+.sair { background: none; border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.sair:hover { color: var(--primary); border-color: var(--primary); }
+
 /* ── Boas-vindas e progresso ──────────── */
 .curso { display: grid; gap: 24px; }
 .boas-vindas { display: grid; gap: 8px; }
@@ -225,7 +245,10 @@ body {
 
   <header class="topo">
     <a class="logo" href="#" aria-label="Início">IA <span>Academy</span></a>
-    <span class="topo__tag">Área do aluno</span>
+    <div class="topo__acoes">
+      <span class="topo__tag">Área do aluno</span>
+      <button class="sair" id="btn-sair" type="button" hidden>Sair</button>
+    </div>
   </header>
 
   <!-- Carregando -->
@@ -234,18 +257,53 @@ body {
     <p>Carregando suas aulas…</p>
   </section>
 
-  <!-- Sem link de acesso -->
+  <!-- Entrar -->
+  <section class="card estado entrar" id="estado-login" hidden>
+    <span class="estado__icone" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+    </span>
+    <h1 class="titulo">Área do aluno</h1>
+    <p>Entre com o e-mail e a senha que você recebeu por e-mail.</p>
+
+    <form class="formulario" id="form-entrar" novalidate>
+      <div class="campo">
+        <label for="f-email">E-mail</label>
+        <input id="f-email" type="email" autocomplete="username" inputmode="email" placeholder="nome@gmail.com" required>
+      </div>
+      <div class="campo">
+        <label for="f-senha">Senha</label>
+        <input id="f-senha" type="password" autocomplete="current-password" placeholder="ABCD-1234" required>
+      </div>
+      <p class="aviso-erro" id="erro-entrar" role="alert"></p>
+      <button class="btn btn--primary" id="btn-entrar" type="submit">Entrar</button>
+    </form>
+
+    <button class="link-botao" id="btn-esqueci" type="button">Esqueci minha senha</button>
+    <form class="formulario" id="form-esqueci" novalidate hidden>
+      <p>Digite o seu e-mail. Vamos mandar uma senha nova para ele.</p>
+      <div class="campo">
+        <label for="f-email-esqueci">E-mail</label>
+        <input id="f-email-esqueci" type="email" autocomplete="email" inputmode="email" placeholder="nome@gmail.com" required>
+      </div>
+      <p class="aviso-ok" id="ok-esqueci" role="status"></p>
+      <p class="aviso-erro" id="erro-esqueci" role="alert"></p>
+      <button class="btn btn--secondary" id="btn-enviar-senha" type="submit">Enviar nova senha</button>
+    </form>
+
+    <p>Ainda não tem acesso? <a class="link" id="link-cadastro" href="index.html">Faça seu cadastro gratuito</a></p>
+    <p id="suporte" hidden>Precisa de ajuda? <a class="link" id="link-suporte" href="#" target="_blank" rel="noopener">Fale com o suporte</a></p>
+  </section>
+
+  <!-- Logado, mas sem o curso liberado -->
   <section class="card estado" id="estado-sem-acesso" hidden>
     <span class="estado__icone" aria-hidden="true">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
     </span>
-    <h1 class="titulo">Área exclusiva para alunos</h1>
-    <p>Para assistir às aulas, faça seu cadastro gratuito e valide sua conta na <span data-plataforma>Mimix</span>. Leva poucos minutos.</p>
+    <h1 class="titulo">Seu acesso ainda não está liberado</h1>
+    <p>Para assistir às aulas, faça seu cadastro gratuito e valide sua conta na <span data-plataforma>Hub</span>. Leva poucos minutos.</p>
     <div class="actions">
       <a class="btn btn--primary" id="btn-cadastro" href="index.html">Fazer meu cadastro gratuito</a>
     </div>
-    <p>Já fez o cadastro? Abra o link de acesso que apareceu no final da validação.</p>
-    <p id="suporte" hidden>Perdeu o link? <a class="link" id="link-suporte" href="#" target="_blank" rel="noopener">Fale com o suporte</a></p>
   </section>
 
   <!-- Erro de conexão -->
@@ -317,18 +375,21 @@ body {
 // ═══════════════════════════════════════════════════════════════
 window.CONFIG = {
   marca: 'IA Academy',
-  plataforma: 'Mimix',
-  enderecoAulas: '/api/aulas',   // função que entrega as aulas para quem tem acesso
+  plataforma: 'Hub',
+  enderecoAulas: '/api/aulas',   // função que entrega as aulas para quem está logado e tem acesso
+  enderecoConfig: '/api/config-publica',  // endereço do Supabase e chave pública para o login
+  enderecoNovaSenha: '/api/nova-senha',   // "Esqueci minha senha"
   paginaCadastro: 'index.html',  // para onde vai quem ainda não tem acesso
   linkSuporte: '',               // link do WhatsApp do suporte (opcional; vazio = esconde)
 };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script>
 (function () {
   'use strict';
 
   const C = window.CONFIG;
-  const KEY = 'inscricao-curso-gratuito';   // mesmo lugar do funil: nome da pessoa e link de acesso
+  const KEY = 'inscricao-curso-gratuito';   // mesmo lugar do funil: nome e e-mail da pessoa
   const KEY_PROGRESSO = 'curso-progresso';
   const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -344,55 +405,119 @@ window.CONFIG = {
   $$('[data-marca]').forEach((el) => { el.textContent = C.marca; });
   $$('[data-plataforma]').forEach((el) => { el.textContent = C.plataforma; });
   $('#btn-cadastro').href = C.paginaCadastro;
+  $('#link-cadastro').href = C.paginaCadastro;
   $('.logo').href = C.paginaCadastro;
   $('#ano').textContent = new Date().getFullYear();
   if (C.linkSuporte) { $('#link-suporte').href = C.linkSuporte; $('#suporte').hidden = false; }
 
   function mostrar(estado) {
     $('#estado-carregando').hidden = estado !== 'carregando';
+    $('#estado-login').hidden = estado !== 'login';
+    $('#btn-sair').hidden = !(estado === 'curso' || estado === 'sem-acesso');
     $('#estado-sem-acesso').hidden = estado !== 'sem-acesso';
     $('#estado-erro').hidden = estado !== 'erro';
     $('#curso').hidden = estado !== 'curso';
   }
 
-  // ── Link de acesso: vem no endereço (?acesso=...) e fica guardado neste aparelho
-  let acesso = null;
-  try {
-    const params = new URLSearchParams(location.search);
-    acesso = params.get('acesso');
-    if (acesso) {
-      funil.acesso = acesso;
-      gravar(KEY, funil);
-      params.delete('acesso');
-      const resto = params.toString();
-      history.replaceState(null, '', location.pathname + (resto ? '?' + resto : '') + location.hash);
-    }
-  } catch (e) {}
-  acesso = acesso || funil.acesso;
+  // ── Login (Supabase): a sessão fica guardada neste aparelho e se renova sozinha
+  let sb = null;
+  let nomeAluno = '';
+  const emailConhecido = funil.emailAcesso || (funil.lead && funil.lead.email) || '';
+  $('#f-email').value = emailConhecido;
+  $('#f-email-esqueci').value = emailConhecido;
 
-  async function carregar() {
-    if (!acesso) { mostrar('sem-acesso'); return; }
+  async function iniciar() {
     mostrar('carregando');
     try {
-      const resposta = await fetch(C.enderecoAulas, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ acesso: acesso }),
-      });
-      if (resposta.status === 401) {
-        delete funil.acesso;
-        gravar(KEY, funil);
-        mostrar('sem-acesso');
-        return;
+      if (!sb) {
+        const resposta = await fetch(C.enderecoConfig);
+        if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+        const config = await resposta.json();
+        sb = window.supabase.createClient(config.supabaseUrl, config.supabaseChave);
       }
-      if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
-      const dados = await resposta.json();
-      montarCurso(dados.curso);
+      const { data } = await sb.auth.getSession();
+      if (!data.session) { mostrar('login'); return; }
+      await carregarAulas(data.session.access_token);
     } catch (e) {
       mostrar('erro');
     }
   }
-  $('#btn-tentar').addEventListener('click', carregar);
+
+  async function carregarAulas(token) {
+    mostrar('carregando');
+    const resposta = await fetch(C.enderecoAulas, { headers: { Authorization: 'Bearer ' + token } });
+    if (resposta.status === 401) { await sb.auth.signOut(); mostrar('login'); return; }
+    if (resposta.status === 403) { mostrar('sem-acesso'); return; }
+    if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+    const dados = await resposta.json();
+    nomeAluno = (dados.aluno && dados.aluno.nome) || '';
+    montarCurso(dados.curso);
+  }
+
+  $('#form-entrar').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = $('#f-email').value.trim().toLowerCase();
+    const senha = $('#f-senha').value.trim().toUpperCase();
+    const erro = $('#erro-entrar');
+    erro.textContent = '';
+    if (!email || !senha) { erro.textContent = 'Digite o seu e-mail e a sua senha.'; return; }
+    const botao = $('#btn-entrar');
+    botao.disabled = true;
+    botao.textContent = 'Entrando…';
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email: email, password: senha });
+      if (error) {
+        erro.textContent = error.status === 400
+          ? 'E-mail ou senha incorretos. Confira os dados do e-mail que você recebeu.'
+          : 'Não conseguimos entrar agora. Tente de novo em instantes.';
+        return;
+      }
+      $('#f-senha').value = '';
+      await carregarAulas(data.session.access_token);
+    } catch (e) {
+      erro.textContent = 'Não conseguimos entrar agora. Confira sua internet e tente de novo.';
+    } finally {
+      botao.disabled = false;
+      botao.textContent = 'Entrar';
+    }
+  });
+
+  $('#btn-esqueci').addEventListener('click', () => {
+    $('#form-esqueci').hidden = false;
+    $('#btn-esqueci').hidden = true;
+    if (!$('#f-email-esqueci').value) $('#f-email-esqueci').value = $('#f-email').value;
+    $('#f-email-esqueci').focus();
+  });
+
+  $('#form-esqueci').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = $('#f-email-esqueci').value.trim().toLowerCase();
+    $('#ok-esqueci').textContent = '';
+    $('#erro-esqueci').textContent = '';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('#erro-esqueci').textContent = 'Digite um e-mail válido.'; return; }
+    const botao = $('#btn-enviar-senha');
+    botao.disabled = true;
+    try {
+      await fetch(C.enderecoNovaSenha, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email }),
+      });
+      $('#ok-esqueci').textContent = 'Se esse e-mail tiver cadastro, enviamos uma senha nova. Confira também o SPAM e a LIXEIRA.';
+      $('#f-email').value = email;
+    } catch (e) {
+      $('#erro-esqueci').textContent = 'Não conseguimos enviar agora. Tente de novo em instantes.';
+    } finally {
+      botao.disabled = false;
+    }
+  });
+
+  $('#btn-sair').addEventListener('click', async () => {
+    try { if (sb) await sb.auth.signOut(); } catch (e) {}
+    mostrar('login');
+  });
+
+  $('#btn-tentar').addEventListener('click', iniciar);
 
   // ── Curso
   let curso = null;
@@ -400,7 +525,7 @@ window.CONFIG = {
 
   function montarCurso(dados) {
     curso = dados;
-    const primeiroNome = ((funil.lead && funil.lead.nome) || '').trim().split(/\s+/)[0];
+    const primeiroNome = (nomeAluno || (funil.lead && funil.lead.nome) || '').trim().split(/\s+/)[0];
     $('#aluno').textContent = primeiroNome || 'aluno(a)';
     $('#curso-titulo').textContent = curso.titulo;
     $('#player').classList.toggle('player--vertical', curso.formatoVideo === '9/16');
@@ -633,7 +758,7 @@ window.CONFIG = {
     requestAnimationFrame(quadro);
   }
 
-  carregar();
+  iniciar();
 })();
 </script>
 </body>
