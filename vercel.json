@@ -31,6 +31,10 @@
     {
       "source": "/aiwork/obrigado",
       "destination": "/aiwork-obrigado.html"
+    },
+    {
+      "source": "/painel",
+      "destination": "/painel.html"
     }
   ]
 }

@@ -71,6 +71,12 @@ create table if not exists public.acessos (
   unique (aluno_id, curso)
 );
 
+-- Uso do curso, gravado pela área do aluno (api/aulas.js): quando entrou, quais aulas concluiu e quando terminou
+alter table public.acessos add column if not exists primeiro_acesso_em timestamptz;
+alter table public.acessos add column if not exists ultimo_acesso_em   timestamptz;
+alter table public.acessos add column if not exists aulas_concluidas   integer[];   -- posição das aulas (0 = primeira)
+alter table public.acessos add column if not exists concluido_em       timestamptz; -- quando concluiu todas as aulas
+
 -- ── Compras do curso pago (IA Work), registradas pelo aviso (webhook) do Stripe ──
 create table if not exists public.compras (
   id               uuid primary key default gen_random_uuid(),
@@ -130,6 +136,68 @@ drop trigger if exists leads_conferencia on public.leads;
 create trigger leads_conferencia
   after update of conferencia on public.leads
   for each row execute function public.aplicar_conferencia();
+
+-- ── Números do painel (/painel). "desde" vazio = desde o começo.
+-- O funil acompanha as pessoas que preencheram o formulário no período, até onde cada uma chegou.
+-- As vendas contam todas as compras do período (inclusive de quem não veio pelo curso gratuito).
+create or replace function public.painel_funil(desde timestamptz default null)
+returns jsonb
+language sql stable
+set search_path = public
+as $$
+  with
+  l as (select * from leads where desde is null or criado_em >= desde),
+  ag as (select * from acessos where curso = 'gratuito' and revogado_em is null),
+  c as (select * from compras where desde is null or criado_em >= desde),
+  dias as (
+    select generate_series(
+      coalesce(date_trunc('day', desde at time zone 'America/Sao_Paulo')::date, (now() at time zone 'America/Sao_Paulo')::date - 29),
+      (now() at time zone 'America/Sao_Paulo')::date,
+      interval '1 day'
+    )::date as dia
+  )
+  select jsonb_build_object(
+    'funil', jsonb_build_object(
+      'leads',       (select count(*) from l),
+      'abriram_hub', (select count(*) from l where etapa <> 'formulario'),
+      'liberados',   (select count(*) from l where etapa = 'aprovado'),
+      'entraram',    (select count(distinct l.id) from l join ag on ag.aluno_id = l.aluno_id where ag.primeiro_acesso_em is not null),
+      'concluiram',  (select count(distinct l.id) from l join ag on ag.aluno_id = l.aluno_id where ag.concluido_em is not null),
+      'compraram',   (select count(distinct l.id) from l join compras cp on cp.aluno_id = l.aluno_id and cp.status = 'pago')
+    ),
+    'vendas', jsonb_build_object(
+      'pagas',      (select count(*) from c where status = 'pago'),
+      'receita',    (select coalesce(sum(valor), 0) from c where status = 'pago'),
+      'com_cupom',  (select count(*) from c where status = 'pago' and coalesce(desconto, 0) > 0),
+      'aguardando', (select count(*) from c where status = 'aguardando'),
+      'reembolsos', (select count(*) from c where status = 'reembolsado')
+    ),
+    'conferencia_pendente', (select count(*) from leads where conferencia = 'pendente'),
+    'por_dia', (
+      select coalesce(jsonb_agg(jsonb_build_object(
+        'dia', d.dia,
+        'leads', (select count(*) from leads x where (x.criado_em at time zone 'America/Sao_Paulo')::date = d.dia),
+        'liberados', (select count(*) from acessos x where x.curso = 'gratuito' and (x.criado_em at time zone 'America/Sao_Paulo')::date = d.dia),
+        'vendas', (select count(*) from compras x where x.status = 'pago' and (x.criado_em at time zone 'America/Sao_Paulo')::date = d.dia)
+      ) order by d.dia), '[]'::jsonb)
+      from dias d
+    ),
+    'origens', (
+      select coalesce(jsonb_agg(o order by (o->>'leads')::int desc), '[]'::jsonb) from (
+        select jsonb_build_object(
+          'origem', coalesce(nullif(l.utm_source, ''), '(direto)'),
+          'leads', count(*),
+          'liberados', count(*) filter (where l.etapa = 'aprovado'),
+          'compraram', count(distinct l.id) filter (where exists (select 1 from compras cp where cp.aluno_id = l.aluno_id and cp.status = 'pago'))
+        ) as o
+        from l group by coalesce(nullif(l.utm_source, ''), '(direto)')
+      ) t
+    )
+  );
+$$;
+-- Só o servidor (chave secreta) pode chamar
+revoke execute on function public.painel_funil(timestamptz) from public, anon, authenticated;
+grant execute on function public.painel_funil(timestamptz) to service_role;
 
 -- ── Segurança: tudo fechado para o navegador, menos os dados do próprio aluno ──
 alter table public.leads      enable row level security;

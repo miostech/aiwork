@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel IA Academy</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FDF6F4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<!--
+  PAINEL (endereço: /painel)
+  Funil do curso gratuito e vendas do IA Work. Entra com o mesmo login da área do aluno,
+  mas só os e-mails da variável ADMIN_EMAILS (na Vercel) conseguem ver os números.
+-->
+<style>
+:root {
+  --bg: #FDF6F4;
+  --surface: #FFFAF8;
+  --white: #FFFFFF;
+  --primary: #B04668;
+  --primary-soft: #F7E0E6;
+  --accent: #D99577;
+  --ink: #2A1D22;
+  --muted: #6E5A60;
+  --border: #F4E1DA;
+  --border-strong: #E3C8BF;
+  --ok: #2F7D55;
+  --ok-soft: #E2F2E9;
+  --verde: #1E6E4C;
+
+  --font-logo: "Anton", "Arial Narrow", Impact, sans-serif;
+  --font-display: "Bitter", Georgia, "Times New Roman", serif;
+  --font-body: "DM Sans", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.page { max-width: 1120px; margin-inline: auto; padding: 20px 16px 48px; display: grid; gap: 20px; }
+
+/* Topo */
+.topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.logo { font-family: var(--font-logo); font-size: 22px; line-height: 1; text-transform: uppercase; color: var(--ink); text-decoration: none; }
+.logo span { color: var(--primary); }
+.logo small { font-family: var(--font-body); font-size: 13px; font-weight: 600; text-transform: none; color: var(--muted); margin-left: 6px; }
+.topo__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.periodo { display: inline-flex; background: var(--white); border: 1px solid var(--border-strong); border-radius: 999px; padding: 3px; }
+.periodo button { border: 0; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.periodo button[aria-pressed="true"] { background: var(--primary); color: var(--white); }
+.pilula { background: none; border: 1px solid var(--border-strong); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.pilula:hover { color: var(--primary); border-color: var(--primary); }
+
+/* Cartões */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 1px 0 rgba(42, 29, 34, 0.03), 0 18px 40px -30px rgba(42, 29, 34, 0.3); padding: 22px 18px; }
+.card h2 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 21px; line-height: 1.25; }
+.card .sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.grade { display: grid; gap: 20px; }
+
+/* Funil */
+.funil { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 14px; }
+.etapa { display: grid; gap: 6px; }
+.etapa__linha { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.etapa__nome { font-weight: 600; font-size: 15px; }
+.etapa__num { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 18px; }
+.etapa__num small { font-weight: 500; font-size: 13px; color: var(--muted); margin-left: 6px; }
+.barra { height: 12px; border-radius: 999px; background: var(--primary-soft); overflow: hidden; }
+.barra span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--primary), var(--accent)); min-width: 2px; transition: width 0.5s ease; }
+.etapa--venda .barra span { background: linear-gradient(90deg, var(--verde), #3E9B6E); }
+.etapa__passo { font-size: 13px; color: var(--muted); }
+
+/* Números */
+.numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 16px; }
+.numero { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px 12px; display: grid; gap: 2px; }
+.numero strong { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; white-space: nowrap; }
+.numero span { font-size: 13px; color: var(--muted); line-height: 1.35; }
+.numero--destaque { background: #EAF4EE; border-color: #CFE6D8; }
+.numero--destaque strong { color: var(--verde); }
+
+/* Gráfico por dia */
+.grafico { margin-top: 18px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(6px, 1fr); align-items: end; gap: 3px; height: 170px; padding-bottom: 4px; border-bottom: 1px solid var(--border-strong); }
+.dia { position: relative; height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.dia__leads { width: 100%; background: var(--primary-soft); border-radius: 4px 4px 0 0; position: relative; min-height: 0; }
+.dia__liberados { position: absolute; left: 22%; right: 22%; bottom: 0; background: var(--primary); border-radius: 3px 3px 0 0; }
+.dia__venda { position: absolute; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 2px var(--surface); }
+.eixo { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.legenda { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+.legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+/* Tabela de origens */
+.tabela { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
+.tabela th { text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 8px 6px; border-bottom: 1px solid var(--border-strong); }
+.tabela td { padding: 10px 6px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+.tabela th:not(:first-child), .tabela td:not(:first-child) { text-align: right; }
+
+.aviso { margin: 0; padding: 12px 14px; border-radius: 14px; background: #FFF6E8; border: 1px solid #F2D7A6; color: #7A4A0B; font-size: 14px; }
+.nota { margin: 0; font-size: 13px; color: var(--muted); }
+
+/* Login e estados */
+.estado { max-width: 460px; width: 100%; margin: 8vh auto 0; padding: 32px 24px 28px; display: grid; gap: 14px; text-align: center; }
+.estado h1 { margin: 0; font-family: var(--font-display); font-weight: 500; font-size: 28px; }
+.estado p { margin: 0; color: var(--muted); }
+.formulario { display: grid; gap: 12px; text-align: left; }
+.campo { display: grid; gap: 6px; }
+.campo label { font-size: 14px; font-weight: 600; }
+.campo input { width: 100%; font: inherit; font-size: 16px; color: var(--ink); padding: 13px 16px; border: 1px solid var(--border-strong); border-radius: 12px; background: var(--white); }
+.campo input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+.aviso-erro { margin: 0; padding: 10px 14px; border-radius: 12px; background: #FDEDEF; border: 1px solid #F3C4CB; color: #B4233A; font-size: 14px; }
+.aviso-erro:empty { display: none; }
+.btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 50px; padding: 12px 22px; border: 0; border-radius: 999px; cursor: pointer; font: inherit; font-size: 16px; font-weight: 600; background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); color: var(--white); }
+.spinner { justify-self: center; width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--primary-soft); border-top-color: var(--primary); animation: girar 0.8s linear infinite; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+@media (min-width: 720px) {
+  .card { padding: 26px 26px; }
+}
+@media (min-width: 980px) {
+  .grade { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: start; }
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topo">
+    <a class="logo" href="/">IA <span>Academy</span><small>Painel</small></a>
+    <div class="topo__acoes" id="acoes" hidden>
+      <div class="periodo" role="group" aria-label="Período">
+        <button type="button" data-dias="7" aria-pressed="false">7 dias</button>
+        <button type="button" data-dias="30" aria-pressed="true">30 dias</button>
+        <button type="button" data-dias="90" aria-pressed="false">90 dias</button>
+        <button type="button" data-dias="" aria-pressed="false">Tudo</button>
+      </div>
+      <button class="pilula" id="btn-atualizar" type="button">Atualizar</button>
+      <button class="pilula" id="btn-sair" type="button">Sair</button>
+    </div>
+  </header>
+
+  <section class="card estado" id="estado-carregando"><div class="spinner" aria-hidden="true"></div><p>Carregando…</p></section>
+
+  <section class="card estado" id="estado-login" hidden>
+    <h1>Painel</h1>
+    <p>Entre com o mesmo e-mail e senha da área do aluno.</p>
+    <form class="formulario" id="form-entrar" novalidate>
+      <div class="campo"><label for="f-email">E-mail</label><input id="f-email" type="email" autocomplete="email" inputmode="email" required></div>
+      <div class="campo"><label for="f-senha">Senha</label><input id="f-senha" type="password" autocomplete="current-password" required></div>
+      <p class="aviso-erro" id="erro-entrar" role="alert"></p>
+      <button class="btn" id="btn-entrar" type="submit">Entrar</button>
+    </form>
+  </section>
+
+  <section class="card estado" id="estado-negado" hidden>
+    <h1>Sem permissão</h1>
+    <p id="negado-texto">Este painel é só para a administração da IA Academy.</p>
+  </section>
+
+  <section class="card estado" id="estado-erro" hidden>
+    <h1>Não deu para carregar</h1>
+    <p>Confira sua internet e tente de novo.</p>
+    <button class="btn" id="btn-tentar" type="button">Tentar de novo</button>
+  </section>
+
+  <main class="grade" id="painel" hidden>
+    <section class="card" aria-labelledby="t-funil">
+      <h2 id="t-funil">Funil do curso gratuito</h2>
+      <p class="sub" id="sub-funil"></p>
+      <ol class="funil" id="funil"></ol>
+    </section>
+
+    <div class="grade" style="grid-template-columns:1fr">
+      <section class="card" aria-labelledby="t-vendas">
+        <h2 id="t-vendas">Vendas do IA Work</h2>
+        <p class="sub" id="sub-vendas"></p>
+        <div class="numeros" id="vendas"></div>
+      </section>
+      <p class="aviso" id="aviso-conferencia" hidden></p>
+    </div>
+
+    <section class="card" aria-labelledby="t-dias" style="grid-column:1/-1">
+      <h2 id="t-dias">Por dia</h2>
+      <p class="sub" id="sub-dias"></p>
+      <div class="grafico" id="grafico" role="img"></div>
+      <div class="eixo"><span id="eixo-ini"></span><span id="eixo-fim"></span></div>
+      <div class="legenda">
+        <span><i style="background:var(--primary-soft)"></i>Leads (formulário)</span>
+        <span><i style="background:var(--primary)"></i>Aulas liberadas</span>
+        <span><i style="background:var(--verde);border-radius:50%"></i>Dia com venda do IA Work</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="t-origens" style="grid-column:1/-1">
+      <h2 id="t-origens">De onde vieram</h2>
+      <p class="sub">Pelo utm_source do link do anúncio. "(direto)" = sem UTM.</p>
+      <table class="tabela">
+        <thead><tr><th>Origem</th><th>Leads</th><th>Liberaram</th><th>Compraram</th></tr></thead>
+        <tbody id="origens"></tbody>
+      </table>
+    </section>
+
+    <p class="nota" style="grid-column:1/-1" id="rodape"></p>
+  </main>
+</div>
+
+<script>
+window.CONFIG = {
+  enderecoPainel: '/api/painel',
+  enderecoConfig: '/api/config-publica',
+  // Entrada no curso e aulas concluídas passaram a ser gravadas a partir desta data
+  inicioMedicaoCurso: '19/10/2026',
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script>
+(function () {
+  'use strict';
+  const C = window.CONFIG;
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const inteiro = new Intl.NumberFormat('pt-BR');
+  const reais = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+  const pct = (a, b) => (b > 0 ? Math.round((a / b) * 1000) / 10 : 0).toLocaleString('pt-BR') + '%';
+
+  let sb = null;
+  let dias = '30';
+  try { const salvo = localStorage.getItem('painel-dias'); if (salvo !== null) dias = salvo; } catch (e) {}
+
+  function mostrar(estado) {
+    ['carregando', 'login', 'negado', 'erro'].forEach((e) => { $('#estado-' + e).hidden = e !== estado; });
+    $('#painel').hidden = estado !== 'painel';
+    $('#acoes').hidden = !(estado === 'painel' || estado === 'negado');
+  }
+
+  function marcarPeriodo() {
+    $$('.periodo button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.dias === dias)));
+  }
+
+  async function iniciar() {
+    mostrar('carregando');
+    try {
+      if (!sb) {
+        const r = await fetch(C.enderecoConfig);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const cfg = await r.json();
+        sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseChave);
+      }
+      const { data } = await sb.auth.getSession();
+      if (!data.session) { mostrar('login'); return; }
+      await carregar(data.session.access_token);
+    } catch (e) {
+      mostrar('erro');
+    }
+  }
+
+  async function carregar(token) {
+    marcarPeriodo();
+    const r = await fetch(C.enderecoPainel + (dias ? '?dias=' + dias : ''), { headers: { Authorization: 'Bearer ' + token } });
+    if (r.status === 401) { await sb.auth.signOut(); mostrar('login'); return; }
+    if (r.status === 403) { mostrar('negado'); return; }
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    desenhar(await r.json());
+    mostrar('painel');
+  }
+
+  function desenhar(d) {
+    const nomePeriodo = d.periodo.dias ? 'nos últimos ' + d.periodo.dias + ' dias' : 'desde o começo';
+    const f = d.funil;
+
+    // Funil
+    $('#sub-funil').textContent = 'Pessoas que preencheram o formulário ' + nomePeriodo + ' e até onde cada uma chegou.';
+    const etapas = [
+      ['Preencheram o formulário', f.leads],
+      ['Abriram a Hub', f.abriram_hub],
+      ['Liberaram as aulas', f.liberados],
+      ['Entraram no curso', f.entraram],
+      ['Concluíram o curso', f.concluiram],
+      ['Compraram o IA Work', f.compraram, true],
+    ];
+    const funil = $('#funil');
+    funil.replaceChildren();
+    etapas.forEach(([nome, valor, venda], i) => {
+      const li = document.createElement('li');
+      li.className = 'etapa' + (venda ? ' etapa--venda' : '');
+      li.innerHTML = '<div class="etapa__linha"><span class="etapa__nome"></span><span class="etapa__num"><b></b><small></small></span></div><div class="barra"><span></span></div><span class="etapa__passo"></span>';
+      $('.etapa__nome', li).textContent = nome;
+      $('b', li).textContent = inteiro.format(valor);
+      $('small', li).textContent = i ? pct(valor, f.leads) + ' dos leads' : '';
+      $('.barra span', li).style.width = (f.leads ? Math.max(0, Math.min(100, (valor / f.leads) * 100)) : 0) + '%';
+      $('.etapa__passo', li).textContent = i ? pct(valor, etapas[i - 1][1]) + ' da etapa anterior' : '';
+      $('.etapa__passo', li).hidden = !i;
+      funil.appendChild(li);
+    });
+
+    // Vendas
+    const v = d.vendas;
+    $('#sub-vendas').textContent = 'Compras pelo link do Stripe ' + nomePeriodo + '.';
+    const plural = (n, um, varios) => (n === 1 ? um : varios);
+    const cartoes = [
+      [inteiro.format(v.pagas), plural(v.pagas, 'venda paga', 'vendas pagas'), true],
+      [reais.format(v.receita / 100), 'recebido (sem reembolsos)', true],
+      [pct(f.compraram, f.liberados), 'dos alunos do gratuito compraram'],
+      [inteiro.format(v.com_cupom), 'com o cupom do gratuito'],
+      [inteiro.format(v.aguardando), 'Pix aguardando pagamento'],
+      [inteiro.format(v.reembolsos), plural(v.reembolsos, 'reembolso', 'reembolsos')],
+    ];
+    const vendas = $('#vendas');
+    vendas.replaceChildren();
+    cartoes.forEach(([valor, rotulo, destaque]) => {
+      const div = document.createElement('div');
+      div.className = 'numero' + (destaque ? ' numero--destaque' : '');
+      div.innerHTML = '<strong></strong><span></span>';
+      $('strong', div).textContent = valor;
+      $('span', div).textContent = rotulo;
+      vendas.appendChild(div);
+    });
+
+    const pend = d.conferencia_pendente;
+    $('#aviso-conferencia').hidden = !pend;
+    $('#aviso-conferencia').textContent = pend === 1
+      ? '1 cadastro da Hub espera a sua conferência. No Supabase, abra a tabela leads e filtre conferencia = pendente.'
+      : pend + ' cadastros da Hub esperam a sua conferência. No Supabase, abra a tabela leads e filtre conferencia = pendente.';
+
+    // Por dia
+    const serie = d.por_dia || [];
+    const maior = Math.max(1, ...serie.map((x) => Math.max(x.leads, x.liberados)));
+    const grafico = $('#grafico');
+    grafico.replaceChildren();
+    serie.forEach((x) => {
+      const dia = document.createElement('div');
+      dia.className = 'dia';
+      const data = x.dia.split('-').reverse().slice(0, 2).join('/');
+      dia.title = data + ': ' + x.leads + ' leads, ' + x.liberados + ' aulas liberadas, ' + x.vendas + ' vendas';
+      const leads = document.createElement('div');
+      leads.className = 'dia__leads';
+      leads.style.height = (x.leads / maior) * 100 + '%';
+      const lib = document.createElement('div');
+      lib.className = 'dia__liberados';
+      lib.style.height = (x.liberados / maior) * 100 + '%';
+      dia.append(leads, lib);
+      if (x.vendas) {
+        const venda = document.createElement('span');
+        venda.className = 'dia__venda';
+        venda.style.bottom = 'calc(' + (Math.max(x.leads, x.liberados) / maior) * 100 + '% + 6px)';
+        dia.appendChild(venda);
+      }
+      grafico.appendChild(dia);
+    });
+    const fmt = (s) => s ? s.split('-').reverse().slice(0, 2).join('/') : '';
+    $('#eixo-ini').textContent = fmt(serie[0] && serie[0].dia);
+    $('#eixo-fim').textContent = fmt(serie[serie.length - 1] && serie[serie.length - 1].dia);
+    $('#sub-dias').textContent = 'Últimos ' + (d.periodo.dias || 30) + ' dias. Passe o mouse em uma barra para ver os números.';
+    grafico.setAttribute('aria-label', 'Leads por dia: ' + serie.map((x) => fmt(x.dia) + ' ' + x.leads).join(', '));
+
+    // Origens
+    const origens = $('#origens');
+    origens.replaceChildren();
+    (d.origens || []).forEach((o) => {
+      const tr = document.createElement('tr');
+      [o.origem, inteiro.format(o.leads), inteiro.format(o.liberados), inteiro.format(o.compraram)].forEach((t) => {
+        const td = document.createElement('td');
+        td.textContent = t;
+        tr.appendChild(td);
+      });
+      origens.appendChild(tr);
+    });
+    if (!origens.children.length) origens.innerHTML = '<tr><td colspan="4" style="text-align:left;color:var(--muted)">Nenhum lead no período.</td></tr>';
+
+    const hora = new Date(d.atualizado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    $('#rodape').textContent = 'Atualizado às ' + hora + '. "Entraram" e "Concluíram" são medidos a partir de ' + C.inicioMedicaoCurso + ': quem já era aluno antes conta quando voltar ao curso.';
+  }
+
+  // Período
+  $$('.periodo button').forEach((b) => b.addEventListener('click', async () => {
+    dias = b.dataset.dias;
+    try { localStorage.setItem('painel-dias', dias); } catch (e) {}
+    const { data } = await sb.auth.getSession();
+    if (data.session) carregar(data.session.access_token).catch(() => mostrar('erro'));
+  }));
+  $('#btn-atualizar').addEventListener('click', iniciar);
+  $('#btn-tentar').addEventListener('click', iniciar);
+  $('#btn-sair').addEventListener('click', async () => { try { await sb.auth.signOut(); } catch (e) {} mostrar('login'); });
+
+  // Login
+  $('#form-entrar').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = $('#f-email').value.trim().toLowerCase();
+    const senha = $('#f-senha').value.trim().toUpperCase();
+    $('#erro-entrar').textContent = '';
+    if (!email || !senha) { $('#erro-entrar').textContent = 'Digite o e-mail e a senha.'; return; }
+    $('#btn-entrar').disabled = true;
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
+      if (error) { $('#erro-entrar').textContent = 'E-mail ou senha incorretos.'; return; }
+      $('#f-senha').value = '';
+      await carregar(data.session.access_token);
+    } catch (e) {
+      mostrar('erro');
+    } finally {
+      $('#btn-entrar').disabled = false;
+    }
+  });
+
+  iniciar();
+})();
+</script>
+</body>
+</html>

@@ -495,6 +495,10 @@ window.CONFIG = {
     if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
     const dados = await resposta.json();
     mostrarOutroCurso(dados.cursos);
+    // O progresso salvo na conta vale mais que o deste aparelho; na primeira vez, o deste aparelho é enviado
+    const doServidor = dados.progresso && dados.progresso.concluidas;
+    if (Array.isArray(doServidor)) { progresso.concluidas = doServidor.slice(); gravar(KEY_PROGRESSO, progresso); }
+    else if (progresso.concluidas.length) sincronizar();
     nomeAluno = (dados.aluno && dados.aluno.nome) || '';
     montarCurso(dados.curso);
   }
@@ -559,6 +563,10 @@ window.CONFIG = {
 
   $('#btn-sair').addEventListener('click', async () => {
     try { if (sb) await sb.auth.signOut(); } catch (e) {}
+    // O progresso fica guardado na conta; limpa daqui para não passar para outra pessoa neste aparelho
+    progresso.concluidas = [];
+    progresso.atual = null;
+    try { localStorage.removeItem(KEY_PROGRESSO); } catch (e) {}
     mostrar('login');
   });
 
@@ -732,6 +740,25 @@ window.CONFIG = {
     if (feita && !ja) progresso.concluidas.push(i);
     if (!feita && ja) progresso.concluidas = progresso.concluidas.filter((x) => x !== i);
     gravar(KEY_PROGRESSO, progresso);
+    if (feita !== ja) sincronizar();
+  }
+
+  // Guarda as aulas concluídas na conta do aluno (vale em outros aparelhos e alimenta o painel)
+  let esperaSincronizar = null;
+  function sincronizar() {
+    clearTimeout(esperaSincronizar);
+    esperaSincronizar = setTimeout(async () => {
+      try {
+        const { data } = await sb.auth.getSession();
+        if (!data.session) return;
+        await fetch(C.enderecoAulas + (CURSO === 'pago' ? '?curso=pago' : ''), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + data.session.access_token },
+          body: JSON.stringify({ concluidas: progresso.concluidas }),
+          keepalive: true,
+        });
+      } catch (e) {}
+    }, 400);
   }
 
   // Comemora quando a última aula que faltava é concluída
