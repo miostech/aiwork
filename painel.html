@@ -57,7 +57,8 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 1px 0 rgba(42, 29, 34, 0.03), 0 18px 40px -30px rgba(42, 29, 34, 0.3); padding: 22px 18px; }
 .card h2 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 21px; line-height: 1.25; }
 .card .sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
-.grade { display: grid; gap: 20px; }
+.grade { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+.grade > * { min-width: 0; }
 
 /* Funil */
 .funil { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 14px; }
@@ -82,16 +83,61 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
 /* Gráfico por dia */
 .grafico { margin-top: 18px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(6px, 1fr); align-items: end; gap: 3px; height: 170px; padding-bottom: 4px; border-bottom: 1px solid var(--border-strong); }
 .dia { position: relative; height: 100%; display: flex; align-items: flex-end; justify-content: center; }
-.dia__leads { width: 100%; background: var(--primary-soft); border-radius: 4px 4px 0 0; position: relative; min-height: 0; }
-.dia__liberados { position: absolute; left: 22%; right: 22%; bottom: 0; background: var(--primary); border-radius: 3px 3px 0 0; }
+.dia__visitas { position: absolute; left: 0; right: 0; bottom: 0; background: #EFE3DE; border-radius: 4px 4px 0 0; }
+.dia__leads { position: absolute; left: 14%; right: 14%; bottom: 0; background: #E7A9BC; border-radius: 3px 3px 0 0; }
+.dia__liberados { position: absolute; left: 32%; right: 32%; bottom: 0; background: var(--primary); border-radius: 2px 2px 0 0; }
 .dia__venda { position: absolute; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 0 2px var(--surface); }
 .eixo { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; }
 .legenda { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 13px; color: var(--muted); }
 .legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 
+/* Países */
+.paises { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+.pais { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: 14px; }
+.pais__nome { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+.pais__barra { height: 10px; border-radius: 999px; background: var(--primary-soft); overflow: hidden; }
+.pais__barra span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--primary), var(--accent)); min-width: 2px; }
+.pais__num { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 2ch; text-align: right; }
+
+/* Leads */
+.leads-topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px; }
+.filtros { display: flex; flex-wrap: wrap; gap: 6px; }
+.filtros button { border: 1px solid var(--border-strong); background: var(--white); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.filtros button span { display: inline-block; min-width: 20px; margin-left: 4px; padding: 0 6px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); font-size: 12px; text-align: center; }
+.filtros button[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--white); }
+.filtros button[aria-pressed="true"] span { background: rgba(255, 255, 255, 0.25); color: var(--white); }
+.busca { flex: 1 1 220px; max-width: 340px; font: inherit; font-size: 15px; padding: 9px 14px; border: 1px solid var(--border-strong); border-radius: 999px; background: var(--white); color: var(--ink); }
+.busca:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+.lista-leads { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
+.lead { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: grid; gap: 10px; transition: opacity 0.3s; }
+.lead.is-saindo { opacity: 0.3; }
+.lead__topo { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.lead__nome { font-weight: 700; font-size: 16px; }
+.lead__data { font-size: 13px; color: var(--muted); }
+.lead__dados { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px 16px; font-size: 14px; }
+.lead__dados dt { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.lead__dados dd { margin: 1px 0 0; overflow-wrap: anywhere; }
+.lead__dados a { color: var(--primary); text-underline-offset: 3px; }
+.hub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 12px; border-radius: 12px; background: #FFF6E8; border: 1px solid #F2D7A6; font-size: 14px; }
+.hub strong { overflow-wrap: anywhere; }
+.copiar { border: 1px solid #E5C48A; background: var(--white); border-radius: 999px; padding: 3px 10px; font: inherit; font-size: 12.5px; font-weight: 600; color: #7A4A0B; cursor: pointer; }
+.selos { display: flex; flex-wrap: wrap; gap: 6px; }
+.selo { font-size: 12.5px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #F1ECEA; color: var(--muted); }
+.selo--ok { background: var(--ok-soft); color: var(--ok); }
+.selo--venda { background: #E3EFE7; color: var(--verde); }
+.selo--alerta { background: #FFF1D6; color: #8A5300; }
+.selo--erro { background: #FDEDEF; color: #B4233A; }
+.lead__acoes { display: flex; flex-wrap: wrap; gap: 8px; }
+.acao { border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid var(--border-strong); background: var(--white); color: var(--ink); }
+.acao--sim { background: var(--ok); border-color: var(--ok); color: var(--white); }
+.acao--nao { border-color: #E9A3AE; color: #B4233A; }
+.acao:disabled { opacity: 0.5; cursor: progress; }
+.mais { justify-self: center; margin-top: 12px; }
+
 /* Tabela de origens */
-.tabela { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 14px; }
-.tabela th { text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 8px 6px; border-bottom: 1px solid var(--border-strong); }
+.rolagem { overflow-x: auto; margin-top: 14px; -webkit-overflow-scrolling: touch; }
+.tabela { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tabela th { text-align: left; font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; white-space: nowrap; text-transform: uppercase; color: var(--muted); padding: 8px 6px; border-bottom: 1px solid var(--border-strong); }
 .tabela td { padding: 10px 6px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
 .tabela th:not(:first-child), .tabela td:not(:first-child) { text-align: right; }
 
@@ -170,14 +216,31 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       <ol class="funil" id="funil"></ol>
     </section>
 
-    <div class="grade" style="grid-template-columns:1fr">
+    <div class="grade">
       <section class="card" aria-labelledby="t-vendas">
         <h2 id="t-vendas">Vendas do IA Work</h2>
         <p class="sub" id="sub-vendas"></p>
         <div class="numeros" id="vendas"></div>
       </section>
-      <p class="aviso" id="aviso-conferencia" hidden></p>
+      <p class="aviso" id="aviso-conferencia" hidden><span id="aviso-texto"></span> <button class="copiar" id="btn-conferir" type="button">Conferir agora</button></p>
     </div>
+
+    <section class="card" id="secao-leads" aria-labelledby="t-leads" style="grid-column:1/-1">
+      <h2 id="t-leads">Leads</h2>
+      <p class="sub">Todo mundo que preencheu o formulário. Em "Conferir", veja na Hub se o e-mail informado foi cadastrado pelo seu link e marque aqui: "Não encontrei" tira o acesso ao curso gratuito na hora.</p>
+      <div class="leads-topo">
+        <div class="filtros" role="group" aria-label="Filtrar leads">
+          <button type="button" data-filtro="pendente" aria-pressed="true">Conferir<span data-conta="pendente">0</span></button>
+          <button type="button" data-filtro="confirmado" aria-pressed="false">Confirmados<span data-conta="confirmado">0</span></button>
+          <button type="button" data-filtro="nao_encontrado" aria-pressed="false">Não encontrados<span data-conta="nao_encontrado">0</span></button>
+          <button type="button" data-filtro="todos" aria-pressed="false">Todos<span data-conta="todos">0</span></button>
+        </div>
+        <input class="busca" id="busca-leads" type="search" placeholder="Buscar nome, e-mail ou WhatsApp" aria-label="Buscar leads">
+      </div>
+      <ol class="lista-leads" id="lista-leads" aria-live="polite"></ol>
+      <p class="nota" id="leads-vazio" hidden></p>
+      <button class="pilula mais" id="btn-mais-leads" type="button" hidden>Carregar mais</button>
+    </section>
 
     <section class="card" aria-labelledby="t-dias" style="grid-column:1/-1">
       <h2 id="t-dias">Por dia</h2>
@@ -185,19 +248,30 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       <div class="grafico" id="grafico" role="img"></div>
       <div class="eixo"><span id="eixo-ini"></span><span id="eixo-fim"></span></div>
       <div class="legenda">
-        <span><i style="background:var(--primary-soft)"></i>Leads (formulário)</span>
+        <span><i style="background:#EFE3DE"></i>Visitantes da página inicial</span>
+        <span><i style="background:#E7A9BC"></i>Leads (formulário)</span>
         <span><i style="background:var(--primary)"></i>Aulas liberadas</span>
         <span><i style="background:var(--verde);border-radius:50%"></i>Dia com venda do IA Work</span>
       </div>
     </section>
 
+    <section class="card" aria-labelledby="t-paises" style="grid-column:1/-1">
+      <h2 id="t-paises">Países</h2>
+      <p class="sub" id="sub-paises"></p>
+      <ol class="paises" id="paises-grafico"></ol>
+      <div class="rolagem"><table class="tabela">
+        <thead><tr><th>País</th><th>Visitantes</th><th>Leads</th><th>Liberaram</th><th>Compraram</th></tr></thead>
+        <tbody id="paises"></tbody>
+      </table></div>
+    </section>
+
     <section class="card" aria-labelledby="t-origens" style="grid-column:1/-1">
       <h2 id="t-origens">De onde vieram</h2>
       <p class="sub">Pelo utm_source do link do anúncio. "(direto)" = sem UTM.</p>
-      <table class="tabela">
+      <div class="rolagem"><table class="tabela">
         <thead><tr><th>Origem</th><th>Leads</th><th>Liberaram</th><th>Compraram</th></tr></thead>
         <tbody id="origens"></tbody>
-      </table>
+      </table></div>
     </section>
 
     <p class="nota" style="grid-column:1/-1" id="rodape"></p>
@@ -254,6 +328,11 @@ window.CONFIG = {
     }
   }
 
+  let nomes = null;
+  try { nomes = new Intl.DisplayNames(['pt-BR'], { type: 'region' }); } catch (e) {}
+  const bandeira = (c) => (/^[A-Z]{2}$/.test(c) ? String.fromCodePoint(...[...c].map((l) => 127397 + l.charCodeAt(0))) + ' ' : '');
+  const nomePais = (c) => (c ? bandeira(c) + ((nomes && nomes.of(c)) || c) : 'Não identificado');
+
   async function carregar(token) {
     marcarPeriodo();
     const r = await fetch(C.enderecoPainel + (dias ? '?dias=' + dias : ''), { headers: { Authorization: 'Bearer ' + token } });
@@ -262,15 +341,205 @@ window.CONFIG = {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     desenhar(await r.json());
     mostrar('painel');
+    carregarLeads(true);
   }
+
+  // ── Leads: lista, busca e conferência da Hub
+  let filtroLeads = 'pendente';
+  let paginaLeads = 0;
+  let primeiraLista = true;
+  let pedidoLeads = 0;   // só a resposta do pedido mais recente aparece na lista
+  let totalAulas = 9;
+  const ETAPAS = {
+    formulario: 'Só preencheu o formulário', abriu_plataforma: 'Abriu a Hub', print_enviado: 'Enviou print',
+    aprovado: 'Aulas liberadas', recusado: 'Recusado',
+  };
+  const quando = (iso) => new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+  async function token() {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) { mostrar('login'); throw new Error('sem sessão'); }
+    return data.session.access_token;
+  }
+
+  async function carregarLeads(reset) {
+    const meu = ++pedidoLeads;
+    if (reset) paginaLeads = 0;
+    try {
+      const busca = $('#busca-leads').value.trim();
+      const url = C.enderecoPainel + '?leads=1&filtro=' + filtroLeads + '&pagina=' + paginaLeads + (busca ? '&busca=' + encodeURIComponent(busca) : '');
+      const r = await fetch(url, { headers: { Authorization: 'Bearer ' + (await token()) } });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (meu !== pedidoLeads) return; // já existe um pedido mais novo (outro filtro ou busca)
+      totalAulas = d.total_aulas || totalAulas;
+      Object.entries(d.contagens || {}).forEach(([k, v]) => { const el = $('[data-conta="' + k + '"]'); if (el) el.textContent = inteiro.format(v); });
+      // Na primeira vez, sem nada para conferir, mostra todos os leads
+      if (primeiraLista && reset && filtroLeads === 'pendente' && !d.total && d.contagens && d.contagens.todos) {
+        primeiraLista = false;
+        filtroLeads = 'todos';
+        marcarFiltro();
+        return carregarLeads(true);
+      }
+      primeiraLista = false;
+      const lista = $('#lista-leads');
+      if (reset) lista.replaceChildren();
+      (d.leads || []).forEach((l) => lista.appendChild(desenharLead(l)));
+      const mostrados = lista.children.length;
+      $('#btn-mais-leads').hidden = mostrados >= d.total;
+      $('#leads-vazio').hidden = mostrados > 0;
+      $('#leads-vazio').textContent = busca ? 'Nenhum lead encontrado para "' + busca + '".'
+        : filtroLeads === 'pendente' ? 'Nenhum cadastro esperando conferência.' : 'Nenhum lead aqui ainda.';
+    } catch (e) {
+      if (meu !== pedidoLeads) return;
+      $('#leads-vazio').hidden = false;
+      $('#leads-vazio').textContent = 'Não foi possível carregar os leads agora.';
+    }
+  }
+
+  function selo(texto, tipo) {
+    const span = document.createElement('span');
+    span.className = 'selo' + (tipo ? ' selo--' + tipo : '');
+    span.textContent = texto;
+    return span;
+  }
+
+  function desenharLead(l) {
+    const li = document.createElement('li');
+    li.className = 'lead';
+    li.dataset.id = l.id;
+    li.innerHTML = '<div class="lead__topo"><span class="lead__nome"></span><span class="lead__data"></span></div>'
+      + '<dl class="lead__dados">'
+      + '<div><dt>E-mail</dt><dd class="d-email"></dd></div>'
+      + '<div><dt>WhatsApp</dt><dd class="d-whats"></dd></div>'
+      + '<div><dt>País</dt><dd class="d-pais"></dd></div>'
+      + '<div><dt>Origem</dt><dd class="d-origem"></dd></div>'
+      + '</dl><div class="selos"></div>';
+    $('.lead__nome', li).textContent = l.nome;
+    $('.lead__data', li).textContent = quando(l.criado_em);
+
+    const email = document.createElement('a');
+    email.href = 'mailto:' + l.email;
+    email.textContent = l.email;
+    $('.d-email', li).appendChild(email);
+    const digitos = String(l.whatsapp || '').replace(/\D/g, '');
+    if (digitos) {
+      const zap = document.createElement('a');
+      zap.href = 'https://wa.me/' + digitos;
+      zap.target = '_blank';
+      zap.rel = 'noopener';
+      zap.textContent = l.whatsapp;
+      $('.d-whats', li).appendChild(zap);
+    } else $('.d-whats', li).textContent = '—';
+    $('.d-pais', li).textContent = l.pais ? nomePais(l.pais) : '—';
+    $('.d-origem', li).textContent = l.utm_source || '(direto)';
+
+    if (l.email_plataforma) {
+      const hub = document.createElement('div');
+      hub.className = 'hub';
+      hub.innerHTML = '<span>E-mail usado na Hub:</span><strong></strong><button class="copiar" type="button">Copiar</button>';
+      $('strong', hub).textContent = l.email_plataforma;
+      $('.copiar', hub).addEventListener('click', async (ev) => {
+        try { await navigator.clipboard.writeText(l.email_plataforma); ev.target.textContent = 'Copiado'; } catch (e) { ev.target.textContent = 'Não copiou'; }
+        setTimeout(() => { ev.target.textContent = 'Copiar'; }, 1500);
+      });
+      li.appendChild(hub);
+    }
+
+    const selos = $('.selos', li);
+    selos.appendChild(selo(ETAPAS[l.etapa] || l.etapa, l.etapa === 'aprovado' ? 'ok' : ''));
+    if (l.conferencia === 'pendente') selos.appendChild(selo('Conferência pendente', 'alerta'));
+    if (l.conferencia === 'confirmado') selos.appendChild(selo('Confirmado na Hub', 'ok'));
+    if (l.conferencia === 'nao_encontrado') selos.appendChild(selo('Não encontrado na Hub', 'erro'));
+    if (l.acesso_retirado) selos.appendChild(selo('Acesso retirado', 'erro'));
+    else if (l.concluiu_em) selos.appendChild(selo('Concluiu o curso', 'ok'));
+    else if (l.entrou_em) selos.appendChild(selo('Assistindo: ' + l.aulas + '/' + totalAulas + ' aulas'));
+    else if (l.etapa === 'aprovado') selos.appendChild(selo('Ainda não entrou no curso'));
+    if (l.comprou) selos.appendChild(selo('Comprou o IA Work', 'venda'));
+
+    if (l.conferencia) {
+      const acoes = document.createElement('div');
+      acoes.className = 'lead__acoes';
+      const botao = (texto, classe, conferencia) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'acao' + (classe ? ' acao--' + classe : '');
+        b.textContent = texto;
+        b.addEventListener('click', () => conferir(l, conferencia, li));
+        acoes.appendChild(b);
+      };
+      if (l.conferencia !== 'confirmado') botao('✓ Encontrei na Hub', 'sim', 'confirmado');
+      if (l.conferencia !== 'nao_encontrado') botao('✗ Não encontrei', 'nao', 'nao_encontrado');
+      if (l.conferencia !== 'pendente') botao('Voltar para conferir', '', 'pendente');
+      li.appendChild(acoes);
+    }
+    return li;
+  }
+
+  async function conferir(l, conferencia, li) {
+    if (conferencia === 'nao_encontrado' && !window.confirm('Marcar ' + l.nome + ' como não encontrado na Hub? O acesso ao curso gratuito é retirado na hora.')) return;
+    $$('button', li).forEach((b) => { b.disabled = true; });
+    try {
+      const r = await fetch(C.enderecoPainel, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (await token()) },
+        body: JSON.stringify({ lead: l.id, conferencia }),
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      const atualizado = Object.assign({}, l, { conferencia: d.conferencia, acesso_retirado: d.acesso_retirado });
+      if (filtroLeads !== 'todos' && filtroLeads !== conferencia) {
+        li.classList.add('is-saindo');
+        setTimeout(() => { li.remove(); carregarLeads(true); }, 300);
+      } else {
+        li.replaceWith(desenharLead(atualizado));
+        carregarLeads(true);
+      }
+      atualizarNumeros();
+    } catch (e) {
+      $$('button', li).forEach((b) => { b.disabled = false; });
+      window.alert('Não foi possível salvar agora. Tente de novo.');
+    }
+  }
+
+  // Atualiza os números do funil e o aviso sem recarregar a lista
+  async function atualizarNumeros() {
+    try {
+      const r = await fetch(C.enderecoPainel + (dias ? '?dias=' + dias : ''), { headers: { Authorization: 'Bearer ' + (await token()) } });
+      if (r.ok) desenhar(await r.json());
+    } catch (e) {}
+  }
+
+  function marcarFiltro() {
+    $$('.filtros button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filtro === filtroLeads)));
+  }
+  $$('.filtros button').forEach((b) => b.addEventListener('click', () => {
+    filtroLeads = b.dataset.filtro;
+    marcarFiltro();
+    carregarLeads(true);
+  }));
+  let esperaBusca = null;
+  $('#busca-leads').addEventListener('input', () => {
+    clearTimeout(esperaBusca);
+    esperaBusca = setTimeout(() => carregarLeads(true), 350);
+  });
+  $('#btn-mais-leads').addEventListener('click', () => { paginaLeads++; carregarLeads(false); });
+  $('#btn-conferir').addEventListener('click', () => {
+    filtroLeads = 'pendente';
+    $('#busca-leads').value = '';
+    marcarFiltro();
+    carregarLeads(true);
+    $('#secao-leads').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   function desenhar(d) {
     const nomePeriodo = d.periodo.dias ? 'nos últimos ' + d.periodo.dias + ' dias' : 'desde o começo';
     const f = d.funil;
 
     // Funil
-    $('#sub-funil').textContent = 'Pessoas que preencheram o formulário ' + nomePeriodo + ' e até onde cada uma chegou.';
+    $('#sub-funil').textContent = 'Visitantes da página inicial e pessoas que preencheram o formulário ' + nomePeriodo + ', e até onde cada uma chegou.';
     const etapas = [
+      ['Visitaram a página inicial', f.visitaram],
       ['Preencheram o formulário', f.leads],
       ['Abriram a Hub', f.abriram_hub],
       ['Liberaram as aulas', f.liberados],
@@ -286,8 +555,9 @@ window.CONFIG = {
       li.innerHTML = '<div class="etapa__linha"><span class="etapa__nome"></span><span class="etapa__num"><b></b><small></small></span></div><div class="barra"><span></span></div><span class="etapa__passo"></span>';
       $('.etapa__nome', li).textContent = nome;
       $('b', li).textContent = inteiro.format(valor);
-      $('small', li).textContent = i ? pct(valor, f.leads) + ' dos leads' : '';
-      $('.barra span', li).style.width = (f.leads ? Math.max(0, Math.min(100, (valor / f.leads) * 100)) : 0) + '%';
+      $('small', li).textContent = i === 0 ? '' : i === 1 ? pct(valor, f.visitaram) + ' dos visitantes' : pct(valor, f.leads) + ' dos leads';
+      const topo = Math.max(f.visitaram, f.leads);
+      $('.barra span', li).style.width = (topo ? Math.max(0, Math.min(100, (valor / topo) * 100)) : 0) + '%';
       $('.etapa__passo', li).textContent = i ? pct(valor, etapas[i - 1][1]) + ' da etapa anterior' : '';
       $('.etapa__passo', li).hidden = !i;
       funil.appendChild(li);
@@ -301,6 +571,7 @@ window.CONFIG = {
       [inteiro.format(v.pagas), plural(v.pagas, 'venda paga', 'vendas pagas'), true],
       [reais.format(v.receita / 100), 'recebido (sem reembolsos)', true],
       [pct(f.compraram, f.liberados), 'dos alunos do gratuito compraram'],
+      [inteiro.format(d.visitas.aiwork), plural(d.visitas.aiwork, 'pessoa visitou a página do IA Work', 'pessoas visitaram a página do IA Work')],
       [inteiro.format(v.com_cupom), 'com o cupom do gratuito'],
       [inteiro.format(v.aguardando), 'Pix aguardando pagamento'],
       [inteiro.format(v.reembolsos), plural(v.reembolsos, 'reembolso', 'reembolsos')],
@@ -318,31 +589,34 @@ window.CONFIG = {
 
     const pend = d.conferencia_pendente;
     $('#aviso-conferencia').hidden = !pend;
-    $('#aviso-conferencia').textContent = pend === 1
-      ? '1 cadastro da Hub espera a sua conferência. No Supabase, abra a tabela leads e filtre conferencia = pendente.'
-      : pend + ' cadastros da Hub esperam a sua conferência. No Supabase, abra a tabela leads e filtre conferencia = pendente.';
+    $('#aviso-texto').textContent = pend === 1
+      ? '1 cadastro da Hub espera a sua conferência.'
+      : pend + ' cadastros da Hub esperam a sua conferência.';
 
     // Por dia
     const serie = d.por_dia || [];
-    const maior = Math.max(1, ...serie.map((x) => Math.max(x.leads, x.liberados)));
+    const maior = Math.max(1, ...serie.map((x) => Math.max(x.visitas, x.leads, x.liberados)));
     const grafico = $('#grafico');
     grafico.replaceChildren();
     serie.forEach((x) => {
       const dia = document.createElement('div');
       dia.className = 'dia';
       const data = x.dia.split('-').reverse().slice(0, 2).join('/');
-      dia.title = data + ': ' + x.leads + ' leads, ' + x.liberados + ' aulas liberadas, ' + x.vendas + ' vendas';
+      dia.title = data + ': ' + x.visitas + ' visitantes, ' + x.leads + ' leads, ' + x.liberados + ' aulas liberadas, ' + x.vendas + ' vendas';
+      const visitas = document.createElement('div');
+      visitas.className = 'dia__visitas';
+      visitas.style.height = (x.visitas / maior) * 100 + '%';
       const leads = document.createElement('div');
       leads.className = 'dia__leads';
       leads.style.height = (x.leads / maior) * 100 + '%';
       const lib = document.createElement('div');
       lib.className = 'dia__liberados';
       lib.style.height = (x.liberados / maior) * 100 + '%';
-      dia.append(leads, lib);
+      dia.append(visitas, leads, lib);
       if (x.vendas) {
         const venda = document.createElement('span');
         venda.className = 'dia__venda';
-        venda.style.bottom = 'calc(' + (Math.max(x.leads, x.liberados) / maior) * 100 + '% + 6px)';
+        venda.style.bottom = 'calc(' + (Math.max(x.visitas, x.leads, x.liberados) / maior) * 100 + '% + 6px)';
         dia.appendChild(venda);
       }
       grafico.appendChild(dia);
@@ -351,7 +625,37 @@ window.CONFIG = {
     $('#eixo-ini').textContent = fmt(serie[0] && serie[0].dia);
     $('#eixo-fim').textContent = fmt(serie[serie.length - 1] && serie[serie.length - 1].dia);
     $('#sub-dias').textContent = 'Últimos ' + (d.periodo.dias || 30) + ' dias. Passe o mouse em uma barra para ver os números.';
-    grafico.setAttribute('aria-label', 'Leads por dia: ' + serie.map((x) => fmt(x.dia) + ' ' + x.leads).join(', '));
+    grafico.setAttribute('aria-label', 'Visitantes e leads por dia: ' + serie.map((x) => fmt(x.dia) + ' ' + x.visitas + ' e ' + x.leads).join(', '));
+
+    // Países
+    const paises = d.paises || [];
+    const temVisitas = paises.some((x) => x.visitantes > 0);
+    const chave = temVisitas ? 'visitantes' : 'leads';
+    $('#sub-paises').textContent = (temVisitas ? 'Visitantes da página inicial' : 'Leads') + ' ' + nomePeriodo + ', pelo país do acesso à internet (o IP não é guardado).';
+    const maiorPais = Math.max(1, ...paises.map((x) => x[chave]));
+    const listaPaises = $('#paises-grafico');
+    listaPaises.replaceChildren();
+    paises.filter((x) => x[chave] > 0).slice(0, 8).forEach((x) => {
+      const li = document.createElement('li');
+      li.className = 'pais';
+      li.innerHTML = '<span class="pais__nome"></span><span class="pais__barra"><span></span></span><span class="pais__num"></span>';
+      $('.pais__nome', li).textContent = nomePais(x.pais);
+      $('.pais__barra span', li).style.width = (x[chave] / maiorPais) * 100 + '%';
+      $('.pais__num', li).textContent = inteiro.format(x[chave]);
+      listaPaises.appendChild(li);
+    });
+    const tabelaPaises = $('#paises');
+    tabelaPaises.replaceChildren();
+    paises.forEach((x) => {
+      const tr = document.createElement('tr');
+      [nomePais(x.pais), x.visitantes, x.leads, x.liberados, x.compraram].forEach((t, k) => {
+        const td = document.createElement('td');
+        td.textContent = k ? inteiro.format(t) : t;
+        tr.appendChild(td);
+      });
+      tabelaPaises.appendChild(tr);
+    });
+    if (!paises.length) tabelaPaises.innerHTML = '<tr><td colspan="5" style="text-align:left;color:var(--muted)">Nenhuma visita ou lead no período.</td></tr>';
 
     // Origens
     const origens = $('#origens');
@@ -368,7 +672,7 @@ window.CONFIG = {
     if (!origens.children.length) origens.innerHTML = '<tr><td colspan="4" style="text-align:left;color:var(--muted)">Nenhum lead no período.</td></tr>';
 
     const hora = new Date(d.atualizado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    $('#rodape').textContent = 'Atualizado às ' + hora + '. "Entraram" e "Concluíram" são medidos a partir de ' + C.inicioMedicaoCurso + ': quem já era aluno antes conta quando voltar ao curso.';
+    $('#rodape').textContent = 'Atualizado às ' + hora + '. Visitantes, países, "Entraram" e "Concluíram" são medidos a partir de ' + C.inicioMedicaoCurso + '. Cada visitante conta uma vez por dia em cada página.';
   }
 
   // Período

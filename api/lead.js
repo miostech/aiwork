@@ -32,6 +32,9 @@ export default async function handler(req, res) {
         .forEach(([chave, valor]) => { origem[texto(chave, 40)] = texto(valor, 200); });
 
       const linha = { nome, email, whatsapp: texto(corpo.whatsapp, 30) || null, origem };
+      // País de onde a pessoa preencheu (a Vercel descobre pelo IP, que não é guardado)
+      const pais = String(req.headers["x-vercel-ip-country"] || "").toUpperCase();
+      if (/^[A-Z]{2}$/.test(pais)) linha.pais = pais;
       UTMS.forEach((u) => { if (origem[u]) linha[u] = origem[u]; });
 
       const { data, error } = await banco().from("leads").insert(linha).select("id").single();
