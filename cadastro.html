@@ -428,7 +428,16 @@ body {
       <p class="card__lead" data-parte="confirmar">Falta só um passo para liberar as aulas. Digite abaixo o e-mail que você usou para criar sua conta na <span data-plataforma>Hub</span>.</p>
     </div>
 
-    <div class="video" data-video="final">
+    <!-- Vídeo da confirmação (antes de enviar o e-mail) e vídeo do "Tudo pronto" (depois);
+         o do "Tudo pronto" só aparece quando tiver link no CONFIG (data-opcional) -->
+    <div class="video" data-video="confirmacao" data-parte="confirmar">
+      <div class="video__placeholder">
+        <span class="video__play" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span>
+        <strong>Vídeo da confirmação</strong>
+        <span>Coloque o link do vídeo no CONFIG (videos.confirmacao)</span>
+      </div>
+    </div>
+    <div class="video" data-video="final" data-parte="pronto" data-opcional hidden>
       <div class="video__placeholder">
         <span class="video__play" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span>
         <strong>Vídeo final</strong>
@@ -510,11 +519,13 @@ window.CONFIG = {
   videos: {
     orientacoes: 'https://cursiversostorage.blob.core.windows.net/iaacademy/fluxo%202%20-%20editado.mp4',
     validacao: '',   // etapa 3 (desativada por enquanto)
-    final: '',       // etapa final: confirmação do e-mail e acesso ao curso
+    confirmacao: 'https://cursiversostorage.blob.core.windows.net/iaacademy/fluxo%203%20-%20editado.mp4',   // etapa final, antes de enviar o e-mail
+    final: '',       // "Tudo pronto", depois de liberar as aulas (vazio = sem vídeo nessa parte)
   },
   // Imagem que aparece enquanto cada vídeo .mp4 carrega
   capas: {
     orientacoes: '/capa-orientacoes.jpg',
+    confirmacao: '/capa-confirmacao.jpg',
   },
 
   // Nome que precisa aparecer em "Indicado por" no print (usado nos textos da validação).
@@ -603,11 +614,11 @@ window.CONFIG = {
   // ── Vídeos (CONFIG.videos): arquivo .mp4 no player do site, outros links no player deles
   $$('[data-video]').forEach((box) => {
     const url = (C.videos || {})[box.dataset.video];
-    if (!url) return;
+    if (!url) { if (box.hasAttribute('data-opcional')) box.remove(); return; }
     if (/\.mp4($|\?)/i.test(url)) {
       const reservado = box.innerHTML;   // se o vídeo não abrir, volta o espaço reservado
       PlayerVideo.montar(box, {
-        src: url, capa: (C.capas || {})[box.dataset.video], titulo: 'Vídeo de orientação',
+        src: url, capa: (C.capas || {})[box.dataset.video], titulo: 'Vídeo do cadastro',
         aoErro: () => { box.innerHTML = reservado; },
       });
       return;
@@ -865,6 +876,7 @@ window.CONFIG = {
   campoEmail.value = state.emailPlataforma || state.lead.email || '';
 
   function mostrarPronto() {
+    $$('[data-parte="confirmar"] video').forEach((v) => v.pause());   // o vídeo da confirmação para de tocar
     $$('[data-parte="confirmar"]').forEach((el) => { el.hidden = true; });
     $$('[data-parte="pronto"]').forEach((el) => { el.hidden = false; });
     $('#titulo-4').textContent = 'Tudo pronto! 🎉';
