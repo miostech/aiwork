@@ -103,6 +103,7 @@ body {
 .video {
   position: relative; width: 100%; max-width: 100%; aspect-ratio: 9 / 16;
   border-radius: 24px; overflow: hidden; background: var(--video-bg);
+  --player-cor: var(--primary);   /* cor dos botões do player (player-video.js) */
 }
 .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .video__placeholder {
@@ -278,6 +279,7 @@ body {
 }
 </style>
 <script src="/contador.js" data-pagina="cadastro" defer></script>
+<script src="/player-video.js"></script>
 </head>
 <body>
 <main class="page">
@@ -503,12 +505,16 @@ window.CONFIG = {
     linkCadastro: 'https://ai.hub.xyz/r/AIWORK',   // seu link de cadastro (ou link de afiliado)
   },
 
-  // Link de incorporação (embed) de cada vídeo vertical: Panda, YouTube, Vimeo...
-  // Ex.: 'https://player-vz-xxxx.tv.pandavideo.com.br/embed/?v=xxxx'. Vazio = mostra um espaço reservado.
+  // Vídeo vertical de cada etapa: link do arquivo .mp4 (Azure) ou link de incorporação do Panda/YouTube.
+  // Vazio = mostra um espaço reservado.
   videos: {
-    orientacoes: '',
+    orientacoes: 'https://cursiversostorage.blob.core.windows.net/iaacademy/fluxo%202%20-%20editado.mp4',
     validacao: '',   // etapa 3 (desativada por enquanto)
     final: '',       // etapa final: confirmação do e-mail e acesso ao curso
+  },
+  // Imagem que aparece enquanto cada vídeo .mp4 carrega
+  capas: {
+    orientacoes: '/capa-orientacoes.jpg',
   },
 
   // Nome que precisa aparecer em "Indicado por" no print (usado nos textos da validação).
@@ -594,10 +600,18 @@ window.CONFIG = {
   $$('[data-indicador]').forEach((el) => { el.textContent = C.indicadoPor; });
   // Etapa 3 (desativada): if (C.imagemExemploValidacao) { $('#exemplo-img').src = C.imagemExemploValidacao; $('#exemplo').hidden = false; }
 
-  // ── Vídeos (link de incorporação no CONFIG)
+  // ── Vídeos (CONFIG.videos): arquivo .mp4 no player do site, outros links no player deles
   $$('[data-video]').forEach((box) => {
     const url = (C.videos || {})[box.dataset.video];
     if (!url) return;
+    if (/\.mp4($|\?)/i.test(url)) {
+      const reservado = box.innerHTML;   // se o vídeo não abrir, volta o espaço reservado
+      PlayerVideo.montar(box, {
+        src: url, capa: (C.capas || {})[box.dataset.video], titulo: 'Vídeo de orientação',
+        aoErro: () => { box.innerHTML = reservado; },
+      });
+      return;
+    }
     const frame = document.createElement('iframe');
     frame.src = url;
     frame.title = 'Vídeo';

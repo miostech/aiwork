@@ -136,34 +136,7 @@ body {
 }
 .video iframe { display: block; width: 100%; aspect-ratio: 9 / 16; border: 0; }
 
-/* Player do vídeo (arquivo .mp4): começa sem som, com o convite para ativar o som */
-.player { position: relative; aspect-ratio: 9 / 16; background: #0C0B0A; cursor: pointer; }
-.player video { display: block; width: 100%; height: 100%; object-fit: cover; }
-.player__som {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  display: grid; justify-items: center; gap: 10px; width: max-content; max-width: 86%;
-  padding: 18px 22px; border: 0; border-radius: 20px; cursor: pointer;
-  background: rgba(12, 11, 10, 0.72); color: #FFFFFF; font: inherit; text-align: center;
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-}
-.player__som strong { font-size: 1.05rem; font-weight: 800; }
-.player__som span { font-size: 0.85rem; opacity: 0.85; }
-.player__som-icone {
-  width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--accent); box-shadow: 0 10px 26px -8px rgba(255, 77, 158, 0.85);
-  animation: pulsar 1.6s ease-in-out infinite;
-}
-.player__pausa {
-  position: absolute; inset: 0; display: grid; place-items: center; border: 0; cursor: pointer;
-  background: rgba(12, 11, 10, 0.35); color: #FFFFFF;
-}
-.player__pausa span {
-  width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--accent); box-shadow: 0 12px 28px -8px rgba(255, 77, 158, 0.8);
-}
-.player__barra { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: rgba(255, 255, 255, 0.25); pointer-events: none; }
-.player__barra i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.25s linear; }
-@keyframes pulsar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.video { --player-cor: var(--accent); }   /* cor dos botões do player (player-video.js) */
 .video__placeholder {
   aspect-ratio: 9 / 16; max-width: 100%;
   display: grid; place-items: center; align-content: center; gap: 12px; padding: 24px;
@@ -344,6 +317,7 @@ body {
 }
 </style>
 <script src="/contador.js" data-pagina="inicio" defer></script>
+<script src="/player-video.js"></script>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -576,59 +550,15 @@ window.CONFIG = {
   }
 
   function montarPlayer() {
-    const caixa = document.createElement('div');
-    caixa.className = 'player';
-    caixa.innerHTML =
-      '<video playsinline muted autoplay preload="auto"></video>'
-      + '<button class="player__som" type="button"><span class="player__som-icone" aria-hidden="true">'
-      + '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>'
-      + '</span><strong>Seu vídeo já começou</strong><span>Toque para ouvir</span></button>'
-      + '<button class="player__pausa" type="button" aria-label="Continuar o vídeo" hidden><span aria-hidden="true">'
-      + '<svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>'
-      + '</span></button>'
-      + '<div class="player__barra" aria-hidden="true"><i></i></div>';
-    const video = $('video', caixa);
-    const som = $('.player__som', caixa);
-    const pausa = $('.player__pausa', caixa);
-    const barra = $('.player__barra i', caixa);
-    video.src = C.video;
-    if (C.capaVideo) video.poster = C.capaVideo;
-    video.setAttribute('aria-label', 'Vídeo: como receber em dólar treinando inteligência artificial');
-    $('#video').replaceChildren(caixa);
-
-    const tocar = () => video.play().catch(() => { pausa.hidden = false; som.hidden = true; });
-    tocar();
-
-    // Primeiro toque: volta ao começo com som
-    function ativarSom() {
-      som.hidden = true;
-      pausa.hidden = true;
-      video.muted = false;
-      video.currentTime = 0;
-      tocar();
-    }
-    som.addEventListener('click', (e) => { e.stopPropagation(); ativarSom(); });
-    pausa.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (video.muted) { ativarSom(); return; }
-      pausa.hidden = true;
-      tocar();
+    PlayerVideo.montar($('#video'), {
+      src: C.video,
+      capa: C.capaVideo,
+      titulo: 'Vídeo: como receber em dólar treinando inteligência artificial',
+      segundos: C.liberarAposSegundos,
+      aoChegar: () => liberar(true),
+      aoTerminar: () => liberar(true),
+      aoErro: () => liberar(true),   // se o vídeo não carregar, o formulário aparece na hora
     });
-    // Depois do som ativado, tocar no vídeo pausa e continua
-    video.addEventListener('click', () => {
-      if (video.muted) { ativarSom(); return; }
-      if (video.paused) { pausa.hidden = true; tocar(); } else video.pause();
-    });
-    video.addEventListener('pause', () => { if (!video.muted && !video.ended) pausa.hidden = false; });
-    video.addEventListener('play', () => { pausa.hidden = true; });
-
-    video.addEventListener('timeupdate', () => {
-      if (video.duration) barra.style.width = (video.currentTime / video.duration) * 100 + '%';
-      if (!video.muted && video.currentTime >= C.liberarAposSegundos) liberar(true);
-    });
-    video.addEventListener('ended', () => liberar(true));
-    // Se o vídeo não carregar, o formulário aparece na hora
-    video.addEventListener('error', () => liberar(true));
     // Garantia: mesmo sem assistir com som, o formulário aparece depois do tempo do vídeo e mais um pouco
     setTimeout(() => liberar(true), (C.liberarAposSegundos + 60) * 1000);
   }
