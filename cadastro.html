@@ -520,12 +520,13 @@ window.CONFIG = {
     orientacoes: 'https://cursiversostorage.blob.core.windows.net/iaacademy/fluxo%202%20-%20editado.mp4',
     validacao: '',   // etapa 3 (desativada por enquanto)
     confirmacao: 'https://cursiversostorage.blob.core.windows.net/iaacademy/fluxo%203%20-%20editado.mp4',   // etapa final, antes de enviar o e-mail
-    final: '',       // "Tudo pronto", depois de liberar as aulas (vazio = sem vídeo nessa parte)
+    final: 'https://cursiversostorage.blob.core.windows.net/iaacademy/fluxo%204%20-%20editado.mp4',   // "Tudo pronto", depois de liberar as aulas (vazio = sem vídeo nessa parte)
   },
   // Imagem que aparece enquanto cada vídeo .mp4 carrega
   capas: {
     orientacoes: '/capa-orientacoes.jpg',
     confirmacao: '/capa-confirmacao.jpg',
+    final: '/capa-tudo-pronto.jpg',
   },
 
   // Nome que precisa aparecer em "Indicado por" no print (usado nos textos da validação).
@@ -619,7 +620,7 @@ window.CONFIG = {
       const reservado = box.innerHTML;   // se o vídeo não abrir, volta o espaço reservado
       PlayerVideo.montar(box, {
         src: url, capa: (C.capas || {})[box.dataset.video], titulo: 'Vídeo do cadastro',
-        aoErro: () => { box.innerHTML = reservado; },
+        aoErro: () => { if (box.hasAttribute('data-opcional')) box.remove(); else box.innerHTML = reservado; },
       });
       return;
     }
