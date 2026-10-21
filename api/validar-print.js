@@ -7,7 +7,7 @@
 // Vercel → Settings → Environment Variables:
 //   ANTHROPIC_API_KEY  chave da API da Anthropic (obrigatória)
 //   NOME_INDICACAO     nome que precisa aparecer em "Indicado por" (padrão: Camila Mota)
-//   CODIGO_INDICACAO   código de indicação aceito no lugar do nome (padrão: AIWORK)
+//   CODIGO_INDICACAO   código de indicação aceito no lugar do nome (padrão: IAACAD)
 //   PLATAFORMA         nome da plataforma (padrão: Hub)
 //   LIBERAR_SE_FALHAR  "false" para NÃO liberar o acesso quando a conferência der erro (padrão: libera)
 //   + as do Supabase (api/_supabase.js) e do Resend (api/_emails.js)
@@ -21,7 +21,7 @@ import { enviarEmail } from "./_emails.js";
 const client = new Anthropic();
 
 const NOME = process.env.NOME_INDICACAO || "Camila Mota";
-const CODIGO = process.env.CODIGO_INDICACAO || "AIWORK";
+const CODIGO = process.env.CODIGO_INDICACAO || "IAACAD";
 const PLATAFORMA = process.env.PLATAFORMA || "Hub";
 const TIPOS = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const MAX_BYTES = 4 * 1024 * 1024;
