@@ -159,12 +159,21 @@ body {
 .aula__titulo:focus { outline: none; }
 .aula__descricao { margin: 0; color: var(--muted); max-width: 65ch; }
 
-.materiais { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+/* Links da aula (campo "materiais" em api/_aulas.js) */
+.materiais-caixa { display: grid; gap: 10px; margin-top: 4px; }
+.materiais__titulo { margin: 0; font-size: 12.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.materiais { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .materiais a {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: var(--primary); font-weight: 600; text-decoration: none; overflow-wrap: anywhere;
+  display: grid; grid-template-columns: 38px minmax(0, 1fr) 18px; align-items: center; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--border-strong); border-radius: 16px; background: var(--white);
+  color: var(--ink); text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s;
 }
-.materiais a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.materiais a:hover { border-color: var(--primary); box-shadow: 0 8px 20px -14px rgba(176, 70, 104, 0.6); }
+.materiais__icone { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--primary-soft); color: var(--primary); }
+.materiais__textos { display: grid; gap: 2px; min-width: 0; }
+.materiais__textos strong { font-size: 15.5px; font-weight: 700; color: var(--primary); overflow-wrap: anywhere; }
+.materiais__textos span { font-size: 13.5px; color: var(--muted); }
+.materiais__seta { color: var(--muted); }
 
 /* Chamada para o curso pago (campo "oferta" da aula em api/_aulas.js) */
 .oferta { display: grid; gap: 8px; margin-top: 6px; padding: 18px 18px 20px; border-radius: 18px; background: var(--primary-soft); border: 1px solid var(--border-strong); }
@@ -353,7 +362,10 @@ body {
             <p class="aula__numero" id="aula-numero"></p>
             <h2 class="aula__titulo" id="aula-titulo"></h2>
             <p class="aula__descricao" id="aula-descricao"></p>
-            <ul class="materiais" id="materiais"></ul>
+            <div class="materiais-caixa" id="materiais-caixa" hidden>
+              <p class="materiais__titulo">Links da aula</p>
+              <ul class="materiais" id="materiais"></ul>
+            </div>
             <div class="oferta" id="oferta" hidden>
               <p class="oferta__titulo" id="oferta-titulo"></p>
               <p class="oferta__texto" id="oferta-texto"></p>
@@ -679,19 +691,25 @@ window.CONFIG = {
     $('#aula-descricao').textContent = aula.descricao || '';
     $('#aula-descricao').hidden = !aula.descricao;
 
+    // Links da aula: { titulo, link, texto (opcional, aparece embaixo do título) }
     const materiais = $('#materiais');
     materiais.replaceChildren();
-    (aula.materiais || []).forEach((m) => {
+    (aula.materiais || []).filter((m) => m && m.link).forEach((m) => {
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.href = m.link;
       a.target = '_blank';
       a.rel = 'noopener';
-      a.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg><span></span>';
-      $('span', a).textContent = m.titulo;
+      a.innerHTML = '<span class="materiais__icone" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>'
+        + '<span class="materiais__textos"><strong></strong><span></span></span>'
+        + '<svg class="materiais__seta" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+      $('strong', a).textContent = m.titulo;
+      $('.materiais__textos span', a).textContent = m.texto || '';
+      $('.materiais__textos span', a).hidden = !m.texto;
       li.appendChild(a);
       materiais.appendChild(li);
     });
+    $('#materiais-caixa').hidden = !materiais.children.length;
 
     const oferta = aula.oferta;
     $('#oferta').hidden = !(oferta && oferta.link);

@@ -10,7 +10,8 @@
 // capa:      imagem que aparece antes do play (ex.: '/capas/aula-2.jpg', na pasta capas/ do site).
 //            Sem capa, o navegador mostra o comecinho do vídeo.
 // duracao:   texto livre, ex.: '4 min'. Vazio = não mostra.
-// materiais: links extras que aparecem embaixo da aula, ex.: [{ titulo: 'Site da empresa', link: 'https://...' }]
+// materiais: links que aparecem em "Links da aula", embaixo do título, ex.:
+//            [{ titulo: 'Site da empresa', texto: 'frase opcional embaixo', link: 'https://...' }]
 //
 // As aulas ficam dentro de módulos. Para criar um módulo novo, copie um bloco { titulo, aulas: [...] }.
 // descricao: texto curto embaixo do título da aula. Vazio = não mostra.
@@ -27,7 +28,13 @@ export const CURSO = {
           duracao: "9 min",
           video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%201%20-%20iaacademy.mp4",
           capa: "/capas/aula-1.jpg",
-          materiais: [],
+          materiais: [
+            {
+              titulo: "Criar minha conta grátis na Hub",
+              texto: "Para quem ainda não fez o cadastro na Hub",
+              link: "https://ai.hub.xyz/r/IAACAD",
+            },
+          ],
         },
         {
           titulo: "O kit para começar com o celular que você já tem",
