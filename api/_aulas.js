@@ -63,9 +63,36 @@ export const CURSO = {
         {
           titulo: "Hub: libere a sua conta e grave o primeiro vídeo",
           descricao: "",
-          duracao: "5 min",
-          video: "",
-          materiais: [],
+          duracao: "8 min",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%203%20-%20iaacademy.mp4",
+          capa: "/capas/aula-3.jpg",
+          materiais: [
+            {
+              titulo: "Criar minha conta grátis na Hub",
+              texto: "Para quem ainda não fez o cadastro na Hub",
+              link: "https://ai.hub.xyz/r/IAACAD",
+            },
+            {
+              titulo: "Hub Capture para iPhone",
+              texto: "Baixar o app da Hub na App Store",
+              link: "https://apps.apple.com/br/app/hub-capture/id6772285040",
+            },
+            {
+              titulo: "Hub Capture para Android",
+              texto: "Baixar o app da Hub no Google Play",
+              link: "https://play.google.com/store/apps/details?id=xyz.hub.mobile",
+            },
+            {
+              titulo: "Minute para iPhone",
+              texto: "Baixar o Minute Data na App Store",
+              link: "https://apps.apple.com/br/app/minute-data/id6760918280",
+            },
+            {
+              titulo: "Minute para Android",
+              texto: "Baixar o Minute Data no Google Play",
+              link: "https://play.google.com/store/apps/details?id=com.bakerdata.minute",
+            },
+          ],
         },
         {
           titulo: "O segredo dos vídeos aprovados (e os 3 erros que bloqueiam a sua conta)",
