@@ -12,6 +12,8 @@
 // duracao:   texto livre, ex.: '4 min'. Vazio = não mostra.
 // materiais: links que aparecem em "Links da aula", embaixo do título, ex.:
 //            [{ titulo: 'Site da empresa', texto: 'frase opcional embaixo', link: 'https://...' }]
+// aviso:     aula sem vídeo, só com material: texto que aparece no lugar do player,
+//            ex.: 'Baixe o PDF abaixo'. Sem vídeo e sem aviso = mostra "vídeo em breve".
 //
 // As aulas ficam dentro de módulos. Para criar um módulo novo, copie um bloco { titulo, aulas: [...] }.
 // descricao: texto curto embaixo do título da aula. Vazio = não mostra.
@@ -123,16 +125,23 @@ export const CURSO = {
           ],
         },
         {
-          titulo: "Claru: dólares na conta a cada duas semanas",
-          descricao: "",
-          duracao: "3 min",
-          video: "",
-          materiais: [],
-        },
-        {
           titulo: "Mimix: a carta na manga de quem mora fora do Brasil",
           descricao: "",
           duracao: "4 min",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%206%20-%20iaacademy.mp4",
+          capa: "/capas/aula-6.jpg",
+          materiais: [
+            {
+              titulo: "Criar minha conta grátis na Mimix",
+              texto: "Para quem ainda não fez o cadastro na Mimix",
+              link: "https://mimix-ai.xyz/register?ref=iaacademy",
+            },
+          ],
+        },
+        {
+          titulo: "Você já tem as 3 plataformas: o que vem agora",
+          descricao: "",
+          duracao: "1 min",
           video: "",
           materiais: [],
         },
@@ -142,11 +151,18 @@ export const CURSO = {
       titulo: "Primeiros passos e ganhos",
       aulas: [
         {
-          titulo: "Dólar no bolso: como sacar sem perder dinheiro (e sem problemas com o Leão)",
+          titulo: "Checklist completo e as minhas indicações de cada plataforma",
           descricao: "",
-          duracao: "4 min",
+          duracao: "PDF",
           video: "",
-          materiais: [],
+          aviso: "Baixe o PDF abaixo",
+          materiais: [
+            {
+              titulo: "Checklist completo (PDF)",
+              texto: "O checklist de gravação e os links das 3 plataformas",
+              link: "/materiais/checklist-completo.pdf",
+            },
+          ],
         },
         {
           titulo: "O próximo nível: empresas que pagam acima de US$ 20 por hora",
