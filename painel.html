@@ -333,10 +333,19 @@ window.CONFIG = {
   const bandeira = (c) => (/^[A-Z]{2}$/.test(c) ? String.fromCodePoint(...[...c].map((l) => 127397 + l.charCodeAt(0))) + ' ' : '');
   const nomePais = (c) => (c ? bandeira(c) + ((nomes && nomes.of(c)) || c) : 'Não identificado');
 
-  async function carregar(token) {
+  async function carregar(token, jaRenovou) {
     marcarPeriodo();
     const r = await fetch(C.enderecoPainel + (dias ? '?dias=' + dias : ''), { headers: { Authorization: 'Bearer ' + token } });
-    if (r.status === 401) { await sb.auth.signOut(); mostrar('login'); return; }
+    if (r.status === 401) {
+      // Renova a sessão uma vez antes de pedir o login de novo
+      if (!jaRenovou) {
+        const { data } = await sb.auth.refreshSession().catch(() => ({ data: null }));
+        if (data && data.session) return carregar(data.session.access_token, true);
+      }
+      await sb.auth.signOut();
+      mostrar('login');
+      return;
+    }
     if (r.status === 403) { mostrar('negado'); return; }
     if (!r.ok) throw new Error('HTTP ' + r.status);
     desenhar(await r.json());

@@ -495,11 +495,21 @@ window.CONFIG = {
     }
   }
 
-  async function carregarAulas(token) {
+  async function carregarAulas(token, jaRenovou) {
     mostrar('carregando');
     const endereco = C.enderecoAulas + (CURSO === 'pago' ? '?curso=pago' : '');
     const resposta = await fetch(endereco, { headers: { Authorization: 'Bearer ' + token } });
-    if (resposta.status === 401) { await sb.auth.signOut(); mostrar('login'); return; }
+    if (resposta.status === 401) {
+      // O servidor recusou o acesso (ex.: relógio do aparelho adiantado ou atrasado): renova a sessão
+      // uma vez antes de pedir o login de novo
+      if (!jaRenovou) {
+        const { data } = await sb.auth.refreshSession().catch(() => ({ data: null }));
+        if (data && data.session) return carregarAulas(data.session.access_token, true);
+      }
+      await sb.auth.signOut();
+      mostrar('login');
+      return;
+    }
     if (resposta.status === 403) {
       const negado = await resposta.json().catch(() => ({}));
       mostrarOutroCurso(negado.cursos);

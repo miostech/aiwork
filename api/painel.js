@@ -36,6 +36,11 @@ export default async function handler(req, res) {
   try {
     const db = banco();
     const { data, error } = await db.auth.getUser(token);
+    // Só é "sessão expirada" quando o Supabase recusa o token; falha passageira dele não desloga ninguém
+    if (error && error.status !== 401 && error.status !== 403) {
+      console.error("Não foi possível conferir o login:", error.message);
+      return res.status(503).json({ erro: "Não foi possível confirmar o seu login agora. Tente de novo." });
+    }
     if (error || !data || !data.user) return res.status(401).json({ erro: "Sua sessão expirou. Entre de novo." });
     if (!ADMINS.includes(normalizarEmail(data.user.email))) {
       return res.status(403).json({ erro: "Este painel é só para a administração da IA Academy." });
