@@ -140,7 +140,8 @@ body {
   border-radius: 20px; overflow: hidden; background: var(--video-bg);
 }
 .player--vertical { aspect-ratio: 9 / 16; max-width: 420px; margin-inline: auto; }
-.player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player video { background: #000; object-fit: contain; }
 .player__vazio {
   position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 10px;
   padding: 24px; text-align: center; color: #F6ECEF;
@@ -639,7 +640,21 @@ window.CONFIG = {
     const total = curso.aulas.length;
 
     const player = $('#player');
-    if (aula.video) {
+    if (aula.video && /\.mp4($|\?)/i.test(aula.video)) {
+      // Arquivo .mp4 (Azure): player do navegador, com pausar, avançar, velocidade e tela cheia
+      const atual = $('video', player);
+      if (!atual || atual.getAttribute('src') !== aula.video) {
+        const video = document.createElement('video');
+        video.src = aula.video;
+        video.controls = true;
+        video.playsInline = true;
+        video.preload = 'metadata';
+        video.setAttribute('controlslist', 'nodownload');
+        video.setAttribute('aria-label', aula.titulo);
+        if (aula.capa) video.poster = aula.capa;
+        player.replaceChildren(video);
+      }
+    } else if (aula.video) {
       const atualFrame = $('iframe', player);
       if (!atualFrame || atualFrame.src !== aula.video) {
         const frame = document.createElement('iframe');

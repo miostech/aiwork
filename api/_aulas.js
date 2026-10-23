@@ -4,9 +4,9 @@
 // Este arquivo fica no servidor: os links dos vídeos só são entregues para quem
 // tem o link de acesso. Depois de editar, faça o commit e o push; a Vercel publica sozinha.
 //
-// video:     link de incorporação (embed) do Panda Video, por exemplo
-//            'https://player-vz-xxxxxxxx-xxx.tv.pandavideo.com.br/embed/?v=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
-//            Vazio = mostra "vídeo em breve".
+// video:     link do arquivo .mp4 no Azure (espaços viram %20), ex.:
+//            'https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%201%20-%20iaacademy.mp4'
+//            ou link de incorporação (embed) do Panda Video. Vazio = mostra "vídeo em breve".
 // duracao:   texto livre, ex.: '4 min'. Vazio = não mostra.
 // materiais: links extras que aparecem embaixo da aula, ex.: [{ titulo: 'Site da empresa', link: 'https://...' }]
 //
@@ -22,8 +22,8 @@ export const CURSO = {
         {
           titulo: "Por que empresas de IA pagam em dólar para você gravar a sua rotina",
           descricao: "",
-          duracao: "5 min",
-          video: "",
+          duracao: "9 min",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%201%20-%20iaacademy.mp4",
           materiais: [],
         },
         {
