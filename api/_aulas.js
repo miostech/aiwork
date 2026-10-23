@@ -112,8 +112,15 @@ export const CURSO = {
           titulo: "Claru: grave para o laboratório criado por ex-pesquisadores do Google",
           descricao: "",
           duracao: "4 min",
-          video: "",
-          materiais: [],
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%205%20-%20iaacademy.mp4",
+          capa: "/capas/aula-5.jpg",
+          materiais: [
+            {
+              titulo: "Criar minha conta grátis na Claru",
+              texto: "Para quem ainda não fez o cadastro na Claru",
+              link: "https://app.claru.ai/signup?ref=2e58qws8",
+            },
+          ],
         },
         {
           titulo: "Claru: dólares na conta a cada duas semanas",
