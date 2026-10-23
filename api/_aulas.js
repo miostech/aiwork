@@ -39,9 +39,20 @@ export const CURSO = {
         {
           titulo: "O kit para começar com o celular que você já tem",
           descricao: "",
-          duracao: "4 min",
-          video: "",
-          materiais: [],
+          duracao: "9 min",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%202%20-%20iaacademy.mp4",
+          materiais: [
+            {
+              titulo: "Suporte de cabeça simples",
+              texto: "O baratinho que eu uso, para começar enquanto o da Hub não chega",
+              link: "https://s.click.aliexpress.com/e/_c31OQYRd",
+            },
+            {
+              titulo: "Suporte de cabeça profissional Ulanzi",
+              texto: "Mais confortável para gravar muitas horas por dia",
+              link: "https://s.click.aliexpress.com/e/_c42BTHqJ",
+            },
+          ],
         },
       ],
     },
