@@ -168,8 +168,9 @@ export const CURSO = {
         {
           titulo: "O próximo nível: empresas que pagam acima de US$ 20 por hora",
           descricao: "",
-          duracao: "6 min",
-          video: "",
+          duracao: "10 min",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%209%20-%20iaacademy.mp4",
+          capa: "/capas/aula-9.jpg",
           materiais: [],
           // Chamada para o curso pago, mostrada abaixo da descrição desta aula
           oferta: {
