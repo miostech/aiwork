@@ -171,7 +171,18 @@ export const CURSO = {
           duracao: "10 min",
           video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%209%20-%20iaacademy.mp4",
           capa: "/capas/aula-9.jpg",
-          materiais: [],
+          materiais: [
+            {
+              titulo: "Conhecer o IA Work",
+              texto: "A página do curso completo, com o desconto de quem fez o gratuito",
+              link: "/aiwork?origem=curso",
+            },
+            {
+              titulo: "Canal da IA Academy no WhatsApp",
+              texto: "Novidades, vagas e dicas das plataformas",
+              link: "https://whatsapp.com/channel/0029Vb9E7Ow0rGiEGxEOY30F",
+            },
+          ],
           // Chamada para o curso pago, mostrada abaixo da descrição desta aula
           oferta: {
             titulo: "Conheça o IA Work",
