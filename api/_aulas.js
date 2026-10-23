@@ -7,6 +7,8 @@
 // video:     link do arquivo .mp4 no Azure (espaços viram %20), ex.:
 //            'https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%201%20-%20iaacademy.mp4'
 //            ou link de incorporação (embed) do Panda Video. Vazio = mostra "vídeo em breve".
+// capa:      imagem que aparece antes do play (ex.: '/capas/aula-2.jpg', na pasta capas/ do site).
+//            Sem capa, o navegador mostra o comecinho do vídeo.
 // duracao:   texto livre, ex.: '4 min'. Vazio = não mostra.
 // materiais: links extras que aparecem embaixo da aula, ex.: [{ titulo: 'Site da empresa', link: 'https://...' }]
 //
@@ -24,6 +26,7 @@ export const CURSO = {
           descricao: "",
           duracao: "9 min",
           video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%201%20-%20iaacademy.mp4",
+          capa: "/capas/aula-1.jpg",
           materiais: [],
         },
         {

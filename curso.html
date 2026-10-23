@@ -643,9 +643,11 @@ window.CONFIG = {
     if (aula.video && /\.mp4($|\?)/i.test(aula.video)) {
       // Arquivo .mp4 (Azure): player do navegador, com pausar, avançar, velocidade e tela cheia
       const atual = $('video', player);
-      if (!atual || atual.getAttribute('src') !== aula.video) {
+      if (!atual || atual.dataset.aula !== aula.video) {
         const video = document.createElement('video');
-        video.src = aula.video;
+        video.dataset.aula = aula.video;
+        // Sem capa, "#t=0.1" faz o navegador mostrar o comecinho do vídeo em vez de uma tela preta
+        video.src = aula.capa ? aula.video : aula.video + '#t=0.1';
         video.controls = true;
         video.playsInline = true;
         video.preload = 'metadata';
