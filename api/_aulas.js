@@ -41,6 +41,7 @@ export const CURSO = {
           descricao: "",
           duracao: "9 min",
           video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%202%20-%20iaacademy.mp4",
+          capa: "/capas/aula-2.jpg",
           materiais: [
             {
               titulo: "Suporte de cabeça simples",
