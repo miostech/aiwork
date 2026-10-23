@@ -97,9 +97,16 @@ export const CURSO = {
         {
           titulo: "O segredo dos vídeos aprovados (e os 3 erros que bloqueiam a sua conta)",
           descricao: "",
-          duracao: "6 min",
-          video: "",
-          materiais: [],
+          duracao: "11 min",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%204%20-%20iaacademy.mp4",
+          capa: "/capas/aula-4.jpg",
+          materiais: [
+            {
+              titulo: "Checklist antes de gravar",
+              texto: "Em PDF, para imprimir ou salvar no celular",
+              link: "/materiais/checklist-antes-de-gravar.pdf",
+            },
+          ],
         },
         {
           titulo: "Claru: grave para o laboratório criado por ex-pesquisadores do Google",
