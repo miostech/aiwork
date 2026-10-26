@@ -225,6 +225,15 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       <p class="aviso" id="aviso-conferencia" hidden><span id="aviso-texto"></span> <button class="copiar" id="btn-conferir" type="button">Conferir agora</button></p>
     </div>
 
+    <section class="card" id="secao-espera" aria-labelledby="t-espera" style="grid-column:1/-1" hidden>
+      <h2 id="t-espera">Lista de espera do IA Work</h2>
+      <p class="sub">Quem pediu para receber o aviso quando abrir a próxima turma, em miaiacademy.com/ia-work/lista-de-espera. O botão da última aula da Formação leva para lá.</p>
+      <div class="numeros" id="espera-numeros"></div>
+      <div class="leads-topo"><button class="pilula" id="btn-copiar-emails" type="button">Copiar todos os e-mails</button></div>
+      <ol class="lista-leads" id="lista-espera"></ol>
+      <p class="nota" id="espera-vazio" hidden>Ninguém na lista de espera ainda.</p>
+    </section>
+
     <section class="card" id="secao-leads" aria-labelledby="t-leads" style="grid-column:1/-1">
       <h2 id="t-leads">Leads</h2>
       <p class="sub">Todo mundo que preencheu o formulário. Em "Conferir", veja na Hub se o e-mail informado foi cadastrado pelo seu link e marque aqui. "Não encontrei" só tira o acesso de quem entrou quando o curso era gratuito; quem pagou a Formação continua com as aulas.</p>
@@ -543,9 +552,73 @@ window.CONFIG = {
     $('#secao-leads').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
+  // ── Lista de espera do IA Work (vem junto com os números, a inscrição mais recente primeiro)
+  const ORIGENS_ESPERA = { formacao: 'Botão da última aula da Formação', miai: 'Direto na página' };
+  let emailsEspera = [];
+  function desenharListaEspera(todas, periodo, nomePeriodo) {
+    $('#secao-espera').hidden = !todas;
+    if (!todas) return;
+    const pessoas = todas.filter((p) => p.curso === 'ia-work');
+    emailsEspera = pessoas.map((p) => p.email);
+    const desde = periodo.desde ? Date.parse(periodo.desde) : 0;
+    const cartoes = [
+      [pessoas.length, pessoas.length === 1 ? 'pessoa na lista' : 'pessoas na lista', true],
+      [pessoas.filter((p) => Date.parse(p.criado_em) >= desde).length, 'entraram ' + nomePeriodo],
+      [pessoas.filter((p) => p.origem === 'formacao').length, 'vieram da Formação'],
+    ];
+    const numeros = $('#espera-numeros');
+    numeros.replaceChildren();
+    cartoes.forEach(([valor, rotulo, destaque]) => {
+      const div = document.createElement('div');
+      div.className = 'numero' + (destaque ? ' numero--destaque' : '');
+      div.innerHTML = '<strong></strong><span></span>';
+      $('strong', div).textContent = inteiro.format(valor);
+      $('span', div).textContent = rotulo;
+      numeros.appendChild(div);
+    });
+    const lista = $('#lista-espera');
+    lista.replaceChildren();
+    pessoas.forEach((p) => {
+      const li = document.createElement('li');
+      li.className = 'lead';
+      li.innerHTML = '<div class="lead__topo"><span class="lead__nome"></span><span class="lead__data"></span></div>'
+        + '<dl class="lead__dados">'
+        + '<div><dt>E-mail</dt><dd class="d-email"></dd></div>'
+        + '<div><dt>WhatsApp</dt><dd class="d-whats"></dd></div>'
+        + '<div><dt>Origem</dt><dd class="d-origem"></dd></div>'
+        + '</dl>';
+      $('.lead__nome', li).textContent = p.nome || '—';
+      $('.lead__data', li).textContent = quando(p.criado_em);
+      const email = document.createElement('a');
+      email.href = 'mailto:' + p.email;
+      email.textContent = p.email;
+      $('.d-email', li).appendChild(email);
+      const digitos = String(p.whatsapp || '').replace(/\D/g, '');
+      if (digitos) {
+        const zap = document.createElement('a');
+        zap.href = 'https://wa.me/' + digitos;
+        zap.target = '_blank';
+        zap.rel = 'noopener';
+        zap.textContent = p.whatsapp;
+        $('.d-whats', li).appendChild(zap);
+      } else $('.d-whats', li).textContent = '—';
+      $('.d-origem', li).textContent = ORIGENS_ESPERA[p.origem] || p.origem || '—';
+      lista.appendChild(li);
+    });
+    $('#espera-vazio').hidden = pessoas.length > 0;
+    $('#btn-copiar-emails').hidden = pessoas.length === 0;
+  }
+  // Para avisar a turma nova: todos os e-mails separados por vírgula
+  $('#btn-copiar-emails').addEventListener('click', async (ev) => {
+    try { await navigator.clipboard.writeText(emailsEspera.join(', ')); ev.target.textContent = 'Copiado (' + emailsEspera.length + ')'; }
+    catch (e) { ev.target.textContent = 'Não copiou'; }
+    setTimeout(() => { ev.target.textContent = 'Copiar todos os e-mails'; }, 1800);
+  });
+
   function desenhar(d) {
     const nomePeriodo = d.periodo.dias ? 'nos últimos ' + d.periodo.dias + ' dias' : 'desde o começo';
     const f = d.funil;
+    desenharListaEspera(d.lista_espera, d.periodo, nomePeriodo);
 
     // Funil
     $('#sub-funil').textContent = 'Visitantes da página inicial e pessoas que preencheram o formulário ' + nomePeriodo + ', e até onde cada uma chegou.';

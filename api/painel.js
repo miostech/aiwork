@@ -1,6 +1,7 @@
 // Painel (/painel): números do funil e das vendas, lista de leads e conferência da Hub.
 // Só para os e-mails em ADMIN_EMAILS (separados por vírgula), que entram com o mesmo login da área do aluno.
-//   GET  /api/painel?dias=7|30|90                       → números (sem "dias" = desde o começo)
+//   GET  /api/painel?dias=7|30|90                       → números (sem "dias" = desde o começo) e a lista de espera
+//                                                          dos cursos (lista_espera, inteira, a mais recente primeiro)
 //   GET  /api/painel?leads=1&filtro=pendente&busca=&pagina=0 → lista de leads (50 por página)
 //   POST /api/painel { lead, conferencia }              → muda a conferência da Hub do lead:
 //        "confirmado", "nao_encontrado" (tira o acesso só de quem entrou quando o curso era gratuito) ou "pendente"
@@ -84,7 +85,14 @@ export default async function handler(req, res) {
     const desde = [7, 30, 90].includes(dias) ? inicioDoPeriodo(dias) : null;
     const { data: numeros, error: erroNumeros } = await db.rpc("painel_funil", { desde });
     if (erroNumeros) throw erroNumeros;
-    return res.status(200).json({ periodo: { dias: desde ? dias : null, desde }, atualizado_em: new Date().toISOString(), ...numeros });
+    // Lista de espera: se não der para ler, o resto do painel aparece mesmo assim
+    const { data: espera, error: erroEspera } = await db.from("lista_espera")
+      .select("curso, nome, email, whatsapp, origem, criado_em").order("criado_em", { ascending: false }).limit(1000);
+    if (erroEspera) console.error("Não foi possível ler a lista de espera:", erroEspera.message);
+    return res.status(200).json({
+      periodo: { dias: desde ? dias : null, desde }, atualizado_em: new Date().toISOString(), ...numeros,
+      lista_espera: erroEspera ? null : espera,
+    });
   } catch (erro) {
     console.error("Erro no painel:", erro);
     return res.status(500).json({ erro: "Não foi possível carregar o painel agora." });
