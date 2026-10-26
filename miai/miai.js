@@ -17,16 +17,25 @@
       capa: '',                            // imagem própria da capa (16:9). Vazio = capa desenhada com a cor acima
       novo: true,                          // selo "Novo" e destaque no topo da página inicial
       professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
-      preco: 'R$ 497',
-      parcelas: '',                        // ex.: 'ou 12x de R$ 49,70 no cartão' (vazio = não mostra)
+      preco: 'R$ 497',                     // no Brasil
+      precoFora: 'US$ 99',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
+      parcelas: '',                        // ex.: 'ou 12x de R$ 49,70 no cartão' (vazio = não mostra; só no Brasil)
       linkPagamento: 'https://buy.stripe.com/fZu00lgOW4GtbD9bPA67S03',   // US$ 99, com R$ 497 fixo no Brasil
       // Cupom de quem veio da Formação IA Academy (/ia-work?origem=curso)
-      cupom: { codigo: 'ACADEMY', preco: 'R$ 197' },
+      cupom: { codigo: 'ACADEMY', preco: 'R$ 197', precoFora: 'US$ 39' },
     },
   ];
 
   const $ = (sel, raiz = document) => raiz.querySelector(sel);
   const curso = (endereco) => CATALOGO.find((c) => c.endereco === endereco) || null;
+
+  // ── Preço na moeda em que o Stripe cobra: reais no Brasil, dólar fora (país vindo de /pais.js, carregado antes).
+  // Até o país chegar vale reais; quem mostra preço reescreve depois de Miai.pais.
+  const pais = window.Pais ? window.Pais.pronto : Promise.resolve('');
+  const foraDoBrasil = () => !!(window.Pais && window.Pais.foraDoBrasil());
+  const precoDe = (c) => (foraDoBrasil() && c.precoFora) || c.preco;
+  const precoCupomDe = (c) => (c.cupom && ((foraDoBrasil() && c.cupom.precoFora) || c.cupom.preco)) || '';
+  const parcelasDe = (c) => (foraDoBrasil() ? '' : c.parcelas || '');
   const areas = () => CATALOGO.map((c) => c.area).filter((a, i, todas) => a && todas.indexOf(a) === i);
 
   // ── Capa do curso: a imagem própria ou uma capa desenhada com a cor, a área, o nome e a foto de quem ensina
@@ -101,12 +110,16 @@
       $('.progresso p', corpo).innerHTML = '<strong>' + concluidas + ' de ' + total + '</strong> aulas concluídas';
       preco.textContent = '';
     } else {
-      preco.textContent = c.preco;
-      if (c.parcelas) {
-        const parcelas = document.createElement('small');
-        parcelas.textContent = c.parcelas;
-        preco.appendChild(parcelas);
-      }
+      const escreverPreco = () => {
+        preco.textContent = precoDe(c);
+        if (parcelasDe(c)) {
+          const parcelas = document.createElement('small');
+          parcelas.textContent = parcelasDe(c);
+          preco.appendChild(parcelas);
+        }
+      };
+      escreverPreco();
+      pais.then(escreverPreco);
     }
     const botao = $('.cartao-curso__rodape a', corpo);
     botao.href = link;
@@ -254,7 +267,7 @@
   }
 
   window.Miai = {
-    catalogo: CATALOGO, curso, areas, capaCurso, cartaoCurso,
+    catalogo: CATALOGO, curso, areas, capaCurso, cartaoCurso, pais, precoDe, precoCupomDe, parcelasDe,
     supabase, chamar, sair, montarLogin, emailGuardado, ajustarTopo,
   };
 })();

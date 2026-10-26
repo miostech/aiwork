@@ -323,6 +323,7 @@ body {
 </style>
 <script src="/contador.js" data-pagina="inicio" defer></script>
 <script src="/player-video.js"></script>
+<script src="/pais.js"></script>
 <script src="/formacao.js"></script>
 </head>
 <body>
@@ -490,16 +491,21 @@ window.CONFIG = {
 
   // ── Textos e links da configuração
   $$('[data-marca]').forEach((el) => { el.textContent = C.marca; });
-  // Preço da vaga: com o cupom da Black Friday enquanto ele valer, depois o preço cheio
+  // Preço da vaga: com o cupom da Black Friday enquanto ele valer, depois o preço cheio.
+  // Em reais no Brasil e em dólar fora: escreve em reais e reescreve quando o país chega (F.pais).
   const F = window.Formacao;
-  if (F.cupomAtivo()) {
-    $('#preco-formacao').innerHTML = 'De <s></s> por <mark class="hl"></mark> com o cupom ' + F.cupom.codigo + ', até ' + F.cupom.ateTexto + '. Preencha seus dados e siga para o pagamento:';
-    $('#preco-formacao s').textContent = F.preco;
-    $('#preco-formacao mark').textContent = F.cupom.preco;
-  } else {
-    $('#preco-formacao').innerHTML = 'Investimento: <mark class="hl"></mark>. Preencha seus dados e siga para o pagamento:';
-    $('#preco-formacao mark').textContent = F.preco;
+  function mostrarPreco() {
+    if (F.cupomAtivo()) {
+      $('#preco-formacao').innerHTML = 'De <s></s> por <mark class="hl"></mark> com o cupom ' + F.cupom.codigo + ', até ' + F.cupom.ateTexto + '. Preencha seus dados e siga para o pagamento:';
+      $('#preco-formacao s').textContent = F.precoCheio();
+      $('#preco-formacao mark').textContent = F.precoCupom();
+    } else {
+      $('#preco-formacao').innerHTML = 'Investimento: <mark class="hl"></mark>. Preencha seus dados e siga para o pagamento:';
+      $('#preco-formacao mark').textContent = F.precoCheio();
+    }
   }
+  mostrarPreco();
+  F.pais.then(mostrarPreco);
   $('#link-termos').href = C.linkTermos;
   $('#link-privacidade').href = C.linkPrivacidade;
   $('#ano').textContent = new Date().getFullYear();
@@ -583,7 +589,10 @@ window.CONFIG = {
   // ── Formulário
   const form = $('#step-1');
   const botao = $('button[type="submit"]', form);
-  botao.firstChild.textContent = 'Garantir vaga por ' + window.Formacao.precoAtual().replace(' ', '\u00a0') + ' ';
+  const textoDoBotao = () => 'Garantir vaga por ' + window.Formacao.precoAtual().replace(' ', '\u00a0') + ' ';
+  botao.firstChild.textContent = textoDoBotao();
+  // quando o pa\u00eds chega (d\u00f3lar fora do Brasil), sem mexer no "Carregando\u2026" de quem j\u00e1 enviou
+  window.Formacao.pais.then(() => { if (!enviando) botao.firstChild.textContent = textoDoBotao(); });
   const campos = { nome: $('#f-nome'), email: $('#f-email'), whatsapp: $('#f-whatsapp') };
   if (state.lead.nome) campos.nome.value = state.lead.nome;
   if (state.lead.email) campos.email.value = state.lead.email;

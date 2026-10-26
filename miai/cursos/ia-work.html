@@ -414,6 +414,7 @@
   </div>
 </footer>
 
+<script src="/pais.js"></script>
 <script src="/miai/miai.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -483,13 +484,19 @@ window.CONFIG = {
   }
 
   // ── Oferta
-  $('#preco').textContent = CURSO.preco;
-  if (CURSO.parcelas) { $('#parcelas').textContent = CURSO.parcelas; $('#parcelas').hidden = false; }
+  // Preço em reais no Brasil e em dólar fora; reescreve quando o país chega (Miai.pais)
+  function mostrarPreco() {
+    $('#preco').textContent = Miai.precoDe(CURSO);
+    $('#parcelas').textContent = Miai.parcelasDe(CURSO);
+    $('#parcelas').hidden = !Miai.parcelasDe(CURSO);
+    if (CURSO.cupom && CURSO.cupom.codigo) $('#cupom-preco').textContent = Miai.precoCupomDe(CURSO);
+  }
+  mostrarPreco();
+  Miai.pais.then(mostrarPreco);
   if (C.prazoAcesso) { $('#item-prazo span').textContent = 'Acesso por ' + C.prazoAcesso; $('#item-prazo').hidden = false; }
   if (C.suporte) { $('#item-suporte span').textContent = C.suporte; $('#item-suporte').hidden = false; }
   if (CURSO.cupom && CURSO.cupom.codigo) {
     $('#cupom-codigo').textContent = CURSO.cupom.codigo;
-    $('#cupom-preco').textContent = CURSO.cupom.preco;
     $('#cupom').hidden = false;
   }
   const comprar = $('#btn-comprar');

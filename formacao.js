@@ -4,25 +4,39 @@
 // ═══════════════════════════════════════════════════════════════
 // O link do Stripe devolve a pessoa para cadastro.html?pagamento=... depois do pagamento, e o servidor libera as
 // aulas (api/stripe-webhook.js). O id desse link também está em api/_cursos.js (CURSOS_IA_ACADEMY).
+//
+// Moeda: no Brasil a página mostra o preço em reais; fora, em dólar (precoFora), como o Stripe cobra. O país vem de
+// /pais.js; enquanto ele não chega, a página mostra reais e depois chama de novo quem esperou Formacao.pais.
 (function () {
   'use strict';
 
   const FORMACAO = {
     nome: 'Formação IA Academy',
-    preco: 'R$ 98',
     // US$ 19 no Stripe, com R$ 98 fixo para quem está no Brasil (nos outros países o Stripe converte para a moeda local)
+    preco: 'R$ 98',
+    precoFora: 'US$ 19',
     linkPagamento: 'https://buy.stripe.com/5kQbJ32Y61uh7mT7zk67S02',
     // Cupom da Black Friday: vai preenchido no pagamento até o fim do dia 30/11/2026 (horário de Brasília),
     // quando o código também expira no Stripe. Depois disso a página mostra só o preço cheio.
-    cupom: { codigo: 'BLACKFRIDAY', preco: 'R$ 28', ate: '2026-12-01T02:59:59Z', ateTexto: '30/11' },
+    cupom: { codigo: 'BLACKFRIDAY', preco: 'R$ 28', precoFora: 'US$ 6', ate: '2026-12-01T02:59:59Z', ateTexto: '30/11' },
   };
+
+  const foraDoBrasil = () => !!(window.Pais && window.Pais.foraDoBrasil());
 
   function cupomAtivo() {
     return !!(FORMACAO.cupom && FORMACAO.cupom.codigo && Date.now() <= Date.parse(FORMACAO.cupom.ate));
   }
 
+  function precoCheio() {
+    return foraDoBrasil() ? FORMACAO.precoFora : FORMACAO.preco;
+  }
+
+  function precoCupom() {
+    return foraDoBrasil() ? FORMACAO.cupom.precoFora : FORMACAO.cupom.preco;
+  }
+
   function precoAtual() {
-    return cupomAtivo() ? FORMACAO.cupom.preco : FORMACAO.preco;
+    return cupomAtivo() ? precoCupom() : precoCheio();
   }
 
   // Link do Stripe com o e-mail do formulário, o cupom (enquanto valer) e o id do cadastro (lead) já preenchidos
@@ -36,5 +50,7 @@
     return url.toString();
   }
 
-  window.Formacao = Object.assign({}, FORMACAO, { cupomAtivo, precoAtual, urlPagamento });
+  const pais = window.Pais ? window.Pais.pronto : Promise.resolve('');
+
+  window.Formacao = Object.assign({}, FORMACAO, { cupomAtivo, precoCheio, precoCupom, precoAtual, urlPagamento, pais });
 })();

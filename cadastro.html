@@ -289,6 +289,7 @@ body {
 </style>
 <script src="/contador.js" data-pagina="cadastro" defer></script>
 <script src="/player-video.js"></script>
+<script src="/pais.js"></script>
 <script src="/formacao.js"></script>
 </head>
 <body>
@@ -1000,12 +1001,17 @@ window.CONFIG = {
     $$('[data-pag]', pagamento).forEach((el) => { el.hidden = el.dataset.pag !== estado; });
     if (estado === 'falta') {
       $('#btn-pagar').href = F.urlPagamento({ email: state.lead.email, leadId: state.leadId });
-      $('#btn-pagar').textContent = 'Ir para o pagamento · ' + F.precoAtual();
-      $('#pagamento-preco').innerHTML = F.cupomAtivo()
-        ? 'De <s>' + F.preco + '</s> por ' + F.cupom.preco + ' com o cupom ' + F.cupom.codigo + ', até ' + F.cupom.ateTexto + '.'
-        : 'Investimento: ' + F.preco + '.';
+      mostrarPreco();
     }
   }
+  // Em reais no Brasil e em dólar fora; reescreve quando o país chega (F.pais)
+  function mostrarPreco() {
+    $('#btn-pagar').textContent = 'Ir para o pagamento · ' + F.precoAtual();
+    $('#pagamento-preco').innerHTML = F.cupomAtivo()
+      ? 'De <s>' + F.precoCheio() + '</s> por ' + F.precoCupom() + ' com o cupom ' + F.cupom.codigo + ', até ' + F.cupom.ateTexto + '.'
+      : 'Investimento: ' + F.precoCheio() + '.';
+  }
+  F.pais.then(mostrarPreco);
   function continuarCadastro() {
     state.pago = true;
     save();
