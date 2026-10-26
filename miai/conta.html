@@ -25,6 +25,7 @@ main { min-height: 60vh; }
 .conta__ola p { color: var(--suave); max-width: 52ch; }
 .bloco { display: grid; gap: 0; }
 .bloco > .rotulo { margin-bottom: 20px; }
+.bloco .grade-cursos { padding-top: 24px; border-top: 1px solid var(--linha); }
 .vazio { display: grid; gap: 14px; justify-items: start; padding: 28px 0 32px; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); }
 .vazio h3 { font-size: clamp(26px, 3.6vw, 34px); }
 .vazio p { color: var(--suave); max-width: 52ch; }
@@ -104,7 +105,7 @@ main { min-height: 60vh; }
 
     <section class="bloco" aria-labelledby="titulo-meus">
       <span class="rotulo"><b>01</b> <span id="titulo-meus">Meus cursos</span></span>
-      <ul class="cursos" id="meus-cursos"></ul>
+      <div class="grade-cursos" id="meus-cursos"></div>
       <div class="vazio" id="sem-cursos" hidden>
         <h3>Você ainda não tem cursos na MIAI.</h3>
         <p>Quando você comprar um curso, ele aparece aqui. Se já comprou, confira se entrou com o mesmo e-mail do pagamento.</p>
@@ -114,7 +115,7 @@ main { min-height: 60vh; }
 
     <section class="bloco" id="bloco-outros" aria-labelledby="titulo-outros" hidden>
       <span class="rotulo"><b>02</b> <span id="titulo-outros">Outros cursos da MIAI</span></span>
-      <ul class="cursos" id="outros-cursos"></ul>
+      <div class="grade-cursos" id="outros-cursos"></div>
     </section>
   </div>
 </main>
@@ -174,13 +175,13 @@ main { min-height: 60vh; }
     Miai.catalogo.forEach((curso) => {
       const meu = tenho.get(curso.endereco);
       if (meu) {
-        meus.appendChild(Miai.linhaCurso(curso, meus.children.length + 1, {
+        meus.appendChild(Miai.cartaoCurso(curso, {
           acao: meu.concluidas ? 'Continuar' : 'Começar',
           link: '/conta/' + curso.endereco,
           progresso: { concluidas: meu.concluidas, total: meu.total },
         }));
       } else {
-        outros.appendChild(Miai.linhaCurso(curso, outros.children.length + 1));
+        outros.appendChild(Miai.cartaoCurso(curso));
       }
     });
     $('#meus-cursos').hidden = meus.children.length === 0;

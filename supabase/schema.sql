@@ -52,6 +52,14 @@ create table if not exists public.visitas (
 );
 create index if not exists visitas_dia_idx on public.visitas (dia);
 
+-- ── Interessados: quem pediu para ser avisado dos próximos cursos na página da MIAI (api/avise.js) ──
+create table if not exists public.interessados (
+  id         uuid primary key default gen_random_uuid(),
+  criado_em  timestamptz not null default now(),
+  email      text not null unique,
+  origem     text not null default 'miai'   -- página onde a pessoa pediu o aviso
+);
+
 -- ── Validações: cada print enviado e o resultado da conferência da IA ──
 create table if not exists public.validacoes (
   id           uuid primary key default gen_random_uuid(),
@@ -289,6 +297,7 @@ alter table public.alunos     enable row level security;
 alter table public.acessos    enable row level security;
 alter table public.compras    enable row level security;
 alter table public.visitas    enable row level security;
+alter table public.interessados enable row level security;
 
 drop policy if exists "aluno lê o próprio cadastro" on public.alunos;
 create policy "aluno lê o próprio cadastro" on public.alunos

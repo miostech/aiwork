@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MIAI Academy · Cursos para conquistar as melhores oportunidades</title>
-<meta name="description" content="Cursos práticos para você conquistar as melhores oportunidades. Escolha um curso, pague só por ele e assista no seu ritmo, na sua conta da MIAI Academy.">
+<title>MIAI Academy · Cursos práticos de várias áreas</title>
+<meta name="description" content="Cursos práticos de várias áreas para aprender com quem faz. Escolha um curso, pague só por ele e assista no seu ritmo, na sua conta da MIAI Academy.">
 <meta name="theme-color" content="#F3F1EC">
 <link rel="icon" type="image/png" href="/miai/favicon.png">
 <link rel="apple-touch-icon" href="/miai/icone-180.png">
@@ -13,28 +13,39 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <link rel="stylesheet" href="/miai/miai.css">
 <!--
-  PÁGINA INICIAL DA MIAI ACADEMY (endereço: miaiacademy.com)
-  Os cursos da lista vêm do CATÁLOGO em miai/miai.js. Os textos desta página ficam aqui mesmo.
+  PÁGINA INICIAL DA MIAI ACADEMY (endereço: miaiacademy.com) — a vitrine dos cursos
+  Os cursos vêm do CATÁLOGO em miai/miai.js: cada bloco vira um cartão. O curso marcado como "novo" aparece em
+  destaque na primeira dobra, e os botões de área só aparecem quando houver cursos de mais de uma área.
+  Os textos desta página ficam aqui mesmo.
 -->
 <!-- Google Analytics e Google Ads (os mesmos do site antigo da Mios Academy, miosacademy.com) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
 <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
 <style>
-/* Primeira dobra */
+/* Primeira dobra: a escola à esquerda e o curso novo em destaque à direita */
 .hero { padding: 40px 0 56px; }
 .hero__etiquetas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; padding-top: 18px; border-top: 1px solid var(--linha); }
-.hero__grade { display: grid; gap: 32px; margin-top: 48px; }
-.hero h1 { font-size: clamp(44px, 9vw, 88px); line-height: 0.98; max-width: 13ch; }
-.hero__lado { display: grid; gap: 22px; align-content: end; justify-items: start; }
-.hero__lado p { color: var(--suave); max-width: 34ch; }
-.hero__lado .link-botao { color: var(--tinta); text-decoration: none; }
-.hero__lado .link-botao:hover { text-decoration: underline; }
-@media (min-width: 900px) {
+.hero__grade { display: grid; gap: 40px; margin-top: 44px; align-items: end; }
+.hero__texto { display: grid; gap: 24px; justify-items: start; }
+.hero h1 { font-size: clamp(42px, 7.6vw, 80px); line-height: 1.02; max-width: 15ch; }
+.hero h1 em { font-style: normal; color: var(--roxo); }
+.hero__sub { color: var(--suave); font-size: 18px; max-width: 50ch; }
+.hero__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.hero__cta .link-botao { color: var(--tinta); text-decoration: none; font-size: 15px; }
+.hero__cta .link-botao:hover { text-decoration: underline; }
+.destaque { display: grid; gap: 14px; width: 100%; max-width: 440px; text-decoration: none; }
+.destaque__linha { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.destaque__linha p { color: var(--suave); font-size: 15px; }
+.destaque__linha strong { display: block; font-family: var(--fonte-titulo); font-weight: 500; font-size: 20px; color: var(--tinta); }
+.destaque .seta { font-size: 22px; transition: transform 0.15s; }
+.destaque:hover .seta { transform: translateX(4px); }
+.destaque:hover strong { color: var(--roxo); }
+@media (min-width: 960px) {
   .hero { padding: 48px 0 72px; }
-  .hero__grade { grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; margin-top: 64px; }
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 400px; gap: 56px; margin-top: 60px; }
 }
 
-/* Vídeo de apresentação (o mesmo do site antigo da Mios Academy), logo abaixo da primeira dobra */
+/* Vídeo de apresentação (o mesmo do site antigo da Mios Academy, com o logo da MIAI) */
 .filme { padding-bottom: 56px; }
 .filme__quadro { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--tinta); }
 .filme video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: var(--tinta); }
@@ -50,10 +61,74 @@
 .filme__legenda { display: flex; justify-content: space-between; gap: 12px; padding-top: 14px; }
 @media (min-width: 900px) { .filme { padding-bottom: 72px; } }
 
+/* Filtro por área (só aparece com cursos de mais de uma área) */
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.filtro { padding: 8px 16px; border: 1px solid var(--linha-forte); background: transparent; color: var(--tinta); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
+.filtro:hover { border-color: var(--tinta); }
+.filtro[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: var(--papel); }
+
+/* "Avise-me dos próximos cursos": um cartão a mais na grade */
+.avise { display: grid; align-content: center; gap: 14px; padding: 28px 24px; border: 1px dashed var(--linha-forte); }
+.avise h3 { font-size: 28px; }
+.avise > p { color: var(--suave); }
+.avise form { display: grid; gap: 8px; }
+.avise__linha { display: flex; gap: 8px; }
+.avise input[type="email"] { flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 11px 14px; border: 1px solid var(--linha-forte); background: var(--papel-claro); color: var(--tinta); }
+.avise input[type="email"]:focus { outline: none; border-color: var(--roxo); box-shadow: 0 0 0 3px var(--roxo-fundo); }
+.avise .escondido { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Por que a MIAI: seis vantagens em grade, separadas por linhas finas */
+.vantagens { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--linha); }
+.vantagem { display: grid; gap: 10px; align-content: start; padding: 26px 0 30px; border-bottom: 1px solid var(--linha); }
+.vantagem svg { color: var(--roxo); }
+.vantagem h3 { font-size: 24px; }
+.vantagem p { color: var(--suave); max-width: 38ch; }
+@media (min-width: 720px) {
+  .vantagens { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vantagem { padding: 30px 28px 34px 0; }
+  .vantagem:nth-child(2n) { padding-left: 28px; border-left: 1px solid var(--linha); }
+}
+@media (min-width: 1040px) {
+  .vantagens { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .vantagem, .vantagem:nth-child(2n) { padding: 30px 28px 34px; border-left: 1px solid var(--linha); }
+  .vantagem:nth-child(3n + 1) { padding-left: 0; border-left: 0; }
+}
+
+/* Por dentro: a área do aluno desenhada (as mesmas cores e partes da página de aulas) */
+.dentro { display: grid; gap: 44px; align-items: center; }
+.dentro__texto { display: grid; gap: 18px; justify-items: start; }
+.dentro__texto h2 { font-size: clamp(36px, 5.6vw, 56px); }
+.dentro__texto > p { color: var(--escuro-suave); max-width: 46ch; }
+.dentro__lista { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 12px; }
+.dentro__lista li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; color: var(--escuro-texto); }
+.dentro__lista svg { color: #B79CF0; margin-top: 3px; }
+@media (min-width: 980px) { .dentro { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 64px; } }
+
+.tela { background: var(--papel); color: var(--tinta); border: 1px solid var(--escuro-linha); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.8); font-size: 12px; }
+.tela__barra { display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: var(--papel-escuro); border-bottom: 1px solid var(--linha); }
+.tela__barra i { width: 9px; height: 9px; border-radius: 50%; background: rgba(20, 19, 15, 0.2); }
+.tela__barra span { margin-left: 10px; padding: 3px 10px; background: var(--papel-claro); color: var(--suave); font-size: 11px; border: 1px solid var(--linha); }
+.tela__corpo { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; padding: 16px; }
+.tela__player { position: relative; aspect-ratio: 16 / 9; background: var(--tinta) center / cover no-repeat; display: grid; place-items: center; }
+.tela__player span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--papel); color: var(--tinta); }
+.tela__rotulo { margin-top: 10px; font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--roxo); }
+.tela__titulo { margin-top: 2px; font-family: var(--fonte-titulo); font-weight: 500; font-size: 16px; line-height: 1.15; }
+.tela__progresso { margin-top: 10px; height: 3px; background: var(--linha); }
+.tela__progresso span { display: block; height: 100%; width: 34%; background: var(--roxo); }
+.tela__botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.tela__botoes b { padding: 6px; text-align: center; font-weight: 500; font-size: 10px; border: 1px solid var(--tinta); }
+.tela__botoes b + b { background: var(--tinta); color: var(--papel); }
+.tela__lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--tinta); }
+.tela__lista li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 8px; align-items: center; padding: 7px 4px; border-bottom: 1px solid var(--linha); font-size: 11px; line-height: 1.3; }
+.tela__lista li b { width: 16px; height: 16px; display: grid; place-items: center; border: 1px solid var(--linha-forte); font-size: 9px; font-weight: 600; color: var(--suave); }
+.tela__lista li.feita b { background: var(--verde); border-color: var(--verde); color: var(--papel); }
+.tela__lista li.atual { background: var(--papel-claro); box-shadow: inset 2px 0 0 var(--roxo); }
+@media (max-width: 520px) { .tela__corpo { grid-template-columns: 1fr; } .tela__lista li:nth-child(n + 5) { display: none; } }
+
 /* Como funciona: três passos lado a lado, separados por linhas finas */
 .passos { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--linha); }
 .passo { display: grid; gap: 12px; align-content: start; padding: 28px 0; border-bottom: 1px solid var(--linha); }
-.passo h3 { font-size: 28px; }
+.passo h3 { font-size: 26px; }
 .passo p { color: var(--suave); max-width: 40ch; }
 @media (min-width: 860px) {
   .passos { grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--linha); }
@@ -61,7 +136,7 @@
   .passo:first-child { border-left: 0; padding-left: 0; }
 }
 
-/* Chamada final (escura, como o "Vamos construir o seu próximo produto." da Mios Tech) */
+/* Chamada final (escura) */
 .final h2 { font-size: clamp(40px, 7vw, 72px); max-width: 14ch; }
 .final p { margin-top: 18px; color: var(--escuro-suave); max-width: 46ch; }
 .final__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 32px; }
@@ -86,16 +161,27 @@
   <section class="hero">
     <div class="container">
       <div class="hero__etiquetas">
-        <span class="rotulo rotulo--ponto">Escola online da MIAI</span>
-        <span class="rotulo">Pague só pelo curso que escolher</span>
+        <span class="rotulo rotulo--ponto">Escola online</span>
+        <span class="rotulo">Cursos de várias áreas · Pague só pelo que escolher</span>
       </div>
       <div class="hero__grade">
-        <h1>Aprenda o que o mercado procura e conquiste as melhores oportunidades.</h1>
-        <div class="hero__lado">
-          <p>Cursos práticos e diretos ao ponto. Você escolhe o curso, paga só por ele e assiste no seu ritmo, na sua conta da MIAI Academy.</p>
-          <a class="botao botao--tinta botao--grande" href="#cursos">Ver os cursos <span class="seta" aria-hidden="true">→</span></a>
-          <a class="link-botao" href="/conta">Já sou aluno</a>
+        <div class="hero__texto">
+          <h1>Cursos práticos para aprender <em>com quem faz.</em></h1>
+          <p class="hero__sub">Cursos de áreas diferentes, sempre direto ao ponto. Escolha um, pague só por ele e assista no seu ritmo. Todos os seus cursos ficam numa conta só.</p>
+          <div class="hero__cta">
+            <a class="botao botao--tinta botao--grande" href="#cursos">Ver os cursos <span class="seta" aria-hidden="true">→</span></a>
+            <a class="link-botao" href="/conta">Já sou aluno</a>
+          </div>
         </div>
+        <!-- Curso novo em destaque (o primeiro do catálogo com "novo: true") -->
+        <a class="destaque" id="destaque" href="#cursos" hidden>
+          <span class="rotulo rotulo--ponto">Novo na MIAI</span>
+          <div id="destaque-capa"></div>
+          <div class="destaque__linha">
+            <div><strong id="destaque-nome"></strong><p id="destaque-texto"></p></div>
+            <span class="seta" aria-hidden="true">→</span>
+          </div>
+        </a>
       </div>
     </div>
   </section>
@@ -116,11 +202,11 @@
     </div>
   </section>
 
-  <!-- Faixa com os temas (a lista aparece duas vezes para a faixa correr sem emenda) -->
+  <!-- Faixa com as vantagens (a lista aparece duas vezes para a faixa correr sem emenda) -->
   <div class="faixa" aria-hidden="true">
     <div class="faixa__trilho">
-      <span>Cursos práticos</span><span>IA aplicada</span><span>Treinamento de IA</span><span>Renda em dólar</span><span>Trabalho remoto</span><span>Carreira internacional</span><span>No seu ritmo</span>
-      <span>Cursos práticos</span><span>IA aplicada</span><span>Treinamento de IA</span><span>Renda em dólar</span><span>Trabalho remoto</span><span>Carreira internacional</span><span>No seu ritmo</span>
+      <span>Aulas práticas</span><span>Pague só pelo curso</span><span>Acesso imediato</span><span>Garantia de 7 dias</span><span>Assista no celular</span><span>Uma conta para todos os cursos</span>
+      <span>Aulas práticas</span><span>Pague só pelo curso</span><span>Acesso imediato</span><span>Garantia de 7 dias</span><span>Assista no celular</span><span>Uma conta para todos os cursos</span>
     </div>
   </div>
 
@@ -129,45 +215,147 @@
     <div class="container">
       <div class="secao__topo">
         <span class="rotulo"><b>01</b> Cursos</span>
-        <h2 id="titulo-cursos">Escolha o seu próximo passo.</h2>
-        <p>Cada curso tem o seu próprio pagamento. Na sua conta aparecem só os cursos que você comprou.</p>
+        <h2 id="titulo-cursos">Escolha o seu próximo curso.</h2>
+        <p>Cada curso tem o seu próprio pagamento e entra na sua conta assim que o pagamento é confirmado.</p>
       </div>
-      <ul class="cursos" id="lista-cursos"></ul>
+      <div class="filtros" id="filtros" role="group" aria-label="Filtrar cursos por área" hidden></div>
+      <div class="grade-cursos" id="lista-cursos">
+        <aside class="avise" id="avise" aria-labelledby="titulo-avise">
+          <span class="rotulo rotulo--ponto">Em breve</span>
+          <h3 id="titulo-avise">Novos cursos a caminho.</h3>
+          <p>Deixe o seu e-mail e avisamos quando abrir um curso novo. Sem spam: só os lançamentos.</p>
+          <form id="form-avise" novalidate>
+            <label class="escondido" for="f-avise">E-mail</label>
+            <div class="avise__linha">
+              <input id="f-avise" type="email" autocomplete="email" inputmode="email" placeholder="seu@email.com" required>
+              <button class="botao botao--tinta" id="btn-avise" type="submit">Avise-me</button>
+            </div>
+            <input class="escondido" type="text" name="site" id="f-avise-site" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <p class="aviso-ok" id="ok-avise" role="status"></p>
+            <p class="aviso-erro" id="erro-avise" role="alert"></p>
+          </form>
+        </aside>
+      </div>
     </div>
   </section>
 
-  <!-- ═══ 02 Como funciona ═══ -->
-  <section class="secao" aria-labelledby="titulo-como" style="padding-top: 0">
+  <!-- ═══ 02 Por que a MIAI ═══ -->
+  <section class="secao" aria-labelledby="titulo-porque" style="padding-top: 0">
     <div class="container">
       <div class="secao__topo">
-        <span class="rotulo"><b>02</b> Como funciona</span>
+        <span class="rotulo"><b>02</b> Por que a MIAI</span>
+        <h2 id="titulo-porque">Do jeito que estudar online deveria ser.</h2>
+      </div>
+      <ul class="vantagens">
+        <li class="vantagem">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg>
+          <h3>Prático do começo ao fim</h3>
+          <p>Cada curso vai direto ao que você precisa fazer, com exemplos reais de quem trabalha com aquilo.</p>
+        </li>
+        <li class="vantagem">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+          <h3>Pague só pelo que escolher</h3>
+          <p>Sem assinatura e sem pacote: cada curso tem o seu preço, e você compra só o que fizer sentido.</p>
+        </li>
+        <li class="vantagem">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+          <h3>Acesso imediato</h3>
+          <p>O acesso chega no seu e-mail assim que o pagamento é confirmado. No cartão, em segundos.</p>
+        </li>
+        <li class="vantagem">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.6"/></svg>
+          <h3>Garantia de 7 dias</h3>
+          <p>Se o curso não for para você, peça o reembolso em até 7 dias e devolvemos 100% do valor.</p>
+        </li>
+        <li class="vantagem">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9h18M8 4v5"/></svg>
+          <h3>Uma conta para tudo</h3>
+          <p>Todos os seus cursos e o seu progresso ficam num lugar só, com o mesmo e-mail e senha.</p>
+        </li>
+        <li class="vantagem">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
+          <h3>No seu ritmo, onde quiser</h3>
+          <p>Assista no computador ou no celular, quando quiser, e continue de onde parou.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══ 03 Por dentro da plataforma ═══ -->
+  <section class="secao secao--escura" aria-labelledby="titulo-dentro">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>03</b> Por dentro</span>
+      </div>
+      <div class="dentro">
+        <div class="dentro__texto">
+          <h2 id="titulo-dentro">Uma conta, todos os seus cursos.</h2>
+          <p>Depois da compra, você entra com o seu e-mail e a sua senha e encontra os seus cursos organizados, aula por aula.</p>
+          <ul class="dentro__lista">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Aulas em vídeo organizadas por módulo</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Progresso salvo, em qualquer aparelho</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Links e materiais de cada aula</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Sem aplicativo: é só entrar pelo navegador</li>
+          </ul>
+          <a class="botao botao--claro botao--grande" href="#cursos">Ver os cursos <span class="seta" aria-hidden="true">→</span></a>
+        </div>
+        <!-- Desenho da página de aulas (decorativo) -->
+        <div class="tela" aria-hidden="true">
+          <div class="tela__barra"><i></i><i></i><i></i><span>miaiacademy.com/conta/ia-work</span></div>
+          <div class="tela__corpo">
+            <div>
+              <div class="tela__player" style="background-image: url('/miai/capa-video.jpg')"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span></div>
+              <p class="tela__rotulo">Módulo 3 · Aula 3 de 6</p>
+              <p class="tela__titulo">Currículo e perfil em inglês</p>
+              <div class="tela__progresso"><span></span></div>
+              <div class="tela__botoes"><b>Marcar como concluída</b><b>Próxima aula</b></div>
+            </div>
+            <ul class="tela__lista">
+              <li class="feita"><b>✓</b>O mercado de IA para especialistas</li>
+              <li class="feita"><b>✓</b>As plataformas certas para a sua área</li>
+              <li class="atual"><b>3</b>Currículo e perfil em inglês</li>
+              <li><b>4</b>Os testes de entrada</li>
+              <li><b>5</b>Qualidade que mantém você nos projetos</li>
+              <li><b>6</b>Receber, declarar e organizar a rotina</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 04 Como funciona ═══ -->
+  <section class="secao" aria-labelledby="titulo-como">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>04</b> Como funciona</span>
         <h2 id="titulo-como">Do pagamento à primeira aula.</h2>
       </div>
       <ol class="passos">
         <li class="passo">
           <span class="rotulo"><b>01</b></span>
           <h3>Escolha o curso</h3>
-          <p>Veja o que cada curso ensina, para quem ele é e quanto custa. Sem assinatura e sem pacote.</p>
+          <p>Veja o que cada curso ensina, para quem ele é e quanto custa.</p>
         </li>
         <li class="passo">
           <span class="rotulo"><b>02</b></span>
           <h3>Pague só por ele</h3>
-          <p>Pagamento seguro pelo Stripe. Assim que ele é confirmado, o acesso chega no seu e-mail.</p>
+          <p>Pagamento seguro pelo Stripe, no cartão ou no Pix. Assim que ele é confirmado, o acesso chega no seu e-mail.</p>
         </li>
         <li class="passo">
           <span class="rotulo"><b>03</b></span>
           <h3>Assista na sua conta</h3>
-          <p>Entre com o seu e-mail e a sua senha. Os seus cursos e o seu progresso ficam todos num lugar só.</p>
+          <p>Entre com o seu e-mail e a sua senha. Comprou outro curso depois? Ele aparece na mesma conta.</p>
         </li>
       </ol>
     </div>
   </section>
 
-  <!-- ═══ 03 Perguntas frequentes ═══ -->
+  <!-- ═══ 05 Perguntas frequentes ═══ -->
   <section class="secao" aria-labelledby="titulo-faq" style="padding-top: 0">
     <div class="container">
       <div class="secao__topo">
-        <span class="rotulo"><b>03</b> Perguntas</span>
+        <span class="rotulo"><b>05</b> Perguntas</span>
         <h2 id="titulo-faq">Dúvidas frequentes.</h2>
       </div>
       <div class="faq">
@@ -182,6 +370,10 @@
         <details>
           <summary>Comprei um curso. Onde eu assisto?</summary>
           <p>Em <a class="link" href="/conta">Minha conta</a>. Entre com o e-mail que você usou no pagamento e a senha que recebeu por e-mail.</p>
+        </details>
+        <details>
+          <summary>Se eu comprar outro curso depois, preciso de outra conta?</summary>
+          <p>Não. Pague com o mesmo e-mail e o curso novo aparece na mesma conta, junto com os que você já tem.</p>
         </details>
         <details>
           <summary>Esqueci a minha senha. E agora?</summary>
@@ -213,7 +405,7 @@
     <div class="rodape__grade">
       <div>
         <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
-        <p>Cursos práticos para você conquistar as melhores oportunidades, no seu ritmo.</p>
+        <p>Cursos práticos de várias áreas para aprender com quem faz, no seu ritmo.</p>
       </div>
       <div class="rodape__coluna">
         <span class="rotulo">Cursos</span>
@@ -235,22 +427,81 @@
 <script>
 (function () {
   'use strict';
+  const $ = (sel) => document.querySelector(sel);
   Miai.ajustarTopo();
 
   // Vídeo: o botão grande da capa dá o play; depois ficam os controles normais do navegador
-  const filme = document.getElementById('filme');
-  const play = document.getElementById('filme-play');
+  const filme = $('#filme');
+  const play = $('#filme-play');
   play.addEventListener('click', () => { filme.play().catch(() => {}); });
   filme.addEventListener('play', () => { play.hidden = true; });
 
-  const lista = document.getElementById('lista-cursos');
-  const rodape = document.getElementById('rodape-cursos');
-  Miai.catalogo.forEach((curso, i) => {
-    lista.appendChild(Miai.linhaCurso(curso, i + 1));
+  // Cursos: um cartão por curso do catálogo, antes do cartão "Avise-me"
+  const lista = $('#lista-cursos');
+  const avise = $('#avise');
+  const rodape = $('#rodape-cursos');
+  Miai.catalogo.forEach((curso) => {
+    lista.insertBefore(Miai.cartaoCurso(curso), avise);
     const link = document.createElement('a');
     link.href = '/' + curso.endereco;
     link.textContent = curso.nome;
     rodape.appendChild(link);
+  });
+
+  // Destaque da primeira dobra: o primeiro curso marcado como novo
+  const novo = Miai.catalogo.find((c) => c.novo);
+  if (novo) {
+    $('#destaque').href = '/' + novo.endereco;
+    $('#destaque-capa').appendChild(Miai.capaCurso(novo));
+    $('#destaque-nome').textContent = novo.nome;
+    $('#destaque-texto').textContent = novo.chamada;
+    $('#destaque').hidden = false;
+  }
+
+  // Filtro por área: só aparece quando há cursos de mais de uma área
+  const areas = Miai.areas();
+  if (areas.length > 1) {
+    const filtros = $('#filtros');
+    ['Todas'].concat(areas).forEach((area, i) => {
+      const botao = document.createElement('button');
+      botao.type = 'button';
+      botao.className = 'filtro';
+      botao.textContent = area;
+      botao.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+      botao.addEventListener('click', () => {
+        filtros.querySelectorAll('.filtro').forEach((b) => b.setAttribute('aria-pressed', b === botao ? 'true' : 'false'));
+        lista.querySelectorAll('.cartao-curso').forEach((cartao) => {
+          cartao.hidden = !(i === 0 || cartao.dataset.area === area);
+        });
+      });
+      filtros.appendChild(botao);
+    });
+    filtros.hidden = false;
+  }
+
+  // Avise-me dos próximos cursos
+  $('#form-avise').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const email = $('#f-avise').value.trim().toLowerCase();
+    $('#ok-avise').textContent = '';
+    $('#erro-avise').textContent = '';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { $('#erro-avise').textContent = 'Digite um e-mail válido.'; return; }
+    const botao = $('#btn-avise');
+    botao.disabled = true;
+    try {
+      const resposta = await fetch('/api/avise', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, origem: 'miai', site: $('#f-avise-site').value }),
+      });
+      if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+      $('#ok-avise').textContent = 'Pronto! Avisamos você quando abrir um curso novo.';
+      $('#f-avise').value = '';
+    } catch (e) {
+      $('#erro-avise').textContent = 'Não conseguimos guardar agora. Tente de novo em instantes.';
+    } finally {
+      botao.disabled = false;
+    }
   });
 })();
 </script>

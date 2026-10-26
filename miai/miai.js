@@ -10,8 +10,13 @@
     {
       endereco: 'ia-work',                 // miaiacademy.com/ia-work (vendas) e /conta/ia-work (aulas)
       nome: 'IA Work',
+      area: 'Inteligência Artificial',     // vira um filtro na página inicial quando houver cursos de mais de uma área
       chamada: 'Use o que você já sabe para treinar IA e receber acima de US$ 20 por hora.',
-      etiquetas: ['Para profissionais', 'Com a Camila', '6 módulos'],
+      detalhes: ['6 módulos', 'Acesso imediato', 'Garantia de 7 dias'],
+      cor: '#5E1D93',                      // cor da capa desenhada (cada curso com a sua)
+      capa: '',                            // imagem própria da capa (16:9). Vazio = capa desenhada com a cor acima
+      novo: true,                          // selo "Novo" e destaque no topo da página inicial
+      professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
       preco: 'R$ 497',
       parcelas: '',                        // ex.: 'ou 12x de R$ 49,70 no cartão' (vazio = não mostra)
       linkPagamento: 'https://buy.stripe.com/9B65kFeGO0qd8qXdXI67S00',
@@ -22,40 +27,79 @@
 
   const $ = (sel, raiz = document) => raiz.querySelector(sel);
   const curso = (endereco) => CATALOGO.find((c) => c.endereco === endereco) || null;
+  const areas = () => CATALOGO.map((c) => c.area).filter((a, i, todas) => a && todas.indexOf(a) === i);
 
-  // ── Linha de um curso na lista (catálogo e conta), como a lista de serviços da Mios Tech
-  // opcoes: { acao: 'Conhecer o curso', link, progresso: { concluidas, total } }
-  function linhaCurso(c, numero, opcoes) {
+  // ── Capa do curso: a imagem própria ou uma capa desenhada com a cor, a área, o nome e a foto de quem ensina
+  // link vazio = capa sem link (quando ela já está dentro de outro link, como no destaque da página inicial)
+  function capaCurso(c, link) {
+    const capa = document.createElement(link ? 'a' : 'div');
+    capa.className = 'capa-curso' + (c.capa ? ' capa-curso--imagem' : '');
+    if (link) {
+      capa.href = link;
+      capa.tabIndex = -1;                  // o link do título já leva ao curso (evita duas paradas no teclado)
+    }
+    capa.setAttribute('aria-hidden', 'true');
+    capa.style.setProperty('--cor', c.cor || '#5E1D93');
+    capa.innerHTML = '<span class="capa-curso__area"></span><strong class="capa-curso__nome"></strong>';
+    $('.capa-curso__area', capa).textContent = c.area || '';
+    $('.capa-curso__nome', capa).textContent = c.nome;
+    if (c.capa) {
+      const img = new Image();
+      img.src = c.capa; img.alt = ''; img.loading = 'lazy';
+      capa.prepend(img);
+    }
+    if (c.professor && c.professor.foto) {
+      const foto = new Image();
+      foto.className = 'capa-curso__foto';
+      foto.src = c.professor.foto; foto.alt = ''; foto.loading = 'lazy';
+      capa.appendChild(foto);
+    }
+    if (c.novo) {
+      const selo = document.createElement('span');
+      selo.className = 'capa-curso__selo';
+      selo.textContent = 'Novo';
+      capa.appendChild(selo);
+    }
+    return capa;
+  }
+
+  // ── Cartão de um curso (catálogo e conta)
+  // opcoes: { acao: 'Ver curso', link, progresso: { concluidas, total } }
+  function cartaoCurso(c, opcoes) {
     opcoes = opcoes || {};
-    const li = document.createElement('li');
-    li.className = 'curso';
-    li.innerHTML =
-      '<span class="curso__numero"></span>'
-      + '<h3 class="curso__nome"><a></a></h3>'
-      + '<div class="curso__texto"><p></p><p class="curso__meta"></p>'
-      + '  <div class="progresso" hidden><div class="progresso__barra"><span></span></div><p></p></div></div>'
-      + '<div class="curso__fim"><p class="curso__preco"></p><span class="curso__acao"><span></span><span class="seta" aria-hidden="true">→</span></span></div>';
-
-    $('.curso__numero', li).textContent = String(numero).padStart(2, '0');
-    const nome = $('.curso__nome a', li);
+    const link = opcoes.link || '/' + c.endereco;
+    const el = document.createElement('article');
+    el.className = 'cartao-curso';
+    el.dataset.area = c.area || '';
+    el.appendChild(capaCurso(c, link));
+    const corpo = document.createElement('div');
+    corpo.className = 'cartao-curso__corpo';
+    corpo.innerHTML =
+      '<h3 class="cartao-curso__nome"><a></a></h3>'
+      + '<p class="cartao-curso__chamada"></p>'
+      + '<ul class="cartao-curso__detalhes"></ul>'
+      + '<div class="progresso" hidden><div class="progresso__barra"><span></span></div><p></p></div>'
+      + '<div class="cartao-curso__rodape"><p class="cartao-curso__preco"></p><a class="botao botao--tinta"><span></span> <span class="seta" aria-hidden="true">→</span></a></div>';
+    const nome = $('.cartao-curso__nome a', corpo);
     nome.textContent = c.nome;
-    nome.href = opcoes.link || '/' + c.endereco;
-    $('.curso__texto p', li).textContent = c.chamada;
-    const meta = $('.curso__meta', li);
-    (c.etiquetas || []).forEach((texto) => {
-      const etiqueta = document.createElement('span');
-      etiqueta.textContent = texto;
-      meta.appendChild(etiqueta);
+    nome.href = link;
+    $('.cartao-curso__chamada', corpo).textContent = c.chamada;
+    const detalhes = $('.cartao-curso__detalhes', corpo);
+    const itens = (c.professor ? ['Com ' + c.professor.nome] : []).concat(c.detalhes || []);
+    itens.forEach((texto) => {
+      const li = document.createElement('li');
+      li.textContent = texto;
+      detalhes.appendChild(li);
     });
 
-    const preco = $('.curso__preco', li);
+    const preco = $('.cartao-curso__preco', corpo);
     if (opcoes.progresso) {
       const { concluidas, total } = opcoes.progresso;
       const pct = total ? Math.round((concluidas / total) * 100) : 0;
-      $('.progresso', li).hidden = false;
-      $('.progresso__barra span', li).style.width = pct + '%';
-      $('.progresso p', li).innerHTML = '<strong>' + concluidas + ' de ' + total + '</strong> aulas concluídas';
-      preco.remove();
+      $('.progresso', corpo).hidden = false;
+      $('.progresso__barra span', corpo).style.width = pct + '%';
+      $('.progresso p', corpo).innerHTML = '<strong>' + concluidas + ' de ' + total + '</strong> aulas concluídas';
+      preco.textContent = '';
     } else {
       preco.textContent = c.preco;
       if (c.parcelas) {
@@ -64,8 +108,11 @@
         preco.appendChild(parcelas);
       }
     }
-    $('.curso__acao span', li).textContent = opcoes.acao || 'Conhecer o curso';
-    return li;
+    const botao = $('.cartao-curso__rodape a', corpo);
+    botao.href = link;
+    $('span', botao).textContent = opcoes.acao || 'Ver curso';
+    el.appendChild(corpo);
+    return el;
   }
 
   // ── Login (Supabase): o mesmo login da IA Academy. A sessão fica guardada neste aparelho e se renova sozinha.
@@ -207,7 +254,7 @@
   }
 
   window.Miai = {
-    catalogo: CATALOGO, curso, linhaCurso,
+    catalogo: CATALOGO, curso, areas, capaCurso, cartaoCurso,
     supabase, chamar, sair, montarLogin, emailGuardado, ajustarTopo,
   };
 })();

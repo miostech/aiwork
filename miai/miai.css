@@ -118,28 +118,43 @@ section[id] { scroll-margin-top: 80px; }
 .faixa__trilho span { display: inline-flex; align-items: center; gap: 22px; padding-right: 22px; font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--suave); white-space: nowrap; }
 .faixa__trilho span::after { content: "⋅"; color: var(--apagado); }
 
-/* ── Lista de cursos (catálogo e conta): linhas como os serviços da Mios Tech ── */
-.cursos { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--linha); }
-.curso { position: relative; display: grid; gap: 14px; padding: 28px 0; border-top: 1px solid var(--linha); }
-.curso__numero { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; color: var(--apagado); }
-.curso__nome { font-size: clamp(32px, 5vw, 44px); }
-.curso__nome a { text-decoration: none; }
-.curso__nome a::after { content: ""; position: absolute; inset: 0; }
-.curso:hover .curso__nome { color: var(--roxo); }
-.curso__texto { display: grid; gap: 10px; color: var(--suave); max-width: 48ch; }
-.curso__meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); }
-.curso__fim { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.curso__preco { font-family: var(--fonte-titulo); font-size: 28px; font-weight: 500; line-height: 1; }
-.curso__preco small { display: block; margin-top: 6px; font-family: var(--fonte); font-size: 12px; color: var(--suave); }
-.curso__acao { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
-.curso__acao .seta { font-size: 22px; transition: transform 0.15s; }
-.curso:hover .curso__acao .seta { transform: translateX(4px); }
-@media (min-width: 860px) {
-  .curso { grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1fr) 190px; align-items: start; gap: 24px; padding: 34px 0; }
-  .curso__numero { padding-top: 14px; }
-  .curso__texto { padding-top: 8px; }
-  .curso__fim { flex-direction: column; align-items: flex-end; justify-content: flex-start; gap: 18px; padding-top: 8px; text-align: right; }
+/* ── Cursos em cartões (catálogo e conta): capa + nome + detalhes + preço ── */
+.grade-cursos { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.cartao-curso {
+  display: grid; grid-template-rows: auto 1fr; background: var(--papel-claro); border: 1px solid var(--linha);
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 }
+.cartao-curso:hover { border-color: var(--tinta); transform: translateY(-2px); box-shadow: 0 22px 44px -32px rgba(20, 19, 15, 0.5); }
+.cartao-curso[hidden] { display: none; }
+
+/* Capa desenhada: a cor do curso com um brilho, listras finas, a área, o nome e a foto de quem ensina */
+.capa-curso { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; isolation: isolate; background: var(--cor, #5E1D93); color: #FFFFFF; text-decoration: none; }
+.capa-curso::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(255, 255, 255, 0.2), transparent 55%),
+    radial-gradient(90% 80% at 0% 100%, rgba(0, 0, 0, 0.3), transparent 60%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 14px);
+}
+.capa-curso--imagem > img:not(.capa-curso__foto) { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
+.capa-curso--imagem::before { background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 30%, rgba(0, 0, 0, 0.62)); }
+.capa-curso__area { position: absolute; left: 20px; top: 18px; right: 90px; font-family: var(--fonte-etiqueta); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); }
+.capa-curso__nome { position: absolute; left: 20px; right: 108px; bottom: 18px; font-family: var(--fonte-titulo); font-weight: 600; font-size: clamp(30px, 3.6vw, 42px); line-height: 1.02; letter-spacing: -0.01em; }
+.capa-curso__foto { position: absolute; right: 18px; bottom: 18px; width: 74px; height: 74px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(255, 255, 255, 0.92); }
+.capa-curso__selo { position: absolute; right: 18px; top: 16px; padding: 4px 10px; background: var(--papel); color: var(--tinta); font-family: var(--fonte-etiqueta); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+
+.cartao-curso__corpo { display: grid; gap: 12px; align-content: start; padding: 20px 22px 22px; }
+.cartao-curso__nome { font-size: 28px; }
+.cartao-curso__nome a { text-decoration: none; }
+.cartao-curso__nome a:hover { color: var(--roxo); }
+.cartao-curso__chamada { color: var(--suave); }
+.cartao-curso__detalhes { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.cartao-curso__detalhes li { padding: 3px 9px; border: 1px solid var(--linha-forte); font-family: var(--fonte-etiqueta); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-2); }
+.cartao-curso__rodape { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; padding-top: 16px; border-top: 1px solid var(--linha); }
+.cartao-curso__preco { font-family: var(--fonte-titulo); font-weight: 600; font-size: 26px; line-height: 1; }
+.cartao-curso__preco small { display: block; margin-top: 6px; font-family: var(--fonte); font-size: 12px; font-weight: 400; color: var(--suave); }
+.cartao-curso__preco:empty { display: none; }
+.cartao-curso__rodape .botao { margin-left: auto; }
 
 /* Progresso (conta e aulas) */
 .progresso { display: grid; gap: 8px; }
