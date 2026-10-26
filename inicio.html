@@ -106,6 +106,14 @@ body {
   text-decoration: none; text-transform: uppercase;
 }
 .logo__accent { color: var(--accent); }
+.topbar__entrar {
+  font-family: var(--font-body); font-size: 0.85rem; line-height: 1.2;
+  color: var(--ink-soft); text-decoration: none;
+  padding: 8px 0 8px 12px;   /* área de toque maior, sem aparecer */
+}
+.topbar__entrar strong { color: var(--ink); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line); }
+.topbar__entrar:hover strong, .topbar__entrar:focus-visible strong { text-decoration-color: currentColor; }
+@media (max-width: 340px) { .topbar__entrar-pergunta { display: none; } }
 
 /* ── Vídeo de vendas ──────────────────── */
 .vsl { margin-top: clamp(26px, 8vw, 44px); }
@@ -335,6 +343,8 @@ body {
 
   <header class="topbar rise" style="--i:0">
     <a class="logo" href="#" aria-label="Início"><span>IA</span> <span class="logo__accent">Academy</span></a>
+    <!-- Para quem já pagou voltar às aulas: a área do aluno pede o e-mail e a senha -->
+    <a class="topbar__entrar" href="/curso.html"><span class="topbar__entrar-pergunta">Já tenho acesso? </span><strong>Entrar</strong></a>
   </header>
 
   <section class="vsl" aria-labelledby="titulo">
