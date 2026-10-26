@@ -34,6 +34,22 @@
   .hero__grade { grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; margin-top: 64px; }
 }
 
+/* Vídeo de apresentação (o mesmo do site antigo da Mios Academy), logo abaixo da primeira dobra */
+.filme { padding-bottom: 56px; }
+.filme__quadro { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--tinta); }
+.filme video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: var(--tinta); }
+.filme__play {
+  position: absolute; inset: 0; display: grid; place-items: center; border: 0; padding: 0; cursor: pointer;
+  background: linear-gradient(180deg, rgba(20, 19, 15, 0) 40%, rgba(20, 19, 15, 0.45) 100%);
+}
+.filme__play span {
+  width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--papel); color: var(--tinta); transition: transform 0.15s;
+}
+.filme__play:hover span { transform: scale(1.06); }
+.filme__legenda { display: flex; justify-content: space-between; gap: 12px; padding-top: 14px; }
+@media (min-width: 900px) { .filme { padding-bottom: 72px; } }
+
 /* Como funciona: três passos lado a lado, separados por linhas finas */
 .passos { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--linha); }
 .passo { display: grid; gap: 12px; align-content: start; padding: 28px 0; border-bottom: 1px solid var(--linha); }
@@ -80,6 +96,22 @@
           <a class="botao botao--tinta botao--grande" href="#cursos">Ver os cursos <span class="seta" aria-hidden="true">→</span></a>
           <a class="link-botao" href="/conta">Já sou aluno</a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Vídeo de apresentação: o arquivo fica no Azure (container iaacademy); a capa é um quadro do vídeo ═══ -->
+  <section class="filme" aria-label="Vídeo de apresentação da MIAI Academy">
+    <div class="container">
+      <div class="filme__quadro">
+        <video id="filme" controls playsinline preload="none" controlslist="nodownload" poster="/miai/capa-video.jpg">
+          <source src="https://cursiversostorage.blob.core.windows.net/iaacademy/MIAI%20-%20video.mp4" type="video/mp4">
+        </video>
+        <button class="filme__play" id="filme-play" type="button" aria-label="Assistir ao vídeo"><span aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span></button>
+      </div>
+      <div class="filme__legenda">
+        <span class="rotulo rotulo--ponto">MIAI Academy</span>
+        <span class="rotulo">0:30</span>
       </div>
     </div>
   </section>
@@ -204,6 +236,13 @@
 (function () {
   'use strict';
   Miai.ajustarTopo();
+
+  // Vídeo: o botão grande da capa dá o play; depois ficam os controles normais do navegador
+  const filme = document.getElementById('filme');
+  const play = document.getElementById('filme-play');
+  play.addEventListener('click', () => { filme.play().catch(() => {}); });
+  filme.addEventListener('play', () => { play.hidden = true; });
+
   const lista = document.getElementById('lista-cursos');
   const rodape = document.getElementById('rodape-cursos');
   Miai.catalogo.forEach((curso, i) => {
