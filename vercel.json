@@ -28,7 +28,7 @@
       "permanent": true
     },
     {
-      "source": "/:pagina(inicio\\.html|cadastro\\.html|curso\\.html|painel|painel\\.html|aiwork\\.html|aiwork-obrigado\\.html)",
+      "source": "/:pagina(inicio\\.html|cadastro\\.html|curso\\.html|painel|painel\\.html)",
       "has": [
         {
           "type": "host",
@@ -51,13 +51,7 @@
     },
     {
       "source": "/aiwork/obrigado",
-      "has": [
-        {
-          "type": "host",
-          "value": "(.*\\.)?miaiacademy\\.com"
-        }
-      ],
-      "destination": "/obrigado/ia-work",
+      "destination": "https://www.miaiacademy.com/obrigado/ia-work",
       "permanent": false
     }
   ],
@@ -119,10 +113,6 @@
     {
       "source": "/aiwork",
       "destination": "/aiwork.html"
-    },
-    {
-      "source": "/aiwork/obrigado",
-      "destination": "/aiwork-obrigado.html"
     },
     {
       "source": "/painel",
