@@ -59,6 +59,15 @@
   .inscricao { position: sticky; top: 24px; padding: 32px 30px 28px; }
 }
 
+/* Prints dos ganhos da Camila (prova social) */
+.ganhos { display: grid; gap: 18px; align-items: start; }
+.ganho { margin: 0; display: grid; gap: 10px; }
+.ganho a { display: block; border: 1px solid var(--linha-forte); background: #FFFFFF; }
+.ganho img { display: block; width: 100%; height: auto; }
+.ganho figcaption { font-size: 14px; color: var(--suave); }
+.ganhos__aviso { margin-top: 20px; font-size: 13px; color: var(--suave); max-width: 70ch; }
+@media (min-width: 860px) { .ganhos { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 24px; } }
+
 /* Módulos em linhas numeradas, como na página do IA Work */
 .linhas { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--linha); }
 .linhas li { display: grid; gap: 10px; padding: 26px 0; border-top: 1px solid var(--linha); }
@@ -148,6 +157,28 @@
           </div>
         </aside>
       </div>
+    </div>
+  </section>
+
+  <!-- ═══ Os ganhos da Camila: os mesmos prints da Aula 9 da Formação (miai/ganhos/) ═══ -->
+  <section class="secao" aria-labelledby="titulo-ganhos" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>Resultados</b> Camila</span>
+        <h2 id="titulo-ganhos">Os meus ganhos treinando IA.</h2>
+        <p>Prints das minhas contas nas plataformas, os mesmos que eu mostro na última aula da Formação.</p>
+      </div>
+      <div class="ganhos">
+        <figure class="ganho">
+          <a href="/miai/ganhos/ganhos-total.png" target="_blank" rel="noopener"><img src="/miai/ganhos/ganhos-total.png" width="610" height="254" loading="lazy" alt="Print de uma plataforma com US$ 4.037,34 de ganhos totais"></a>
+          <figcaption>US$ 4.037,34 de ganhos totais em uma plataforma</figcaption>
+        </figure>
+        <figure class="ganho">
+          <a href="/miai/ganhos/ganhos-painel.jpg" target="_blank" rel="noopener"><img src="/miai/ganhos/ganhos-painel.jpg" width="1600" height="915" loading="lazy" alt="Painel de recebimentos com € 3.329,29 em ganhos recentes e os pagamentos de setembro e outubro de 2026"></a>
+          <figcaption>€ 3.329,29 em ganhos recentes, com os pagamentos de setembro e outubro</figcaption>
+        </figure>
+      </div>
+      <p class="ganhos__aviso">Resultados pessoais da Camila. Os ganhos variam conforme a área, o nível de inglês, os projetos disponíveis e o tempo dedicado, e não há garantia de ganhos nem de aprovação nas plataformas.</p>
     </div>
   </section>
 
