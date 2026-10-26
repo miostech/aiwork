@@ -174,7 +174,7 @@ export const CURSO = {
           materiais: [
             {
               titulo: "Conhecer o IA Work",
-              texto: "A página do curso completo, com o desconto de quem fez o gratuito",
+              texto: "A página do curso completo, com o desconto de quem fez a Formação",
               link: "/aiwork?origem=curso",
             },
             {
@@ -188,7 +188,7 @@ export const CURSO = {
             titulo: "Conheça o IA Work",
             texto: "O curso completo para usar a sua área de conhecimento em tarefas profissionais de IA, que pagam acima de US$ 20 por hora.",
             botao: "Quero conhecer o IA Work",
-            link: "/aiwork?origem=curso",   // ?origem=curso já preenche o cupom do gratuito no pagamento
+            link: "/aiwork?origem=curso",   // ?origem=curso já preenche o cupom ACADEMY de quem fez a Formação
           },
         },
       ],

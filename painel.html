@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <!--
   PAINEL (endereço: /painel)
-  Funil do curso gratuito e vendas do IA Work. Entra com o mesmo login da área do aluno,
+  Funil da Formação IA Academy e vendas (Formação e IA Work). Entra com o mesmo login da área do aluno,
   mas só os e-mails da variável ADMIN_EMAILS (na Vercel) conseguem ver os números.
 -->
 <style>
@@ -211,14 +211,14 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
 
   <main class="grade" id="painel" hidden>
     <section class="card" aria-labelledby="t-funil">
-      <h2 id="t-funil">Funil do curso gratuito</h2>
+      <h2 id="t-funil">Funil da Formação IA Academy</h2>
       <p class="sub" id="sub-funil"></p>
       <ol class="funil" id="funil"></ol>
     </section>
 
     <div class="grade">
       <section class="card" aria-labelledby="t-vendas">
-        <h2 id="t-vendas">Vendas do IA Work</h2>
+        <h2 id="t-vendas">Vendas</h2>
         <p class="sub" id="sub-vendas"></p>
         <div class="numeros" id="vendas"></div>
       </section>
@@ -227,7 +227,7 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
 
     <section class="card" id="secao-leads" aria-labelledby="t-leads" style="grid-column:1/-1">
       <h2 id="t-leads">Leads</h2>
-      <p class="sub">Todo mundo que preencheu o formulário. Em "Conferir", veja na Hub se o e-mail informado foi cadastrado pelo seu link e marque aqui: "Não encontrei" tira o acesso ao curso gratuito na hora.</p>
+      <p class="sub">Todo mundo que preencheu o formulário. Em "Conferir", veja na Hub se o e-mail informado foi cadastrado pelo seu link e marque aqui. "Não encontrei" só tira o acesso de quem entrou quando o curso era gratuito; quem pagou a Formação continua com as aulas.</p>
       <div class="leads-topo">
         <div class="filtros" role="group" aria-label="Filtrar leads">
           <button type="button" data-filtro="pendente" aria-pressed="true">Conferir<span data-conta="pendente">0</span></button>
@@ -260,7 +260,7 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       <p class="sub" id="sub-paises"></p>
       <ol class="paises" id="paises-grafico"></ol>
       <div class="rolagem"><table class="tabela">
-        <thead><tr><th>País</th><th>Visitantes</th><th>Leads</th><th>Liberaram</th><th>Compraram</th></tr></thead>
+        <thead><tr><th>País</th><th>Visitantes</th><th>Leads</th><th>Pagaram</th><th>Hub ok</th><th>IA Work</th></tr></thead>
         <tbody id="paises"></tbody>
       </table></div>
     </section>
@@ -269,7 +269,7 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       <h2 id="t-origens">De onde vieram</h2>
       <p class="sub">Pelo utm_source do link do anúncio. "(direto)" = sem UTM.</p>
       <div class="rolagem"><table class="tabela">
-        <thead><tr><th>Origem</th><th>Leads</th><th>Liberaram</th><th>Compraram</th></tr></thead>
+        <thead><tr><th>Origem</th><th>Leads</th><th>Pagaram</th><th>Hub ok</th><th>IA Work</th></tr></thead>
         <tbody id="origens"></tbody>
       </table></div>
     </section>
@@ -361,7 +361,7 @@ window.CONFIG = {
   let totalAulas = 9;
   const ETAPAS = {
     formulario: 'Só preencheu o formulário', abriu_plataforma: 'Abriu a Hub', print_enviado: 'Enviou print',
-    aprovado: 'Aulas liberadas', recusado: 'Recusado',
+    aprovado: 'Hub informada', recusado: 'Recusado',
   };
   const quando = (iso) => new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
 
@@ -464,6 +464,7 @@ window.CONFIG = {
     else if (l.concluiu_em) selos.appendChild(selo('Concluiu o curso', 'ok'));
     else if (l.entrou_em) selos.appendChild(selo('Assistindo: ' + l.aulas + '/' + totalAulas + ' aulas'));
     else if (l.etapa === 'aprovado') selos.appendChild(selo('Ainda não entrou no curso'));
+    if (l.pagou) selos.appendChild(selo('Pagou a Formação', 'venda'));
     if (l.comprou) selos.appendChild(selo('Comprou o IA Work', 'venda'));
 
     if (l.conferencia) {
@@ -486,7 +487,7 @@ window.CONFIG = {
   }
 
   async function conferir(l, conferencia, li) {
-    if (conferencia === 'nao_encontrado' && !window.confirm('Marcar ' + l.nome + ' como não encontrado na Hub? O acesso ao curso gratuito é retirado na hora.')) return;
+    if (conferencia === 'nao_encontrado' && !window.confirm('Marcar ' + l.nome + ' como não encontrado na Hub?' + (l.pagou ? '' : ' Quem entrou quando o curso era gratuito perde o acesso na hora.'))) return;
     $$('button', li).forEach((b) => { b.disabled = true; });
     try {
       const r = await fetch(C.enderecoPainel, {
@@ -550,8 +551,9 @@ window.CONFIG = {
     const etapas = [
       ['Visitaram a página inicial', f.visitaram],
       ['Preencheram o formulário', f.leads],
+      ['Pagaram a Formação', f.pagaram, true],
       ['Abriram a Hub', f.abriram_hub],
-      ['Liberaram as aulas', f.liberados],
+      ['Confirmaram a Hub', f.liberados],
       ['Entraram no curso', f.entraram],
       ['Concluíram o curso', f.concluiram],
       ['Compraram o IA Work', f.compraram, true],
@@ -574,14 +576,19 @@ window.CONFIG = {
 
     // Vendas
     const v = d.vendas;
-    $('#sub-vendas').textContent = 'Compras pelo link do Stripe ' + nomePeriodo + '.';
+    $('#sub-vendas').textContent = 'Compras pelos links do Stripe ' + nomePeriodo + ': a Formação IA Academy e o IA Work.';
     const plural = (n, um, varios) => (n === 1 ? um : varios);
+    const fo = v.formacao || { pagas: 0, receita: 0, com_cupom: 0 };
+    const iw = v.iawork || { pagas: 0, receita: 0, com_cupom: 0 };
     const cartoes = [
-      [inteiro.format(v.pagas), plural(v.pagas, 'venda paga', 'vendas pagas'), true],
-      [reais.format(v.receita / 100), 'recebido (sem reembolsos)', true],
-      [pct(f.compraram, f.liberados), 'dos alunos do gratuito compraram'],
+      [inteiro.format(fo.pagas), plural(fo.pagas, 'Formação paga', 'Formações pagas'), true],
+      [reais.format(fo.receita / 100), 'recebido da Formação', true],
+      [inteiro.format(iw.pagas), plural(iw.pagas, 'IA Work pago', 'IA Work pagos'), true],
+      [reais.format(iw.receita / 100), 'recebido do IA Work', true],
+      [inteiro.format(fo.com_cupom), 'Formações com cupom'],
+      [pct(f.compraram, f.pagaram), 'de quem pagou a Formação comprou o IA Work'],
       [inteiro.format(d.visitas.aiwork), plural(d.visitas.aiwork, 'pessoa visitou a página do IA Work', 'pessoas visitaram a página do IA Work')],
-      [inteiro.format(v.com_cupom), 'com o cupom do gratuito'],
+      [inteiro.format(iw.com_cupom), 'IA Work com o cupom ACADEMY'],
       [inteiro.format(v.aguardando), 'Pix aguardando pagamento'],
       [inteiro.format(v.reembolsos), plural(v.reembolsos, 'reembolso', 'reembolsos')],
     ];
@@ -657,28 +664,28 @@ window.CONFIG = {
     tabelaPaises.replaceChildren();
     paises.forEach((x) => {
       const tr = document.createElement('tr');
-      [nomePais(x.pais), x.visitantes, x.leads, x.liberados, x.compraram].forEach((t, k) => {
+      [nomePais(x.pais), x.visitantes, x.leads, x.pagaram || 0, x.liberados, x.compraram].forEach((t, k) => {
         const td = document.createElement('td');
         td.textContent = k ? inteiro.format(t) : t;
         tr.appendChild(td);
       });
       tabelaPaises.appendChild(tr);
     });
-    if (!paises.length) tabelaPaises.innerHTML = '<tr><td colspan="5" style="text-align:left;color:var(--muted)">Nenhuma visita ou lead no período.</td></tr>';
+    if (!paises.length) tabelaPaises.innerHTML = '<tr><td colspan="6" style="text-align:left;color:var(--muted)">Nenhuma visita ou lead no período.</td></tr>';
 
     // Origens
     const origens = $('#origens');
     origens.replaceChildren();
     (d.origens || []).forEach((o) => {
       const tr = document.createElement('tr');
-      [o.origem, inteiro.format(o.leads), inteiro.format(o.liberados), inteiro.format(o.compraram)].forEach((t) => {
+      [o.origem, inteiro.format(o.leads), inteiro.format(o.pagaram || 0), inteiro.format(o.liberados), inteiro.format(o.compraram)].forEach((t) => {
         const td = document.createElement('td');
         td.textContent = t;
         tr.appendChild(td);
       });
       origens.appendChild(tr);
     });
-    if (!origens.children.length) origens.innerHTML = '<tr><td colspan="4" style="text-align:left;color:var(--muted)">Nenhum lead no período.</td></tr>';
+    if (!origens.children.length) origens.innerHTML = '<tr><td colspan="5" style="text-align:left;color:var(--muted)">Nenhum lead no período.</td></tr>';
 
     const hora = new Date(d.atualizado_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     $('#rodape').textContent = 'Atualizado às ' + hora + '. Visitantes, países, "Entraram" e "Concluíram" são medidos a partir de ' + C.inicioMedicaoCurso + '. Cada visitante conta uma vez por dia em cada página.';

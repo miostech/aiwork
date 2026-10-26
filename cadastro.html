@@ -262,6 +262,15 @@ body {
 .btn:not(.is-loading) .spinner { display: none; }
 .hint { margin: 0; font-size: 13px; color: var(--muted); text-align: center; }
 
+/* Pagamento: confere a vaga antes das orientações */
+.pagamento { display: grid; gap: 16px; text-align: center; justify-items: center; }
+.pagamento [data-pag] { display: grid; gap: 14px; justify-items: center; width: 100%; }
+.pagamento [data-pag][hidden] { display: none; }
+.pagamento .actions { width: 100%; }
+.pagamento__girando { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--primary-soft, #F7E0E6); border-top-color: var(--primary); animation: girar 0.8s linear infinite; }
+.pagamento__preco { margin: 0; font-weight: 700; color: var(--ink); }
+.pagamento__preco s { color: var(--muted); font-weight: 600; }
+
 .foot {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px;
   font-size: 13px; color: var(--muted);
@@ -280,6 +289,7 @@ body {
 </style>
 <script src="/contador.js" data-pagina="cadastro" defer></script>
 <script src="/player-video.js"></script>
+<script src="/formacao.js"></script>
 </head>
 <body>
 <main class="page">
@@ -304,6 +314,31 @@ body {
       <span class="sr">Etapa 4: Tudo pronto</span>
     </li>
   </ol>
+
+  <!-- ═══ Pagamento: o cadastro só continua depois que o pagamento da Formação é confirmado ═══
+       O Stripe devolve a pessoa para cadastro.html?pagamento=<sessão>; a página confere em /api/pagamento. -->
+  <section class="card pagamento" id="pagamento" aria-live="polite" hidden>
+    <div data-pag="verificando">
+      <span class="pagamento__girando" aria-hidden="true"></span>
+      <h1 class="card__title">Confirmando seu pagamento…</h1>
+    </div>
+    <div data-pag="aguardando" hidden>
+      <span class="pagamento__girando" aria-hidden="true"></span>
+      <h1 class="card__title">Aguardando a confirmação do pagamento</h1>
+      <p class="card__lead">No Pix, a confirmação costuma levar poucos segundos. Esta página continua sozinha assim que o pagamento for confirmado.</p>
+      <div class="actions"><button class="btn btn--secondary" id="btn-verificar" type="button">Já paguei, verificar de novo</button></div>
+    </div>
+    <div data-pag="falta" hidden>
+      <p class="card__kicker">Falta pouco</p>
+      <h1 class="card__title">Garanta sua vaga para continuar</h1>
+      <p class="card__lead">Para seguir com o cadastro e liberar as aulas, conclua o pagamento da <span data-marca-formacao>Formação IA Academy</span>.</p>
+      <p class="pagamento__preco" id="pagamento-preco"></p>
+      <div class="actions">
+        <a class="btn btn--primary" id="btn-pagar" href="/">Ir para o pagamento</a>
+        <p class="hint">Já pagou? Abra o e-mail com o seu acesso ou use "Esqueci minha senha" na área do aluno.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- ═══ ETAPA 2 · Orientações ═══ -->
   <section class="card" id="etapa-2" data-step="2" aria-labelledby="titulo-2">
@@ -332,7 +367,7 @@ body {
       </li>
       <li>
         <span class="passos__check" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
-        <div><p class="passos__title">PASSO 4: Volte para esta aba e clique em Continuar para validar sua conta e liberar as aulas</p></div>
+        <div><p class="passos__title">PASSO 4: Volte para esta aba e clique em Continuar para confirmar sua conta</p></div>
       </li>
     </ol>
 
@@ -425,7 +460,7 @@ body {
       <p class="card__kicker" data-parte="confirmar">Etapa 3 de 3</p>
       <h1 class="card__title" id="titulo-4">Confirme seu cadastro na <span data-plataforma>Hub</span></h1>
       <p class="card__lead" data-parte="pronto" hidden>Seu acesso está liberado e sua conta na <span data-plataforma>Hub</span> está criada.</p>
-      <p class="card__lead" data-parte="confirmar">Falta só um passo para liberar as aulas. Digite abaixo o e-mail que você usou para criar sua conta na <span data-plataforma>Hub</span>.</p>
+      <p class="card__lead" data-parte="confirmar">Suas aulas já estão liberadas: enviamos o seu acesso por e-mail. Para terminar, digite abaixo o e-mail que você usou para criar sua conta na <span data-plataforma>Hub</span>.</p>
     </div>
 
     <!-- Vídeo da confirmação (antes de enviar o e-mail) e vídeo do "Tudo pronto" (depois);
@@ -453,9 +488,9 @@ body {
       </div>
       <button class="btn btn--primary" id="btn-liberar" type="submit">
         <span class="spinner" aria-hidden="true"></span>
-        <span class="btn__label">Liberar minhas aulas</span>
+        <span class="btn__label">Confirmar meu cadastro</span>
       </button>
-      <p class="nota">Para manter o acesso, sua conta na <span data-plataforma>Hub</span> precisa ter sido criada pelo link da etapa anterior. Vamos confirmar o seu cadastro nas próximas horas.</p>
+      <p class="nota">Use o e-mail da conta que você criou na <span data-plataforma>Hub</span> pelo link da etapa anterior.</p>
     </form>
 
     <div class="texto" data-parte="pronto" hidden>
@@ -533,9 +568,13 @@ window.CONFIG = {
   // Na função da IA esse nome é a variável NOME_INDICACAO.
   indicadoPor: 'Camila Mota',
 
-  // Etapa final: guarda o e-mail que a pessoa usou na plataforma, cria o login e manda a senha
-  // (função api/confirmar-cadastro.js). Você confere esses e-mails depois na tabela "leads".
+  // Etapa final: guarda o e-mail que a pessoa usou na plataforma (função api/confirmar-cadastro.js).
+  // O login e a senha já foram criados pelo pagamento. Você confere esses e-mails depois no painel.
   enderecoConfirmacao: '/api/confirmar-cadastro',
+
+  // Confere o pagamento quando o Stripe devolve a pessoa para esta página (função api/pagamento.js).
+  // Preço, cupom e link do pagamento ficam em /formacao.js.
+  enderecoPagamento: '/api/pagamento',
 
   // Etapa 3 (desativada por enquanto): conferência do print com IA (função api/validar-print.js).
   // validacaoIA: {
@@ -578,7 +617,7 @@ window.CONFIG = {
   if ('reiniciar' in params) state = { lead: state.lead, origem: state.origem };
   state.lead = state.lead || {};
   const origem = {};
-  Object.keys(params).forEach((k) => { if (k !== 'reiniciar') origem[k] = params[k]; });
+  Object.keys(params).forEach((k) => { if (k !== 'reiniciar' && k !== 'pagamento') origem[k] = params[k]; });
   if (Object.keys(origem).length) state.origem = Object.assign({}, state.origem, origem);
   state.etapa = state.etapa || 2;
   if (state.etapa === 3) state.etapa = 4;   // a etapa 3 (print) está desativada
@@ -901,7 +940,7 @@ window.CONFIG = {
       if (resposta.ok && dados.liberado) return { liberado: true, email: dados.email || '', senha: dados.senha || '' };
       throw new Error(dados.erro || 'HTTP ' + resposta.status);
     } catch (e) {
-      return { liberado: false, erro: (dados && dados.erro) || 'Não conseguimos liberar suas aulas agora. Tente de novo em alguns instantes.' };
+      return { liberado: false, erro: (dados && dados.erro) || 'Não conseguimos confirmar agora. Tente de novo em alguns instantes.' };
     } finally {
       clearTimeout(limite);
     }
@@ -923,14 +962,14 @@ window.CONFIG = {
     const rotulo = $('.btn__label', liberar);
     liberar.classList.add('is-loading');
     liberar.setAttribute('aria-busy', 'true');
-    rotulo.textContent = 'Liberando suas aulas…';
+    rotulo.textContent = 'Confirmando…';
     erroEmail.textContent = '';
 
     const resultado = await confirmarCadastro(email);
 
     liberar.classList.remove('is-loading');
     liberar.removeAttribute('aria-busy');
-    rotulo.textContent = 'Liberar minhas aulas';
+    rotulo.textContent = 'Confirmar meu cadastro';
 
     if (!resultado.liberado) {
       erroEmail.textContent = resultado.erro;
@@ -952,7 +991,57 @@ window.CONFIG = {
     confete();
   });
 
-  irPara(state.etapa, false);
+  // ── Pagamento: só segue para as orientações quem já pagou a Formação.
+  // O Stripe devolve a pessoa com ?pagamento=<sessão>; a confirmação fica guardada neste aparelho.
+  const pagamento = $('#pagamento');
+  const F = window.Formacao;
+  function mostrarPagamento(estado) {
+    $$('.card').forEach((el) => { el.hidden = el !== pagamento; });
+    $$('[data-pag]', pagamento).forEach((el) => { el.hidden = el.dataset.pag !== estado; });
+    if (estado === 'falta') {
+      $('#btn-pagar').href = F.urlPagamento({ email: state.lead.email, leadId: state.leadId });
+      $('#btn-pagar').textContent = 'Ir para o pagamento · ' + F.precoAtual();
+      $('#pagamento-preco').innerHTML = F.cupomAtivo()
+        ? 'De <s>' + F.preco + '</s> por ' + F.cupom.preco + ' com o cupom ' + F.cupom.codigo + ', até ' + F.cupom.ateTexto + '.'
+        : 'Investimento: ' + F.preco + '.';
+    }
+  }
+  function continuarCadastro() {
+    state.pago = true;
+    save();
+    try { history.replaceState(null, '', location.pathname); } catch (e) {}
+    irPara(state.etapa, false);
+  }
+  let tentativas = 0;
+  let espera = null;
+  async function conferirPagamento() {
+    clearTimeout(espera);
+    let status = 'erro';
+    try {
+      const resposta = await fetch(C.enderecoPagamento + '?sessao=' + encodeURIComponent(state.sessaoPagamento));
+      status = (await resposta.json().catch(() => ({}))).status || 'erro';
+    } catch (e) {}
+    if (status === 'pago') { continuarCadastro(); return; }
+    if (status === 'nao_pago') { mostrarPagamento('falta'); return; }
+    // Pix ainda não confirmado (ou falha passageira): confere de novo a cada 5 s, por até 15 minutos
+    mostrarPagamento('aguardando');
+    if (++tentativas < 180) espera = setTimeout(conferirPagamento, 5000);
+  }
+  $('#btn-verificar').addEventListener('click', () => { tentativas = 0; conferirPagamento(); });
+
+  if (/^cs_(live|test)_\w+$/.test(params.pagamento || '')) {
+    state.sessaoPagamento = params.pagamento;
+    save();
+  }
+  // Quem fez o cadastro quando o curso era gratuito (state.validado) já tem acesso e segue normalmente
+  if (state.pago || state.validado) {
+    irPara(state.etapa, false);
+  } else if (state.sessaoPagamento) {
+    mostrarPagamento('verificando');
+    conferirPagamento();
+  } else {
+    mostrarPagamento('falta');
+  }
 })();
 </script>
 </body>

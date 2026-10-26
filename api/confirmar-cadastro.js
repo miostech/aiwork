@@ -1,19 +1,40 @@
 // Etapa final da cadastro.html: a pessoa informa o e-mail que usou para criar a conta na plataforma (Hub).
 // Guarda esse e-mail no lead (coluna email_plataforma, com conferencia = "pendente") para você conferir
-// depois na lista de indicados da plataforma. Em seguida cria o login, libera o curso gratuito e manda a senha.
+// depois na lista de indicados da plataforma (painel → leads).
 //
-// Depois de conferir, mude "conferencia" do lead no Supabase (Table Editor → leads):
-//   "confirmado"     → mantém o acesso
-//   "nao_encontrado" → tira o acesso ao curso gratuito na hora (gatilho no banco)
+// A Formação IA Academy é paga: o pagamento já liberou as aulas e mandou a senha por e-mail (api/stripe-webhook.js).
+// Por isso aqui ninguém ganha senha nova; só segue quem tem o pagamento (ou o acesso) da Formação.
+// A conferência "nao_encontrado" só tira o acesso de quem entrou quando o curso era gratuito (gatilho no banco).
 //
-//   POST { lead, nome, email, whatsapp, emailPlataforma } → { liberado, email, emailEnviado, senha? } ou { erro }
+//   POST { lead, nome, email, whatsapp, emailPlataforma } → { liberado, email, emailEnviado } ou { liberado: false, erro }
 import { banco, normalizarEmail, EMAIL_VALIDO } from "./_supabase.js";
 import { acharOuCriarLead } from "./_leads.js";
-import { liberarAcesso, linkCurso } from "./_alunos.js";
-import { enviarEmail } from "./_emails.js";
 
 const PLATAFORMA = process.env.PLATAFORMA || "Hub";
-const INTERVALO_MINIMO_MS = 2 * 60 * 1000; // no máximo um e-mail com senha a cada 2 minutos por aluno
+const CURSO = "gratuito";   // nome no banco da Formação IA Academy (era o curso gratuito)
+
+// Pagamento da Formação ligado a este cadastro: pelo id do lead (enviado ao Stripe) ou pelo e-mail
+async function pagamentoDoLead(db, lead) {
+  const { data, error } = await db.from("compras")
+    .select("status, email")
+    .eq("curso", CURSO)
+    .in("status", ["pago", "aguardando"])
+    .or(`referencia.eq."${lead.id}",email.eq."${normalizarEmail(lead.email).replace(/"/g, "")}"`)
+    .order("criado_em", { ascending: false });
+  if (error) throw error;
+  return (data || []).find((c) => c.status === "pago") || (data || [])[0] || null;
+}
+
+// A pessoa já tem as aulas liberadas (pagou, ou entrou quando o curso era gratuito)?
+async function temAcesso(db, email) {
+  const { data: aluno, error } = await db.from("alunos").select("id, bloqueado").eq("email", normalizarEmail(email)).maybeSingle();
+  if (error) throw error;
+  if (!aluno || aluno.bloqueado) return false;
+  const { data: acesso, error: erroAcesso } = await db.from("acessos")
+    .select("id").eq("aluno_id", aluno.id).eq("curso", CURSO).is("revogado_em", null).maybeSingle();
+  if (erroAcesso) throw erroAcesso;
+  return !!acesso;
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -36,6 +57,17 @@ export default async function handler(req, res) {
       });
     }
 
+    const compra = await pagamentoDoLead(db, lead);
+    const liberado = (compra && compra.status === "pago") || await temAcesso(db, lead.email);
+    if (!liberado) {
+      return res.status(200).json({
+        liberado: false,
+        erro: compra
+          ? "Seu pagamento ainda está sendo confirmado. Tente de novo em alguns instantes."
+          : "Não encontramos o pagamento da sua vaga neste cadastro. Volte à página inicial para garantir sua vaga.",
+      });
+    }
+
     if (lead.conferencia === "nao_encontrado" && normalizarEmail(lead.email_plataforma) === emailPlataforma) {
       return res.status(200).json({
         liberado: false,
@@ -48,37 +80,10 @@ export default async function handler(req, res) {
       .eq("id", lead.id);
     if (erroLead) throw erroLead;
 
-    // Se a senha acabou de ser enviada, não manda outra (evita e-mails repetidos)
-    const { data: aluno, error: erroAluno } = await db
-      .from("alunos").select("senha_enviada_em").eq("email", normalizarEmail(lead.email)).maybeSingle();
-    if (erroAluno) throw erroAluno;
-    const recente = aluno && aluno.senha_enviada_em &&
-      Date.now() - new Date(aluno.senha_enviada_em).getTime() < INTERVALO_MINIMO_MS;
-    if (recente) {
-      return res.status(200).json({ liberado: true, email: lead.email, emailEnviado: true });
-    }
-
-    const conta = await liberarAcesso({
-      nome: lead.nome, email: lead.email, whatsapp: lead.whatsapp,
-      origem: "confirmacao", referencia: lead.id, leadId: lead.id,
-    });
-    if (conta.bloqueado) {
-      return res.status(200).json({ liberado: false, erro: "Seu acesso está bloqueado. Fale com o suporte." });
-    }
-
-    const primeiroNome = String(lead.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
-    const envio = await enviarEmail(
-      "acesso",
-      lead.email,
-      { NOME: primeiroNome, EMAIL_ALUNO: lead.email, SENHA: conta.senha, LINK_CURSO: linkCurso() },
-      `acesso-${lead.id}-${Date.now()}`
-    );
-
-    const resposta = { liberado: true, email: lead.email, emailEnviado: envio.ok };
-    if (!envio.ok) resposta.senha = conta.senha; // se o e-mail falhar, a senha aparece na tela para a pessoa anotar
-    return res.status(200).json(resposta);
+    // O e-mail com a senha foi enviado no pagamento, para o e-mail usado no Stripe
+    return res.status(200).json({ liberado: true, email: (compra && compra.email) || lead.email, emailEnviado: true });
   } catch (erro) {
     console.error("Erro ao confirmar o cadastro:", erro);
-    return res.status(500).json({ erro: "Não foi possível liberar suas aulas agora. Tente de novo em instantes." });
+    return res.status(500).json({ erro: "Não foi possível confirmar agora. Tente de novo em instantes." });
   }
 }

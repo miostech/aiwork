@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Curso Gratuito IA Academy</title>
+<title>Formação IA Academy</title>
 <meta name="description" content="Receba em dólar, trabalhando de casa, treinando inteligência artificial. Veja no vídeo como entrar nesse mercado.">
 <meta name="theme-color" content="#EAE0CB">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -191,6 +191,7 @@ body {
 .formzone__desc p { margin: 0; }
 .formzone__desc .hl { font-weight: 800; }
 .formzone__desc-end { color: var(--ink); font-weight: 700; }
+.formzone__desc-end s { color: var(--muted, #8A7F70); font-weight: 600; }
 .formzone__lista {
   list-style: none; margin: 2px auto; padding: 0; max-width: 34ch;
   display: grid; gap: 10px; text-align: left; text-wrap: pretty;
@@ -322,6 +323,7 @@ body {
 </style>
 <script src="/contador.js" data-pagina="inicio" defer></script>
 <script src="/player-video.js"></script>
+<script src="/formacao.js"></script>
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -362,7 +364,7 @@ body {
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
       </div>
       <p class="formzone__kicker">Falta pouco</p>
-      <h2 class="formzone__title" id="inscricao-titulo">Garanta seu acesso gratuito</h2>
+      <h2 class="formzone__title" id="inscricao-titulo">Garanta sua vaga</h2>
       <div class="formzone__desc">
         <p>9 aulas práticas, com cerca de 40 minutos no total, mostrando <mark class="hl">passo a passo</mark> como começar a receber em dólar ajudando a treinar robôs de inteligência artificial.</p>
         <ul class="formzone__lista">
@@ -370,7 +372,8 @@ body {
           <li>Aprenda a encontrar e se candidatar às oportunidades</li>
           <li>Dê os primeiros passos, mesmo sem experiência na área</li>
         </ul>
-        <p class="formzone__desc-end"><mark class="hl">100% gratuito.</mark> Preencha seus dados abaixo:</p>
+        <!-- Preço e cupom vêm de /formacao.js (o texto abaixo é o da Black Friday; depois de 30/11 muda sozinho) -->
+        <p class="formzone__desc-end" id="preco-formacao">De <s>R$ 98</s> por <mark class="hl">R$ 28</mark> com o cupom BLACKFRIDAY, até 30/11. Preencha seus dados e siga para o pagamento:</p>
       </div>
 
       <div class="formcard" id="card">
@@ -409,11 +412,11 @@ body {
           </div>
           <div class="actions">
             <button class="btn btn--primary" type="submit">
-              Quero meu acesso gratuito
+              Garantir vaga por R$&nbsp;28
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
             <p class="aviso-ganhos">Os ganhos variam conforme a plataforma, o idioma e a disponibilidade de tarefas.</p>
-            <p class="fineprint">🔒 Seus dados estão seguros. Não enviamos spam.</p>
+            <p class="fineprint">🔒 Pagamento seguro pelo Stripe. Acesso liberado assim que o pagamento é confirmado.</p>
           </div>
         </form>
 
@@ -448,8 +451,8 @@ window.CONFIG = {
   // (2:16 = 136). Conta o tempo assistido com som. Sem vídeo, o formulário aparece na hora. 0 = na hora.
   liberarAposSegundos: 136,
 
-  // Para onde a pessoa vai depois de preencher o formulário.
-  paginaCadastro: 'cadastro.html',
+  // Depois do formulário a pessoa vai para o pagamento (preço, cupom e link em /formacao.js).
+  // O Stripe devolve para cadastro.html, que segue com as orientações.
 
   // Função que guarda cada inscrito no banco (Supabase).
   enderecoLeads: '/api/lead',
@@ -487,6 +490,16 @@ window.CONFIG = {
 
   // ── Textos e links da configuração
   $$('[data-marca]').forEach((el) => { el.textContent = C.marca; });
+  // Preço da vaga: com o cupom da Black Friday enquanto ele valer, depois o preço cheio
+  const F = window.Formacao;
+  if (F.cupomAtivo()) {
+    $('#preco-formacao').innerHTML = 'De <s></s> por <mark class="hl"></mark> com o cupom ' + F.cupom.codigo + ', até ' + F.cupom.ateTexto + '. Preencha seus dados e siga para o pagamento:';
+    $('#preco-formacao s').textContent = F.preco;
+    $('#preco-formacao mark').textContent = F.cupom.preco;
+  } else {
+    $('#preco-formacao').innerHTML = 'Investimento: <mark class="hl"></mark>. Preencha seus dados e siga para o pagamento:';
+    $('#preco-formacao mark').textContent = F.preco;
+  }
   $('#link-termos').href = C.linkTermos;
   $('#link-privacidade').href = C.linkPrivacidade;
   $('#ano').textContent = new Date().getFullYear();
@@ -570,6 +583,7 @@ window.CONFIG = {
   // ── Formulário
   const form = $('#step-1');
   const botao = $('button[type="submit"]', form);
+  botao.firstChild.textContent = 'Garantir vaga por ' + window.Formacao.precoAtual().replace(' ', '\u00a0') + ' ';
   const campos = { nome: $('#f-nome'), email: $('#f-email'), whatsapp: $('#f-whatsapp') };
   if (state.lead.nome) campos.nome.value = state.lead.nome;
   if (state.lead.email) campos.email.value = state.lead.email;
@@ -751,12 +765,12 @@ window.CONFIG = {
     const textoBotao = botao.firstChild.textContent;
     botao.firstChild.textContent = 'Carregando… ';
     await guardarLead();
-    // segue para a segunda parte do cadastro levando só os parâmetros de origem (UTMs)
-    const busca = new URLSearchParams(origem).toString();
+    // segue para o pagamento com o e-mail, o cupom e o id do cadastro já preenchidos;
+    // depois do pagamento o Stripe devolve a pessoa para cadastro.html
     try {
-      location.href = C.paginaCadastro + (busca ? '?' + busca : '');
+      location.href = window.Formacao.urlPagamento({ email: email, leadId: state.leadId });
     } catch (e) {}
-    // se a próxima página não abrir em alguns segundos, o botão volta ao normal para tentar de novo
+    // se o pagamento não abrir em alguns segundos, o botão volta ao normal para tentar de novo
     setTimeout(() => { enviando = false; botao.firstChild.textContent = textoBotao; }, 5000);
   });
 })();

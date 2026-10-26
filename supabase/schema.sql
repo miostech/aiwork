@@ -141,14 +141,15 @@ create trigger compras_atualizado_em
   before update on public.compras
   for each row execute function public.tocar_atualizado_em();
 
--- ── Conferência do cadastro na plataforma: 'nao_encontrado' tira o acesso ao curso gratuito, 'confirmado' devolve ──
+-- ── Conferência do cadastro na plataforma: 'nao_encontrado' tira o acesso ao curso, 'confirmado' devolve ──
+-- Só vale para quem entrou quando o curso era gratuito: o acesso de quem pagou a Formação (origem 'stripe') fica.
 create or replace function public.aplicar_conferencia()
 returns trigger language plpgsql as $$
 begin
   if new.aluno_id is not null and new.conferencia is distinct from old.conferencia then
     if new.conferencia = 'nao_encontrado' then
       update public.acessos set revogado_em = now()
-       where aluno_id = new.aluno_id and curso = 'gratuito' and revogado_em is null;
+       where aluno_id = new.aluno_id and curso = 'gratuito' and revogado_em is null and origem <> 'stripe';
     elsif new.conferencia = 'confirmado' then
       update public.acessos set revogado_em = null
        where aluno_id = new.aluno_id and curso = 'gratuito';
@@ -164,7 +165,9 @@ create trigger leads_conferencia
 
 -- ── Números do painel (/painel). "desde" vazio = desde o começo.
 -- O funil acompanha as pessoas que preencheram o formulário no período, até onde cada uma chegou.
--- As vendas contam todas as compras do período (inclusive de quem não veio pelo curso gratuito).
+-- As vendas contam todas as compras do período, separadas em Formação IA Academy (compras.curso = 'gratuito',
+-- o nome antigo do curso) e IA Work (compras.curso = 'pago'). "Pagaram" liga a compra da Formação ao lead pelo id
+-- enviado ao Stripe (compras.referencia), pela conta ou pelo e-mail.
 create or replace function public.painel_funil(desde timestamptz default null)
 returns jsonb
 language sql stable
@@ -175,6 +178,11 @@ as $$
   v as (select * from visitas where desde is null or criado_em >= desde),
   ag as (select * from acessos where curso = 'gratuito' and revogado_em is null),
   c as (select * from compras where desde is null or criado_em >= desde),
+  pf as (select * from compras where curso = 'gratuito' and status = 'pago'),
+  lp as (
+    select l.* from l
+    where exists (select 1 from pf where pf.referencia = l.id::text or pf.aluno_id = l.aluno_id or lower(pf.email) = lower(l.email))
+  ),
   dias as (
     select generate_series(
       coalesce(date_trunc('day', desde at time zone 'America/Sao_Paulo')::date, (now() at time zone 'America/Sao_Paulo')::date - 29),
@@ -186,18 +194,29 @@ as $$
     'funil', jsonb_build_object(
       'visitaram',   (select count(distinct visitante) from v where pagina = 'inicio'),
       'leads',       (select count(*) from l),
+      'pagaram',     (select count(*) from lp),
       'abriram_hub', (select count(*) from l where etapa <> 'formulario'),
       'liberados',   (select count(*) from l where etapa = 'aprovado'),
       'entraram',    (select count(distinct l.id) from l join ag on ag.aluno_id = l.aluno_id where ag.primeiro_acesso_em is not null),
       'concluiram',  (select count(distinct l.id) from l join ag on ag.aluno_id = l.aluno_id where ag.concluido_em is not null),
-      'compraram',   (select count(distinct l.id) from l join compras cp on cp.aluno_id = l.aluno_id and cp.status = 'pago')
+      'compraram',   (select count(distinct l.id) from l join compras cp on cp.aluno_id = l.aluno_id and cp.status = 'pago' and cp.curso = 'pago')
     ),
     'vendas', jsonb_build_object(
       'pagas',      (select count(*) from c where status = 'pago'),
       'receita',    (select coalesce(sum(valor), 0) from c where status = 'pago'),
       'com_cupom',  (select count(*) from c where status = 'pago' and coalesce(desconto, 0) > 0),
       'aguardando', (select count(*) from c where status = 'aguardando'),
-      'reembolsos', (select count(*) from c where status = 'reembolsado')
+      'reembolsos', (select count(*) from c where status = 'reembolsado'),
+      'formacao', jsonb_build_object(
+        'pagas',      (select count(*) from c where curso = 'gratuito' and status = 'pago'),
+        'receita',    (select coalesce(sum(valor), 0) from c where curso = 'gratuito' and status = 'pago'),
+        'com_cupom',  (select count(*) from c where curso = 'gratuito' and status = 'pago' and coalesce(desconto, 0) > 0)
+      ),
+      'iawork', jsonb_build_object(
+        'pagas',      (select count(*) from c where curso = 'pago' and status = 'pago'),
+        'receita',    (select coalesce(sum(valor), 0) from c where curso = 'pago' and status = 'pago'),
+        'com_cupom',  (select count(*) from c where curso = 'pago' and status = 'pago' and coalesce(desconto, 0) > 0)
+      )
     ),
     'visitas', jsonb_build_object(
       'inicio',   (select count(distinct visitante) from v where pagina = 'inicio'),
@@ -221,8 +240,9 @@ as $$
           'pais', k.pais,
           'visitantes', (select count(distinct v.visitante) from v where v.pagina = 'inicio' and coalesce(v.pais, '') = k.pais),
           'leads',      (select count(*) from l where coalesce(l.pais, '') = k.pais),
+          'pagaram',    (select count(*) from lp where coalesce(lp.pais, '') = k.pais),
           'liberados',  (select count(*) from l where coalesce(l.pais, '') = k.pais and l.etapa = 'aprovado'),
-          'compraram',  (select count(distinct l.id) from l join compras cp on cp.aluno_id = l.aluno_id and cp.status = 'pago' where coalesce(l.pais, '') = k.pais)
+          'compraram',  (select count(distinct l.id) from l join compras cp on cp.aluno_id = l.aluno_id and cp.status = 'pago' and cp.curso = 'pago' where coalesce(l.pais, '') = k.pais)
         ) as p
         from (
           select distinct coalesce(pais, '') as pais from v where pagina = 'inicio'
@@ -236,8 +256,9 @@ as $$
         select jsonb_build_object(
           'origem', coalesce(nullif(l.utm_source, ''), '(direto)'),
           'leads', count(*),
+          'pagaram', count(*) filter (where l.id in (select id from lp)),
           'liberados', count(*) filter (where l.etapa = 'aprovado'),
-          'compraram', count(distinct l.id) filter (where exists (select 1 from compras cp where cp.aluno_id = l.aluno_id and cp.status = 'pago'))
+          'compraram', count(distinct l.id) filter (where exists (select 1 from compras cp where cp.aluno_id = l.aluno_id and cp.status = 'pago' and cp.curso = 'pago'))
         ) as o
         from l group by coalesce(nullif(l.utm_source, ''), '(direto)')
       ) t
@@ -260,7 +281,9 @@ as $$
     select l.*,
            ag.primeiro_acesso_em, ag.concluido_em, ag.revogado_em,
            coalesce(array_length(ag.aulas_concluidas, 1), 0) as aulas,
-           exists (select 1 from compras c where c.aluno_id = l.aluno_id and c.status = 'pago') as comprou
+           exists (select 1 from compras c where c.aluno_id = l.aluno_id and c.status = 'pago' and c.curso = 'pago') as comprou,
+           exists (select 1 from compras c where c.curso = 'gratuito' and c.status = 'pago'
+                     and (c.referencia = l.id::text or c.aluno_id = l.aluno_id or lower(c.email) = lower(l.email))) as pagou
     from leads l
     left join acessos ag on ag.aluno_id = l.aluno_id and ag.curso = 'gratuito'
     where (filtro = 'todos' or l.conferencia = filtro)
@@ -281,7 +304,7 @@ as $$
         'id', p.id, 'criado_em', p.criado_em, 'nome', p.nome, 'email', p.email, 'whatsapp', p.whatsapp,
         'pais', p.pais, 'etapa', p.etapa, 'email_plataforma', p.email_plataforma, 'conferencia', p.conferencia,
         'utm_source', p.utm_source, 'entrou_em', p.primeiro_acesso_em, 'concluiu_em', p.concluido_em,
-        'aulas', p.aulas, 'acesso_retirado', p.revogado_em is not null, 'comprou', p.comprou
+        'aulas', p.aulas, 'acesso_retirado', p.revogado_em is not null, 'comprou', p.comprou, 'pagou', p.pagou
       ) order by p.criado_em desc)
       from (select * from base order by criado_em desc limit greatest(1, least(limite, 200)) offset greatest(0, deslocamento)) p
     ), '[]'::jsonb)

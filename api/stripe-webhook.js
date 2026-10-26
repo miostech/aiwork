@@ -1,11 +1,12 @@
-// Recebe os avisos (webhook) do Stripe sobre as compras dos cursos da MIAI (IA Work e os próximos) e libera ou
-// tira o acesso ao curso comprado. O curso é descoberto pelo link de pagamento (lista em api/_cursos.js).
+// Recebe os avisos (webhook) do Stripe sobre as compras dos cursos pagos (Formação IA Academy, IA Work e os próximos
+// da MIAI) e libera ou tira o acesso ao curso comprado. O curso é descoberto pelo link de pagamento (api/_cursos.js).
 //   checkout.session.completed               → guarda a compra; se já está paga (cartão), libera o acesso
 //   checkout.session.async_payment_succeeded → pagamento confirmado depois (Pix): libera o acesso
 //   checkout.session.async_payment_failed    → Pix não pago a tempo: marca a compra como "falhou"
 //   charge.refunded, refund.created, refund.updated → reembolso total (garantia de 7 dias): tira o acesso
-// Ao liberar, cria o login (ou troca a senha de quem já é aluno) e manda o e-mail da compra com a senha
-// ("compra_miai" quando MIAI_URL está definida; "compra", da IA Academy, enquanto não está).
+// Ao liberar, cria o login (ou troca a senha de quem já é aluno) e manda o e-mail com a senha: "acesso" para a
+// Formação IA Academy; para os cursos da MIAI, "compra_miai" (com MIAI_URL definida) ou "compra".
+// O id do cadastro (client_reference_id, preenchido pela página) liga a compra ao lead do formulário.
 //
 // Variáveis de ambiente:
 //   STRIPE_SECRET_KEY      chave secreta do Stripe (sk_live_... ou sk_test_...)
@@ -21,6 +22,7 @@ import { enviarEmail } from "./_emails.js";
 import { cursoPorLinkPagamento, linkMiai } from "./_cursos.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_nao_configurada");
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // O Stripe assina o corpo exatamente como enviou, então a conferência usa o corpo cru (sem ler req.body).
 async function corpoBruto(req) {
@@ -82,14 +84,15 @@ async function liberarCompra(sessao, curso) {
   if (!reservada) return; // já liberada antes
 
   try {
+    const leadId = UUID.test(String(sessao.client_reference_id || "")) ? sessao.client_reference_id : null;
     const conta = await liberarAcesso({
-      nome: reservada.nome, email: reservada.email, curso: curso.id, origem: "stripe", referencia: sessao.id,
+      nome: reservada.nome, email: reservada.email, curso: curso.id, origem: "stripe", referencia: sessao.id, leadId,
     });
     await db.from("compras").update({ aluno_id: conta.alunoId }).eq("id", compra.id);
 
     const primeiroNome = String(reservada.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
     const envio = await enviarEmail(
-      linkMiai() ? "compra_miai" : "compra",
+      curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra",
       reservada.email,
       { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha, LINK_CURSO: linkCurso(curso.id), CURSO: curso.nome },
       `compra-${sessao.id}`

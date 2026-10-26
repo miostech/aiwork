@@ -3,7 +3,7 @@
 //   GET  /api/painel?dias=7|30|90                       → números (sem "dias" = desde o começo)
 //   GET  /api/painel?leads=1&filtro=pendente&busca=&pagina=0 → lista de leads (50 por página)
 //   POST /api/painel { lead, conferencia }              → muda a conferência da Hub do lead:
-//        "confirmado" (mantém o acesso), "nao_encontrado" (tira o acesso ao curso gratuito) ou "pendente"
+//        "confirmado", "nao_encontrado" (tira o acesso só de quem entrou quando o curso era gratuito) ou "pendente"
 // As contas e a lista vêm das funções painel_funil e painel_leads (supabase/schema.sql).
 import { banco, normalizarEmail } from "./_supabase.js";
 import { CURSO as CURSO_GRATUITO } from "./_aulas.js";
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     }
     const q = req.query || {};
 
-    // Conferência da Hub feita pelo painel (o gatilho do banco tira ou devolve o acesso ao curso gratuito)
+    // Conferência da Hub feita pelo painel (o gatilho do banco tira ou devolve o acesso de quem entrou de graça)
     if (req.method === "POST") {
       const corpo = req.body || {};
       if (!UUID.test(String(corpo.lead || "")) || !CONFERENCIAS.includes(corpo.conferencia)) {

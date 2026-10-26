@@ -1,6 +1,6 @@
 // Modelos e envio dos e-mails da IA Academy e da MIAI Academy (pelo Resend).
 // Para mudar o texto ou o visual de um e-mail, edite o html do modelo abaixo.
-// Modelos da IA Academy: acesso (curso gratuito liberado), nova_senha ("Esqueci minha senha") e compra (IA Work comprado).
+// Modelos da IA Academy: acesso (Formação IA Academy paga), nova_senha ("Esqueci minha senha") e compra (IA Work comprado).
 // Modelos da MIAI: compra_miai (curso comprado) e nova_senha_miai ("Esqueci minha senha" na conta da MIAI).
 // Campos preenchidos no envio: {{{NOME}}}, {{{EMAIL_ALUNO}}}, {{{SENHA}}}, {{{LINK_CURSO}}} e, na MIAI, {{{CURSO}}}
 //
@@ -14,7 +14,7 @@ import { linkMiai } from "./_cursos.js";
 
 const MODELOS = {
   acesso: {
-    assunto: "Seu acesso ao curso gratuito da IA Academy",
+    assunto: "Seu acesso à Formação IA Academy",
     html: `<!doctype html>
 <html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -23,7 +23,7 @@ const MODELOS = {
 <meta name="x-apple-disable-message-reformatting">
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
-<title>Seu acesso ao curso gratuito da IA Academy</title>
+<title>Seu acesso à Formação IA Academy</title>
 <!-- Modelo "acesso-curso" do Resend. Campos: {{{NOME}}}, {{{EMAIL_ALUNO}}}, {{{SENHA}}}, {{{LINK_CURSO}}} -->
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:wght@500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -75,7 +75,7 @@ const MODELOS = {
                 <!-- Texto -->
                 <tr>
                   <td align="center" style="padding:0 0 26px;font-family:'DM Sans',Arial,Helvetica,sans-serif;font-size:16px;line-height:1.6;color:#6E5A60;">
-                    Sua vaga no curso gratuito da IA Academy está garantida. Use os dados abaixo para entrar na área do aluno e assistir às aulas.
+                    Pagamento confirmado: sua vaga na Formação IA Academy está garantida. Use os dados abaixo para entrar na área do aluno e assistir às aulas.
                   </td>
                 </tr>
 
@@ -134,7 +134,7 @@ const MODELOS = {
           <!-- Rodapé -->
           <tr>
             <td align="center" style="padding:22px 12px 0;font-family:'DM Sans',Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#6E5A60;">
-              Você recebeu este e-mail porque se cadastrou no curso gratuito da IA Academy.<br>
+              Você recebeu este e-mail porque garantiu sua vaga na Formação IA Academy.<br>
               &copy; 2026 IA Academy
             </td>
           </tr>
@@ -368,7 +368,7 @@ const MODELOS = {
 
                 <tr>
                   <td style="background:#F3ECDF;border:1px solid #E2D7C4;border-radius:16px;padding:14px 16px;font-family:'Hanken Grotesk',Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;color:#3B443F;">
-                    <strong style="color:#18231E;">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Se você já era aluno(a) do curso gratuito, esta é a sua senha nova e vale para os dois cursos. Se esquecer a senha, use "Esqueci minha senha" na tela de entrada da área do aluno.
+                    <strong style="color:#18231E;">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Se você já era aluno(a) da Formação IA Academy, esta é a sua senha nova e vale para os dois cursos. Se esquecer a senha, use "Esqueci minha senha" na tela de entrada da área do aluno.
                   </td>
                 </tr>
 
