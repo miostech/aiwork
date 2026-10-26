@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="/miai/icone-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <link rel="stylesheet" href="/miai/miai.css">
 <!--
   AULAS DE UM CURSO DA MIAI (endereço: miaiacademy.com/conta/<curso>, ex.: /conta/ia-work)
@@ -19,7 +19,7 @@
 -->
 <style>
 .pagina { padding: 32px 0 88px; display: grid; gap: 32px; }
-.voltar { justify-self: start; font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--suave); text-decoration: none; }
+.voltar { justify-self: start; font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--suave); text-decoration: none; }
 .voltar:hover { color: var(--tinta); }
 .boas-vindas { display: grid; gap: 18px; padding-top: 18px; border-top: 1px solid var(--linha); }
 .boas-vindas h1 { font-size: clamp(44px, 8vw, 80px); }
@@ -38,11 +38,11 @@
 .player video { background: #000; object-fit: contain; }
 .player__vazio { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 12px; padding: 24px; text-align: center; color: var(--escuro-texto); }
 .player__play { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--escuro-linha); background: rgba(243, 241, 236, 0.08); }
-.player__vazio strong { font-family: var(--fonte-titulo); font-size: 24px; font-weight: 400; }
+.player__vazio strong { font-family: var(--fonte-titulo); font-size: 24px; font-weight: 500; }
 .player__vazio span:last-child { font-size: 14px; color: var(--escuro-suave); }
 
 .aula__info { display: grid; gap: 14px; }
-.aula__numero { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--roxo); font-variant-numeric: tabular-nums; }
+.aula__numero { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--roxo); font-variant-numeric: tabular-nums; }
 .aula__titulo { font-size: clamp(30px, 4.4vw, 44px); }
 .aula__titulo:focus { outline: none; }
 .aula__descricao { color: var(--suave); max-width: 64ch; }
@@ -63,13 +63,13 @@
 
 .lista { display: grid; gap: 16px; align-content: start; }
 .lista__topo { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-top: 18px; border-top: 1px solid var(--tinta); }
-.lista__topo span { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--suave); font-variant-numeric: tabular-nums; }
+.lista__topo span { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.12em; color: var(--suave); font-variant-numeric: tabular-nums; }
 .lista ol { list-style: none; margin: 0; padding: 0; }
 .modulos { display: grid; gap: 22px; }
 .modulo__topo { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: end; padding-bottom: 8px; }
-.modulo__rotulo { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--roxo); }
+.modulo__rotulo { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--roxo); }
 .modulo__titulo { grid-column: 1; font-size: 20px; line-height: 1.15; }
-.modulo__conta { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--fonte-mono); font-size: 11px; color: var(--suave); font-variant-numeric: tabular-nums; }
+.modulo__conta { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; color: var(--suave); font-variant-numeric: tabular-nums; }
 .item {
   width: 100%; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: center;
   padding: 12px 10px 12px 8px; border: 0; border-top: 1px solid var(--linha); border-left: 2px solid transparent; background: none;
@@ -78,11 +78,11 @@
 .lista ol li:last-child .item { border-bottom: 1px solid var(--linha); }
 .item:hover { background: var(--papel-escuro); }
 .item[aria-current="true"] { background: var(--papel-claro); border-left-color: var(--roxo); }
-.item__num { width: 28px; height: 28px; display: grid; place-items: center; font-family: var(--fonte-mono); font-size: 12px; color: var(--suave); border: 1px solid var(--linha-forte); font-variant-numeric: tabular-nums; }
+.item__num { width: 28px; height: 28px; display: grid; place-items: center; font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 12px; color: var(--suave); border: 1px solid var(--linha-forte); font-variant-numeric: tabular-nums; }
 .item.is-feita .item__num { background: var(--verde); border-color: var(--verde); color: var(--papel); }
 .item__textos { min-width: 0; display: grid; gap: 2px; }
 .item__titulo { font-size: 15px; font-weight: 500; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.item__meta { font-family: var(--fonte-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--suave); }
+.item__meta { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--suave); }
 
 .fim { padding: 32px 24px; display: grid; gap: 14px; justify-items: start; background: var(--tinta); color: var(--escuro-texto); }
 .fim .rotulo { color: var(--escuro-suave); }

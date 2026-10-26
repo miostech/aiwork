@@ -1,6 +1,6 @@
 /* Visual da MIAI Academy (miaiacademy.com), usado por todas as páginas da pasta miai/.
-   Segue o visual do site da Mios Tech (miostec.com): papel claro, tinta quase preta, roxo da marca, títulos grandes em
-   Bricolage Grotesque, textos em Inter, etiquetas em JetBrains Mono, botões retos e listas separadas por linhas finas. */
+   Segue o visual do site da Mios Tech (miostec.com): papel claro, tinta quase preta, roxo da marca, botões retos e listas
+   separadas por linhas finas. As fontes são as da IA Academy: títulos em Bitter e textos e etiquetas em DM Sans. */
 :root {
   --papel: #F3F1EC;
   --papel-claro: #FAF9F6;
@@ -23,9 +23,9 @@
   --escuro-suave: rgba(243, 241, 236, 0.62);
   --escuro-linha: rgba(243, 241, 236, 0.16);
 
-  --fonte-titulo: "Bricolage Grotesque", "Inter", system-ui, -apple-system, sans-serif;
-  --fonte: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --fonte-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --fonte-titulo: "Bitter", Georgia, "Times New Roman", serif;
+  --fonte: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-etiqueta: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;   /* maiúsculas espaçadas */
   color-scheme: light;
 }
 
@@ -43,7 +43,7 @@ body > main { flex: 1 0 auto; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--roxo); outline-offset: 3px; }
-h1, h2, h3 { margin: 0; font-family: var(--fonte-titulo); font-weight: 400; line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; }
+h1, h2, h3 { margin: 0; font-family: var(--fonte-titulo); font-weight: 500; line-height: 1.08; letter-spacing: -0.015em; text-wrap: balance; }
 p { margin: 0; }
 .container { width: 100%; max-width: 1200px; margin-inline: auto; padding-inline: 16px; }
 @media (min-width: 640px) { .container { padding-inline: 32px; } }
@@ -55,7 +55,7 @@ section[id] { scroll-margin-top: 80px; }
   -webkit-mask: url(/miai/logo-miai.png) left center / contain no-repeat; mask: url(/miai/logo-miai.png) left center / contain no-repeat;
 }
 .marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-.marca__nome { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--suave); padding-top: 3px; }
+.marca__nome { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--suave); padding-top: 3px; }
 
 /* ── Topo ─────────────────────────────── */
 .topo {
@@ -97,8 +97,8 @@ section[id] { scroll-margin-top: 80px; }
 .link-botao:hover { color: var(--tinta); }
 
 /* ── Etiquetas em mono (ex.: "01  CURSOS", "● TIMES EM 3 CONTINENTES") ── */
-.rotulo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--fonte-mono); font-size: 11px; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; color: var(--suave); line-height: 1.4; }
-.rotulo b { font-weight: 400; color: var(--roxo); }
+.rotulo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--fonte-etiqueta); font-size: 11.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); line-height: 1.4; }
+.rotulo b { font-weight: 700; color: var(--roxo); }
 .rotulo--ponto::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--roxo); }
 
 /* ── Seções ───────────────────────────── */
@@ -115,21 +115,21 @@ section[id] { scroll-margin-top: 80px; }
 /* Faixa que corre com as áreas (mono, separadas por ⋅) */
 .faixa { border-block: 1px solid var(--linha); overflow: hidden; padding: 14px 0; }
 .faixa__trilho { display: flex; width: max-content; animation: correr 40s linear infinite; }
-.faixa__trilho span { display: inline-flex; align-items: center; gap: 22px; padding-right: 22px; font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--suave); white-space: nowrap; }
+.faixa__trilho span { display: inline-flex; align-items: center; gap: 22px; padding-right: 22px; font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--suave); white-space: nowrap; }
 .faixa__trilho span::after { content: "⋅"; color: var(--apagado); }
 
 /* ── Lista de cursos (catálogo e conta): linhas como os serviços da Mios Tech ── */
 .cursos { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--linha); }
 .curso { position: relative; display: grid; gap: 14px; padding: 28px 0; border-top: 1px solid var(--linha); }
-.curso__numero { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.18em; color: var(--apagado); }
+.curso__numero { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; color: var(--apagado); }
 .curso__nome { font-size: clamp(32px, 5vw, 44px); }
 .curso__nome a { text-decoration: none; }
 .curso__nome a::after { content: ""; position: absolute; inset: 0; }
 .curso:hover .curso__nome { color: var(--roxo); }
 .curso__texto { display: grid; gap: 10px; color: var(--suave); max-width: 48ch; }
-.curso__meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); }
+.curso__meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); }
 .curso__fim { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.curso__preco { font-family: var(--fonte-titulo); font-size: 28px; line-height: 1; }
+.curso__preco { font-family: var(--fonte-titulo); font-size: 28px; font-weight: 500; line-height: 1; }
 .curso__preco small { display: block; margin-top: 6px; font-family: var(--fonte); font-size: 12px; color: var(--suave); }
 .curso__acao { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
 .curso__acao .seta { font-size: 22px; transition: transform 0.15s; }
@@ -145,13 +145,13 @@ section[id] { scroll-margin-top: 80px; }
 .progresso { display: grid; gap: 8px; }
 .progresso__barra { height: 3px; background: var(--linha); overflow: hidden; }
 .progresso__barra span { display: block; height: 100%; width: 0; background: var(--roxo); transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-.progresso p { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--suave); font-variant-numeric: tabular-nums; }
+.progresso p { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--suave); font-variant-numeric: tabular-nums; }
 .progresso strong { font-weight: 500; color: var(--tinta); }
 
 /* ── Formulários (entrar e nova senha) ── */
 .formulario { display: grid; gap: 14px; }
 .campo { display: grid; gap: 6px; }
-.campo label { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--suave); }
+.campo label { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--suave); }
 .campo input {
   width: 100%; font: inherit; font-size: 16px; color: var(--tinta);
   padding: 12px 14px; border: 1px solid var(--linha-forte); border-radius: 0; background: var(--papel-claro);

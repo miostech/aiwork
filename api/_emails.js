@@ -393,12 +393,14 @@ const MODELOS = {
 };
 
 
-// Visual dos e-mails da MIAI Academy (o mesmo do site: papel claro, tinta preta, roxo da marca e botão reto).
+// Visual dos e-mails da MIAI Academy (o mesmo do site: papel claro, tinta preta, roxo da marca, botão reto e as fontes
+// da IA Academy, Bitter e DM Sans).
 // Cada e-mail da MIAI só muda os textos.
 function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, nota, rodape }) {
-  const fonte = "Inter,Arial,Helvetica,sans-serif";
-  const fonteTitulo = "'Bricolage Grotesque',Inter,Arial,Helvetica,sans-serif";
-  const fonteMono = "'JetBrains Mono','SFMono-Regular',Menlo,Consolas,monospace";
+  const fonte = "'DM Sans',Arial,Helvetica,sans-serif";
+  const fonteTitulo = "Bitter,Georgia,'Times New Roman',serif";
+  const fonteEtiqueta = fonte;   // maiúsculas espaçadas
+  const fonteSenha = "'SFMono-Regular',Menlo,Consolas,monospace";
   return `<!doctype html>
 <html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -408,7 +410,7 @@ function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, n
 <meta name="color-scheme" content="light">
 <meta name="supported-color-schemes" content="light">
 <title>${titulo}</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@500;600&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   body { margin: 0; padding: 0; background: #F3F1EC; }
   a { color: #5E1D93; }
@@ -431,8 +433,8 @@ function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, n
           <!-- Logo -->
           <tr>
             <td style="padding:0 0 20px;">
-              <span style="font-family:${fonteTitulo};font-size:32px;font-weight:800;letter-spacing:-1px;color:#5E1D93;">miai</span>
-              <span style="font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;">&nbsp;Academy</span>
+              <span style="font-family:${fonte};font-size:32px;font-weight:800;letter-spacing:-1px;color:#5E1D93;">miai</span>
+              <span style="font-family:${fonteEtiqueta};font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#6A675E;">&nbsp;Academy</span>
             </td>
           </tr>
 
@@ -442,13 +444,13 @@ function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, n
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 
                 <tr>
-                  <td style="padding:0 0 18px;font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;">
+                  <td style="padding:0 0 18px;font-family:${fonteEtiqueta};font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#6A675E;">
                     <span style="color:#5E1D93;">&#9679;</span>&nbsp; ${selo}
                   </td>
                 </tr>
 
                 <tr>
-                  <td class="titulo" style="padding:0 0 16px;font-family:${fonteTitulo};font-size:36px;line-height:1.05;font-weight:400;letter-spacing:-0.5px;color:#14130F;">
+                  <td class="titulo" style="padding:0 0 16px;font-family:${fonteTitulo};font-size:32px;line-height:1.15;font-weight:500;letter-spacing:-0.3px;color:#14130F;">
                     ${chamada}
                   </td>
                 </tr>
@@ -465,14 +467,14 @@ function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, n
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #DCD9D1;border-bottom:1px solid #DCD9D1;">
                       <tr>
                         <td style="padding:16px 0 12px;border-bottom:1px solid #DCD9D1;">
-                          <div style="font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;padding-bottom:4px;">E-mail</div>
+                          <div style="font-family:${fonteEtiqueta};font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#6A675E;padding-bottom:4px;">E-mail</div>
                           <div style="font-family:${fonte};font-size:16px;font-weight:500;color:#14130F;word-break:break-all;">{{{EMAIL_ALUNO}}}</div>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding:12px 0 16px;">
-                          <div style="font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;padding-bottom:4px;">${rotuloSenha}</div>
-                          <div style="font-family:${fonteMono};font-size:22px;font-weight:500;letter-spacing:2px;color:#14130F;">{{{SENHA}}}</div>
+                          <div style="font-family:${fonteEtiqueta};font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#6A675E;padding-bottom:4px;">${rotuloSenha}</div>
+                          <div style="font-family:${fonteSenha};font-size:22px;font-weight:600;letter-spacing:2px;color:#14130F;">{{{SENHA}}}</div>
                         </td>
                       </tr>
                     </table>
