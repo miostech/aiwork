@@ -1,11 +1,14 @@
-// Modelos e envio dos e-mails da IA Academy (pelo Resend).
+// Modelos e envio dos e-mails da IA Academy e da MIAI Academy (pelo Resend).
 // Para mudar o texto ou o visual de um e-mail, edite o html do modelo abaixo.
-// Modelos: acesso (curso gratuito liberado), nova_senha ("Esqueci minha senha") e compra (IA Work comprado).
-// Campos preenchidos no envio: {{{NOME}}}, {{{EMAIL_ALUNO}}}, {{{SENHA}}}, {{{LINK_CURSO}}}
+// Modelos da IA Academy: acesso (curso gratuito liberado), nova_senha ("Esqueci minha senha") e compra (IA Work comprado).
+// Modelos da MIAI: compra_miai (curso comprado) e nova_senha_miai ("Esqueci minha senha" na conta da MIAI).
+// Campos preenchidos no envio: {{{NOME}}}, {{{EMAIL_ALUNO}}}, {{{SENHA}}}, {{{LINK_CURSO}}} e, na MIAI, {{{CURSO}}}
 //
 // Variáveis de ambiente:
-//   RESEND_API_KEY   chave do Resend (só de envio)
-//   EMAIL_REMETENTE  ex.: IA Academy <acesso@iaacademy.bio> (domínio verificado no Resend)
+//   RESEND_API_KEY        chave do Resend (só de envio)
+//   EMAIL_REMETENTE       ex.: IA Academy <acesso@iaacademy.bio> (domínio verificado no Resend)
+//   EMAIL_REMETENTE_MIAI  opcional, ex.: MIAI Academy <acesso@miaiacademy.com> (domínio verificado no Resend).
+//                         Vazio = usa o endereço do EMAIL_REMETENTE com o nome "MIAI Academy".
 import { Resend } from "resend";
 
 const MODELOS = {
@@ -389,7 +392,174 @@ const MODELOS = {
   },
 };
 
+
+// Visual dos e-mails da MIAI Academy (o mesmo do site: papel claro, tinta preta, roxo da marca e botão reto).
+// Cada e-mail da MIAI só muda os textos.
+function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, nota, rodape }) {
+  const fonte = "Inter,Arial,Helvetica,sans-serif";
+  const fonteTitulo = "'Bricolage Grotesque',Inter,Arial,Helvetica,sans-serif";
+  const fonteMono = "'JetBrains Mono','SFMono-Regular',Menlo,Consolas,monospace";
+  return `<!doctype html>
+<html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>${titulo}</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 0; background: #F3F1EC; }
+  a { color: #5E1D93; }
+  @media (max-width: 600px) {
+    .cartao { padding: 28px 20px !important; }
+    .titulo { font-size: 30px !important; }
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F3F1EC;">
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F3F1EC;opacity:0;">
+    ${previa}
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F3F1EC;">
+    <tr>
+      <td align="center" style="padding:32px 16px 40px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+
+          <!-- Logo -->
+          <tr>
+            <td style="padding:0 0 20px;">
+              <span style="font-family:${fonteTitulo};font-size:32px;font-weight:800;letter-spacing:-1px;color:#5E1D93;">miai</span>
+              <span style="font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;">&nbsp;Academy</span>
+            </td>
+          </tr>
+
+          <!-- Cartão -->
+          <tr>
+            <td class="cartao" style="background:#FAF9F6;border:1px solid #DCD9D1;padding:36px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+                <tr>
+                  <td style="padding:0 0 18px;font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;">
+                    <span style="color:#5E1D93;">&#9679;</span>&nbsp; ${selo}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td class="titulo" style="padding:0 0 16px;font-family:${fonteTitulo};font-size:36px;line-height:1.05;font-weight:400;letter-spacing:-0.5px;color:#14130F;">
+                    ${chamada}
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:0 0 26px;font-family:${fonte};font-size:16px;line-height:1.6;color:#6A675E;">
+                    ${texto}
+                  </td>
+                </tr>
+
+                <!-- Dados de acesso -->
+                <tr>
+                  <td style="padding:0 0 26px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #DCD9D1;border-bottom:1px solid #DCD9D1;">
+                      <tr>
+                        <td style="padding:16px 0 12px;border-bottom:1px solid #DCD9D1;">
+                          <div style="font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;padding-bottom:4px;">E-mail</div>
+                          <div style="font-family:${fonte};font-size:16px;font-weight:500;color:#14130F;word-break:break-all;">{{{EMAIL_ALUNO}}}</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:12px 0 16px;">
+                          <div style="font-family:${fonteMono};font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6A675E;padding-bottom:4px;">${rotuloSenha}</div>
+                          <div style="font-family:${fonteMono};font-size:22px;font-weight:500;letter-spacing:2px;color:#14130F;">{{{SENHA}}}</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <!-- Botão -->
+                <tr>
+                  <td style="padding:0 0 18px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td bgcolor="#14130F" style="background:#14130F;">
+                          <a href="{{{LINK_CURSO}}}" target="_blank" style="display:inline-block;padding:15px 28px;font-family:${fonte};font-size:15px;font-weight:500;color:#F3F1EC;text-decoration:none;">${botao} &rarr;</a>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="padding:0 0 26px;font-family:${fonte};font-size:13px;line-height:1.5;color:#6A675E;">
+                    Se o botão não abrir, copie este endereço no navegador:<br>
+                    <a href="{{{LINK_CURSO}}}" target="_blank" style="color:#5E1D93;word-break:break-all;">{{{LINK_CURSO}}}</a>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="background:#EFEAF7;border-left:3px solid #5E1D93;padding:14px 16px;font-family:${fonte};font-size:14px;line-height:1.5;color:#2A2823;">
+                    ${nota}
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:22px 0 0;font-family:${fonte};font-size:12px;line-height:1.6;color:#6A675E;">
+              ${rodape}<br>
+              &copy; 2026 MIAI Academy
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+}
+
+MODELOS.compra_miai = {
+  marca: "miai",
+  assunto: "Seu acesso ao {{{CURSO}}} na MIAI Academy",
+  html: emailMiai({
+    titulo: "Seu acesso ao {{{CURSO}}} na MIAI Academy",
+    previa: "Pagamento confirmado. Aqui estão o seu e-mail e a sua senha para assistir ao {{{CURSO}}}.",
+    selo: "Pagamento confirmado",
+    chamada: "Bem-vindo(a) ao {{{CURSO}}}, {{{NOME}}}!",
+    texto: "Seu acesso está liberado. Use os dados abaixo para entrar na sua conta da MIAI Academy: o {{{CURSO}}} já aparece lá, junto com os outros cursos que você tiver.",
+    rotuloSenha: "Senha",
+    botao: "Assistir ao {{{CURSO}}}",
+    nota: "<strong style=\"color:#14130F;\">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Se você já tinha conta na MIAI Academy ou na IA Academy, esta é a sua senha nova e vale para todos os seus cursos. Se esquecer a senha, use \"Esqueci minha senha\" na tela de entrada.",
+    rodape: "Você recebeu este e-mail porque comprou o {{{CURSO}}} na MIAI Academy.",
+  }),
+};
+
+MODELOS.nova_senha_miai = {
+  marca: "miai",
+  assunto: "Sua nova senha da MIAI Academy",
+  html: emailMiai({
+    titulo: "Sua nova senha da MIAI Academy",
+    previa: "Aqui está a sua nova senha para entrar na sua conta da MIAI Academy.",
+    selo: "Nova senha",
+    chamada: "Aqui está a sua nova senha, {{{NOME}}}",
+    texto: "Recebemos um pedido de nova senha para a sua conta na MIAI Academy. A senha anterior não vale mais: use os dados abaixo para entrar.",
+    rotuloSenha: "Nova senha",
+    botao: "Entrar na minha conta",
+    nota: "<strong style=\"color:#14130F;\">Não pediu uma nova senha?</strong> Pode entrar com a senha acima normalmente. Ela foi enviada só para o seu e-mail, então sua conta continua segura.",
+    rodape: "Você recebeu este e-mail porque tem uma conta na MIAI Academy.",
+  }),
+};
+
 const REMETENTE = process.env.EMAIL_REMETENTE || "IA Academy <onboarding@resend.dev>";
+// Mesmo endereço, com o nome da MIAI, enquanto o domínio da MIAI não estiver verificado no Resend
+const REMETENTE_MIAI = process.env.EMAIL_REMETENTE_MIAI || "MIAI Academy <" + (REMETENTE.match(/<([^>]+)>/) || [null, REMETENTE])[1] + ">";
 let resend = null;
 
 function cliente() {
@@ -406,15 +576,17 @@ function escapar(texto) {
 
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// tipo: "acesso" ou "nova_senha". idempotencia: chave única por tentativa de envio (evita e-mail duplicado).
+// tipo: um dos MODELOS acima. idempotencia: chave única por tentativa de envio (evita e-mail duplicado).
 // Devolve { ok: true, id } ou { ok: false, erro }. Nunca lança erro.
 export async function enviarEmail(tipo, para, dados, idempotencia) {
   const modelo = MODELOS[tipo];
   const html = modelo.html.replace(/\{\{\{(\w+)\}\}\}/g, (_, campo) => escapar(dados[campo]));
+  const assunto = modelo.assunto.replace(/\{\{\{(\w+)\}\}\}/g, (_, campo) => String(dados[campo] ?? ""));
+  const remetente = modelo.marca === "miai" ? REMETENTE_MIAI : REMETENTE;
   try {
     for (let tentativa = 1; tentativa <= 3; tentativa++) {
       const { data, error, headers } = await cliente().emails.send(
-        { from: REMETENTE, to: [para], subject: modelo.assunto, html },
+        { from: remetente, to: [para], subject: assunto, html },
         { idempotencyKey: idempotencia }
       );
       if (!error) {

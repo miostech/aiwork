@@ -1,6 +1,7 @@
 // Contas dos alunos: cria o login no Supabase, gera a senha e libera o curso.
 import crypto from "node:crypto";
 import { banco, normalizarEmail } from "./_supabase.js";
+import { cursoPorId, linkMiai } from "./_cursos.js";
 
 // Senha no formato ABCD-1234: fácil de digitar, sem letras e números que se confundem (0/O, 1/I/L).
 const LETRAS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -86,8 +87,11 @@ export async function trocarSenha(alunoId) {
 }
 
 // Endereço da área do curso com o domínio do site (nunca o .vercel.app).
-// curso "pago" abre direto as aulas do IA Work.
+// Com MIAI_URL definida, os cursos da MIAI abrem na conta da MIAI (ex.: miaiacademy.com/conta/ia-work);
+// sem ela, o curso "pago" abre direto as aulas do IA Work na área do aluno da IA Academy.
 export function linkCurso(curso = "gratuito") {
+  const miai = cursoPorId(curso);
+  if (miai && linkMiai()) return linkMiai("/conta/" + miai.endereco);
   const base = (process.env.SITE_URL || "https://www.iaacademy.bio").replace(/\/+$/, "");
   return base + "/curso.html" + (curso === "pago" ? "?curso=pago" : "");
 }

@@ -306,7 +306,7 @@ body {
       <button class="btn btn--secondary" id="btn-enviar-senha" type="submit">Enviar nova senha</button>
     </form>
 
-    <p>Ainda não tem acesso? <a class="link" id="link-cadastro" href="index.html">Faça seu cadastro gratuito</a></p>
+    <p>Ainda não tem acesso? <a class="link" id="link-cadastro" href="/">Faça seu cadastro gratuito</a></p>
     <p id="suporte" hidden>Precisa de ajuda? <a class="link" id="link-suporte" href="#" target="_blank" rel="noopener">Fale com o suporte</a></p>
   </section>
 
@@ -318,7 +318,7 @@ body {
     <h1 class="titulo" id="sem-acesso-titulo">Seu acesso ainda não está liberado</h1>
     <p id="sem-acesso-texto">Para assistir às aulas, faça seu cadastro gratuito e valide sua conta na <span data-plataforma>Hub</span>. Leva poucos minutos.</p>
     <div class="actions">
-      <a class="btn btn--primary" id="btn-cadastro" href="index.html">Fazer meu cadastro gratuito</a>
+      <a class="btn btn--primary" id="btn-cadastro" href="/">Fazer meu cadastro gratuito</a>
       <a class="btn btn--secondary" id="btn-outro-curso-sem-acesso" href="#" hidden></a>
     </div>
   </section>
@@ -405,7 +405,7 @@ window.CONFIG = {
   enderecoAulas: '/api/aulas',   // função que entrega as aulas para quem está logado e tem acesso
   enderecoConfig: '/api/config-publica',  // endereço do Supabase e chave pública para o login
   enderecoNovaSenha: '/api/nova-senha',   // "Esqueci minha senha"
-  paginaCadastro: 'index.html',  // para onde vai quem ainda não tem acesso
+  paginaCadastro: '/',           // para onde vai quem ainda não tem acesso
   paginaVendas: '/aiwork',       // página de vendas do IA Work (curso pago)
   linkSuporte: '',               // link do WhatsApp do suporte (opcional; vazio = esconde)
 };

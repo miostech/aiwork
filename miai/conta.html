@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minha conta · MIAI Academy</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F3F1EC">
+<link rel="icon" type="image/png" href="/miai/favicon.png">
+<link rel="apple-touch-icon" href="/miai/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/miai/miai.css">
+<!--
+  CONTA DO ALUNO NA MIAI ACADEMY (endereço: miaiacademy.com/conta)
+  Entrar com e-mail e senha (o mesmo login da IA Academy) e ver os cursos comprados.
+  Os cursos que a pessoa tem vêm de /api/conta; os textos de cada curso, do CATÁLOGO em miai/miai.js.
+-->
+<style>
+main { min-height: 60vh; }
+.conta { padding: 40px 0 88px; display: grid; gap: 64px; }
+.conta__ola { display: grid; gap: 20px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.conta__ola h1 { font-size: clamp(44px, 8vw, 80px); }
+.conta__ola p { color: var(--suave); max-width: 52ch; }
+.bloco { display: grid; gap: 0; }
+.bloco > .rotulo { margin-bottom: 20px; }
+.vazio { display: grid; gap: 14px; justify-items: start; padding: 28px 0 32px; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); }
+.vazio h3 { font-size: clamp(26px, 3.6vw, 34px); }
+.vazio p { color: var(--suave); max-width: 52ch; }
+.estado .rodape-estado { font-size: 14px; color: var(--suave); padding-top: 16px; border-top: 1px solid var(--linha); }
+</style>
+<script src="/contador.js" data-pagina="miai-conta" defer></script>
+</head>
+<body>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+    <nav class="topo__acoes" aria-label="Principal">
+      <a class="topo__link" href="/#cursos">Cursos</a>
+      <button class="topo__link" id="btn-sair" type="button" hidden>Sair</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Carregando -->
+  <section class="estado" id="estado-carregando" aria-live="polite">
+    <span class="girando" aria-hidden="true"></span>
+    <p>Carregando a sua conta…</p>
+  </section>
+
+  <!-- Entrar -->
+  <section class="estado" id="estado-login" hidden>
+    <span class="rotulo rotulo--ponto">Minha conta</span>
+    <h1>Entrar.</h1>
+    <p>Use o e-mail do pagamento e a senha que você recebeu por e-mail.</p>
+
+    <form class="formulario" id="form-entrar" novalidate>
+      <div class="campo">
+        <label for="f-email">E-mail</label>
+        <input id="f-email" type="email" autocomplete="username" inputmode="email" placeholder="nome@gmail.com" required>
+      </div>
+      <div class="campo">
+        <label for="f-senha">Senha</label>
+        <input id="f-senha" type="password" autocomplete="current-password" placeholder="ABCD-1234" required>
+      </div>
+      <p class="aviso-erro" id="erro-entrar" role="alert"></p>
+      <button class="botao botao--tinta botao--grande botao--largo" id="btn-entrar" type="submit">Entrar</button>
+    </form>
+
+    <button class="link-botao" id="btn-esqueci" type="button">Esqueci minha senha</button>
+    <form class="formulario" id="form-esqueci" novalidate hidden>
+      <p>Digite o seu e-mail. Vamos mandar uma senha nova para ele.</p>
+      <div class="campo">
+        <label for="f-email-esqueci">E-mail</label>
+        <input id="f-email-esqueci" type="email" autocomplete="email" inputmode="email" placeholder="nome@gmail.com" required>
+      </div>
+      <p class="aviso-ok" id="ok-esqueci" role="status"></p>
+      <p class="aviso-erro" id="erro-esqueci" role="alert"></p>
+      <button class="botao botao--contorno botao--grande botao--largo" id="btn-enviar-senha" type="submit">Enviar nova senha</button>
+    </form>
+
+    <p class="rodape-estado">Ainda não tem conta? Ela é criada quando você compra um curso. <a class="link" href="/#cursos">Ver os cursos</a></p>
+  </section>
+
+  <!-- Erro de conexão -->
+  <section class="estado" id="estado-erro" hidden>
+    <span class="rotulo rotulo--ponto">Minha conta</span>
+    <h1>Não conseguimos carregar a sua conta.</h1>
+    <p>Confira sua internet e tente de novo.</p>
+    <button class="botao botao--tinta botao--grande botao--largo" id="btn-tentar" type="button">Tentar de novo</button>
+  </section>
+
+  <!-- Conta -->
+  <div class="conta" id="conta" hidden>
+    <section class="conta__ola">
+      <span class="rotulo rotulo--ponto">Minha conta</span>
+      <h1>Olá, <span id="aluno">aluno(a)</span>.</h1>
+      <p>Aqui ficam os cursos que você comprou e o quanto já assistiu de cada um.</p>
+    </section>
+
+    <section class="bloco" aria-labelledby="titulo-meus">
+      <span class="rotulo"><b>01</b> <span id="titulo-meus">Meus cursos</span></span>
+      <ul class="cursos" id="meus-cursos"></ul>
+      <div class="vazio" id="sem-cursos" hidden>
+        <h3>Você ainda não tem cursos na MIAI.</h3>
+        <p>Quando você comprar um curso, ele aparece aqui. Se já comprou, confira se entrou com o mesmo e-mail do pagamento.</p>
+        <a class="botao botao--tinta" href="/#cursos">Ver os cursos <span class="seta" aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <section class="bloco" id="bloco-outros" aria-labelledby="titulo-outros" hidden>
+      <span class="rotulo"><b>02</b> <span id="titulo-outros">Outros cursos da MIAI</span></span>
+      <ul class="cursos" id="outros-cursos"></ul>
+    </section>
+  </div>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape__base" style="border-top: 0; padding-top: 0">
+      <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+      <span>Precisa de ajuda? <a href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="/miai/miai.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (sel) => document.querySelector(sel);
+  Miai.ajustarTopo();
+
+  // Depois de entrar, volta para a página de aulas de onde a pessoa veio (ex.: /conta?volta=/conta/ia-work)
+  const volta = new URLSearchParams(location.search).get('volta') || '';
+  const destino = /^\/conta\/[a-z0-9-]+$/.test(volta) ? volta : '';
+
+  function mostrar(estado) {
+    $('#estado-carregando').hidden = estado !== 'carregando';
+    $('#estado-login').hidden = estado !== 'login';
+    $('#estado-erro').hidden = estado !== 'erro';
+    $('#conta').hidden = estado !== 'conta';
+    $('#btn-sair').hidden = estado !== 'conta';
+  }
+
+  async function carregar() {
+    mostrar('carregando');
+    try {
+      const resposta = await Miai.chamar('/api/conta');
+      if (!resposta) { mostrar('login'); return; }
+      if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+      if (destino) { location.replace(destino); return; }
+      montarConta(await resposta.json());
+    } catch (e) {
+      mostrar('erro');
+    }
+  }
+
+  function montarConta(dados) {
+    const primeiroNome = String((dados.aluno && dados.aluno.nome) || '').trim().split(/\s+/)[0];
+    $('#aluno').textContent = primeiroNome || 'aluno(a)';
+
+    const meus = $('#meus-cursos');
+    const outros = $('#outros-cursos');
+    meus.replaceChildren();
+    outros.replaceChildren();
+    const tenho = new Map((dados.cursos || []).map((c) => [c.endereco, c]));
+
+    Miai.catalogo.forEach((curso) => {
+      const meu = tenho.get(curso.endereco);
+      if (meu) {
+        meus.appendChild(Miai.linhaCurso(curso, meus.children.length + 1, {
+          acao: meu.concluidas ? 'Continuar' : 'Começar',
+          link: '/conta/' + curso.endereco,
+          progresso: { concluidas: meu.concluidas, total: meu.total },
+        }));
+      } else {
+        outros.appendChild(Miai.linhaCurso(curso, outros.children.length + 1));
+      }
+    });
+    $('#meus-cursos').hidden = meus.children.length === 0;
+    $('#sem-cursos').hidden = meus.children.length > 0;
+    $('#bloco-outros').hidden = outros.children.length === 0;
+    mostrar('conta');
+  }
+
+  Miai.montarLogin(carregar);
+
+  $('#btn-sair').addEventListener('click', async () => {
+    await Miai.sair();
+    mostrar('login');
+  });
+  $('#btn-tentar').addEventListener('click', carregar);
+
+  carregar();
+})();
+</script>
+</body>
+</html>

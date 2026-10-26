@@ -43,7 +43,7 @@ create table if not exists public.visitas (
   id         bigint generated always as identity primary key,
   criado_em  timestamptz not null default now(),
   dia        date not null,   -- dia da visita (horário de Brasília)
-  pagina     text not null,   -- inicio, cadastro, aiwork, aiwork-obrigado, curso
+  pagina     text not null,   -- inicio, cadastro, aiwork, aiwork-obrigado, curso e as da MIAI (miai-inicio, miai-ia-work...)
   visitante  text not null,   -- número anônimo guardado no navegador da pessoa
   pais       text,            -- código do país (BR, PT, US...), pelo IP; o IP não é guardado
   utm_source text,

@@ -4,7 +4,10 @@
 // a origem do anúncio e o site de onde a pessoa veio. Cada visitante conta uma vez por página por dia.
 import { banco } from "./_supabase.js";
 
-const PAGINAS = ["inicio", "cadastro", "aiwork", "aiwork-obrigado", "curso"];
+const PAGINAS = [
+  "inicio", "cadastro", "aiwork", "aiwork-obrigado", "curso",                    // IA Academy
+  "miai-inicio", "miai-ia-work", "miai-obrigado", "miai-conta", "miai-aulas",     // MIAI Academy
+];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ROBOS = /bot|crawl|spider|preview|headless|lighthouse|pingdom|monitor/i;
 

@@ -1,22 +1,25 @@
-// Recebe os avisos (webhook) do Stripe sobre as compras do IA Work e libera ou tira o acesso ao curso pago.
+// Recebe os avisos (webhook) do Stripe sobre as compras dos cursos da MIAI (IA Work e os próximos) e libera ou
+// tira o acesso ao curso comprado. O curso é descoberto pelo link de pagamento (lista em api/_cursos.js).
 //   checkout.session.completed               → guarda a compra; se já está paga (cartão), libera o acesso
 //   checkout.session.async_payment_succeeded → pagamento confirmado depois (Pix): libera o acesso
 //   checkout.session.async_payment_failed    → Pix não pago a tempo: marca a compra como "falhou"
 //   charge.refunded, refund.created, refund.updated → reembolso total (garantia de 7 dias): tira o acesso
-// Ao liberar, cria o login (ou troca a senha de quem já é aluno) e manda o e-mail "compra" com a senha.
+// Ao liberar, cria o login (ou troca a senha de quem já é aluno) e manda o e-mail da compra com a senha
+// ("compra_miai" quando MIAI_URL está definida; "compra", da IA Academy, enquanto não está).
 //
 // Variáveis de ambiente:
 //   STRIPE_SECRET_KEY      chave secreta do Stripe (sk_live_... ou sk_test_...)
 //   STRIPE_WEBHOOK_SECRET  segredo do webhook (whsec_...), em Stripe → Desenvolvedores → Webhooks
-//   STRIPE_PAYMENT_LINK    id do link de pagamento do IA Work (plink_...). Obrigatório: a conta do Stripe também
-//                          recebe pagamentos de outros produtos, e só as compras feitas por este link liberam o curso.
+//   STRIPE_PAYMENT_LINK    id do link de pagamento do IA Work (plink_...), usado em api/_cursos.js. A conta do Stripe
+//                          também recebe pagamentos de outros produtos: só as compras feitas pelos links dos cursos
+//                          liberam alguma coisa.
 //   + as do Supabase (api/_supabase.js) e do Resend (api/_emails.js)
 import Stripe from "stripe";
 import { banco, normalizarEmail } from "./_supabase.js";
 import { liberarAcesso, linkCurso } from "./_alunos.js";
 import { enviarEmail } from "./_emails.js";
+import { cursoPorLinkPagamento, linkMiai } from "./_cursos.js";
 
-const CURSO = "pago";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_nao_configurada");
 
 // O Stripe assina o corpo exatamente como enviou, então a conferência usa o corpo cru (sem ler req.body).
@@ -30,15 +33,14 @@ function idDe(valor) {
   return typeof valor === "string" ? valor : (valor && valor.id) || null;
 }
 
-function ehDoIaWork(sessao) {
-  const link = process.env.STRIPE_PAYMENT_LINK;
-  if (!link) console.error("Defina STRIPE_PAYMENT_LINK: sem ele nenhuma compra libera o IA Work.");
-  return !!link && idDe(sessao.payment_link) === link;
+// Curso comprado nesta sessão de pagamento, ou null quando é a compra de outro produto da conta do Stripe
+function cursoDaSessao(sessao) {
+  return cursoPorLinkPagamento(idDe(sessao.payment_link));
 }
 
 // Guarda (ou atualiza) a compra. Uma compra paga ou reembolsada nunca volta para "aguardando" ou "falhou",
 // mesmo que os avisos do Stripe cheguem fora de ordem.
-async function registrarCompra(sessao, status) {
+async function registrarCompra(sessao, curso, status) {
   const db = banco();
   const { data: atual, error: erroBusca } = await db
     .from("compras").select("id, status").eq("stripe_sessao", sessao.id).maybeSingle();
@@ -54,7 +56,7 @@ async function registrarCompra(sessao, status) {
     status: atual && atual.status === "reembolsado" ? "reembolsado" : status,
     email: normalizarEmail(cliente.email || sessao.customer_email),
     nome: (cliente.name || (sessao.collected_information && sessao.collected_information.individual_name) || "").trim() || null,
-    curso: CURSO,
+    curso: curso.id,
     valor: sessao.amount_total,
     moeda: sessao.currency,
     desconto: sessao.total_details ? sessao.total_details.amount_discount : null,
@@ -66,11 +68,11 @@ async function registrarCompra(sessao, status) {
   return data;
 }
 
-// Libera o curso pago e manda a senha por e-mail, uma única vez por compra
+// Libera o curso comprado e manda a senha por e-mail, uma única vez por compra
 // (o Stripe pode mandar o mesmo aviso mais de uma vez).
-async function liberarCompra(sessao) {
+async function liberarCompra(sessao, curso) {
   const db = banco();
-  const compra = await registrarCompra(sessao, "pago");
+  const compra = await registrarCompra(sessao, curso, "pago");
   if (compra.status !== "pago") return;
 
   const { data: reservada, error: erroReserva } = await db.from("compras")
@@ -81,15 +83,15 @@ async function liberarCompra(sessao) {
 
   try {
     const conta = await liberarAcesso({
-      nome: reservada.nome, email: reservada.email, curso: CURSO, origem: "stripe", referencia: sessao.id,
+      nome: reservada.nome, email: reservada.email, curso: curso.id, origem: "stripe", referencia: sessao.id,
     });
     await db.from("compras").update({ aluno_id: conta.alunoId }).eq("id", compra.id);
 
     const primeiroNome = String(reservada.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
     const envio = await enviarEmail(
-      "compra",
+      linkMiai() ? "compra_miai" : "compra",
       reservada.email,
-      { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha, LINK_CURSO: linkCurso(CURSO) },
+      { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha, LINK_CURSO: linkCurso(curso.id), CURSO: curso.nome },
       `compra-${sessao.id}`
     );
     if (!envio.ok) {
@@ -102,12 +104,12 @@ async function liberarCompra(sessao) {
   }
 }
 
-// Reembolso total: marca a compra e tira o acesso ao curso pago.
+// Reembolso total: marca a compra e tira o acesso ao curso comprado.
 // valorReembolsado (em centavos) vem dos eventos refund.*; se for menor que o valor pago, é parcial e o acesso continua.
 async function marcarReembolso(pagamento, valorReembolsado = null) {
   if (!pagamento) return;
   const db = banco();
-  const { data: compras, error } = await db.from("compras").select("id, valor, aluno_id").eq("stripe_pagamento", pagamento);
+  const { data: compras, error } = await db.from("compras").select("id, valor, aluno_id, curso").eq("stripe_pagamento", pagamento);
   if (error) throw error;
   if (!compras || !compras.length) return; // pagamento de outro produto da conta
   for (const compra of compras) {
@@ -120,7 +122,7 @@ async function marcarReembolso(pagamento, valorReembolsado = null) {
     if (!compra.aluno_id) continue;
     const { error: erroAcesso } = await db.from("acessos")
       .update({ revogado_em: new Date().toISOString() })
-      .eq("aluno_id", compra.aluno_id).eq("curso", CURSO).is("revogado_em", null);
+      .eq("aluno_id", compra.aluno_id).eq("curso", compra.curso).is("revogado_em", null);
     if (erroAcesso) throw erroAcesso;
   }
 }
@@ -146,17 +148,18 @@ export default async function handler(req, res) {
 
   try {
     const objeto = evento.data.object;
+    const curso = evento.type.startsWith("checkout.session.") ? cursoDaSessao(objeto) : null;
     switch (evento.type) {
       case "checkout.session.completed":
-        if (!ehDoIaWork(objeto)) break;
-        if (objeto.payment_status === "paid") await liberarCompra(objeto);
-        else await registrarCompra(objeto, "aguardando"); // Pix: espera a confirmação
+        if (!curso) break;
+        if (objeto.payment_status === "paid") await liberarCompra(objeto, curso);
+        else await registrarCompra(objeto, curso, "aguardando"); // Pix: espera a confirmação
         break;
       case "checkout.session.async_payment_succeeded":
-        if (ehDoIaWork(objeto)) await liberarCompra(objeto);
+        if (curso) await liberarCompra(objeto, curso);
         break;
       case "checkout.session.async_payment_failed":
-        if (ehDoIaWork(objeto)) await registrarCompra(objeto, "falhou");
+        if (curso) await registrarCompra(objeto, curso, "falhou");
         break;
       case "charge.refunded":
         if (objeto.refunded) await marcarReembolso(idDe(objeto.payment_intent));

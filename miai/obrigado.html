@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Compra recebida · MIAI Academy</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F3F1EC">
+<link rel="icon" type="image/png" href="/miai/favicon.png">
+<link rel="apple-touch-icon" href="/miai/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/miai/miai.css">
+<!--
+  PÁGINA DE OBRIGADO DA MIAI (endereço: miaiacademy.com/obrigado/<curso>, ex.: /obrigado/ia-work)
+  O Stripe manda o comprador para cá depois do pagamento (configurado no link de pagamento de cada curso).
+  O acesso é liberado pelo aviso do Stripe (api/stripe-webhook.js), que manda a senha por e-mail.
+-->
+<!-- Google Analytics e Google Ads (os mesmos do site antigo da Mios Academy, miosacademy.com) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
+<style>
+main { padding: 40px 0 96px; }
+.obrigado { display: grid; gap: 24px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.obrigado h1 { font-size: clamp(44px, 8vw, 84px); max-width: 14ch; }
+.obrigado__grade { display: grid; gap: 28px; margin-top: 16px; }
+.obrigado__texto { display: grid; gap: 14px; color: var(--suave); max-width: 52ch; }
+.obrigado__acao { display: grid; gap: 18px; align-content: start; justify-items: start; }
+.aviso { padding: 14px 16px; background: var(--papel-claro); border-left: 3px solid var(--roxo); font-size: 14.5px; line-height: 1.5; color: var(--tinta-2); }
+.aviso strong { font-weight: 600; }
+@media (min-width: 900px) { .obrigado__grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; } }
+</style>
+<script src="/contador.js" data-pagina="miai-obrigado" defer></script>
+</head>
+<body>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+    <nav class="topo__acoes" aria-label="Principal">
+      <a class="topo__link" href="/conta">Minha conta</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <section class="obrigado" aria-labelledby="titulo">
+    <span class="rotulo rotulo--ponto">Compra recebida</span>
+    <h1 id="titulo">Bem-vindo(a) ao <span id="nome-curso">seu curso</span>.</h1>
+    <div class="obrigado__grade">
+      <div class="obrigado__texto">
+        <p>Recebemos o seu pedido. Assim que o pagamento é confirmado, enviamos para o seu e-mail os dados para entrar na sua conta da MIAI Academy.</p>
+        <p>No cartão isso leva poucos segundos. No Pix, o acesso chega assim que o pagamento é confirmado.</p>
+      </div>
+      <div class="obrigado__acao">
+        <a class="botao botao--tinta botao--grande" id="btn-acessar" href="/conta">Ir para minha conta <span class="seta" aria-hidden="true">→</span></a>
+        <p class="aviso"><strong>Não encontrou o e-mail?</strong> Veja o spam, as promoções e a lixeira. Se mesmo assim não chegar, use "Esqueci minha senha" na tela de entrada com o e-mail que você usou no pagamento.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape__base" style="border-top: 0; padding-top: 0">
+      <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+      <span>Precisa de ajuda? <a href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="/miai/miai.js"></script>
+<script>
+(function () {
+  'use strict';
+  // /obrigado/ia-work → nome do curso e botão direto para as aulas dele
+  const endereco = (location.pathname.match(/^\/obrigado\/([a-z0-9-]+)\/?$/) || [])[1]
+    || new URLSearchParams(location.search).get('curso') || '';
+  const curso = Miai.curso(endereco);
+  if (curso) {
+    document.getElementById('nome-curso').textContent = curso.nome;
+    document.title = 'Compra recebida · ' + curso.nome + ' · MIAI Academy';
+    const botao = document.getElementById('btn-acessar');
+    botao.href = '/conta/' + curso.endereco;
+    botao.firstChild.textContent = 'Acessar o ' + curso.nome + ' ';
+  }
+})();
+</script>
+</body>
+</html>

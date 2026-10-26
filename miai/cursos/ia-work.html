@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IA Work · MIAI Academy</title>
+<meta name="description" content="Empresas de inteligência artificial pagam especialistas para avaliar e corrigir as respostas dos seus modelos. No IA Work você aprende o caminho completo até o seu primeiro projeto.">
+<meta name="theme-color" content="#F3F1EC">
+<link rel="icon" type="image/png" href="/miai/favicon.png">
+<link rel="apple-touch-icon" href="/miai/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/miai/miai.css">
+<!--
+  PÁGINA DE VENDAS DO IA WORK NA MIAI ACADEMY (endereço: miaiacademy.com/ia-work)
+  1. Preço, cupom e link do pagamento: bloco do IA Work no CATÁLOGO (miai/miai.js).
+  2. Vídeo, foto, print dos ganhos e depoimentos: bloco CONFIG no final deste arquivo.
+  3. Textos: edite direto no HTML abaixo.
+-->
+<!-- Google Analytics e Google Ads (os mesmos do site antigo da Mios Academy, miosacademy.com) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
+<style>
+/* Primeira dobra */
+.hero { padding: 40px 0 64px; }
+.hero__etiquetas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.hero h1 { margin-top: 40px; font-size: clamp(42px, 8vw, 84px); line-height: 0.98; max-width: 15ch; }
+.hero__grade { display: grid; gap: 28px; margin-top: 40px; }
+.hero__lado { display: grid; gap: 22px; align-content: start; justify-items: start; }
+.hero__lado p { color: var(--suave); max-width: 46ch; }
+.nota { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); }
+@media (min-width: 900px) {
+  .hero { padding: 48px 0 88px; }
+  .hero h1 { margin-top: 56px; }
+  .hero__grade { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; margin-top: 56px; }
+}
+
+.video { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--tinta); }
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video__vazio { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 14px; padding: 24px; text-align: center; color: var(--escuro-texto); font-size: 15px; }
+.video__play { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--escuro-linha); background: rgba(243, 241, 236, 0.08); }
+.video__vazio small { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--escuro-suave); }
+
+/* Listas numeradas em linhas (o trabalho e os módulos), como os serviços da Mios Tech */
+.linhas { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--linha); }
+.linhas li { display: grid; gap: 10px; padding: 26px 0; border-top: 1px solid var(--linha); }
+.linhas__numero { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.18em; color: var(--roxo); }
+.linhas h3 { font-size: clamp(26px, 3.6vw, 36px); }
+.linhas p { color: var(--suave); max-width: 48ch; }
+@media (min-width: 860px) {
+  .linhas li { grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; padding: 32px 0; }
+  .linhas__numero { padding-top: 12px; }
+  .linhas p { padding-top: 6px; }
+}
+
+/* Para quem é */
+.publico { display: grid; border-top: 1px solid var(--linha); }
+.publico > div { padding: 28px 0 32px; border-bottom: 1px solid var(--linha); }
+.publico h3 { font-size: clamp(26px, 3.6vw, 34px); }
+.lista-icone { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 14px; }
+.lista-icone li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start; line-height: 1.5; }
+.lista-icone svg { margin-top: 2px; }
+.lista-icone--sim svg { color: var(--roxo); }
+.lista-icone--nao svg { color: var(--apagado); }
+.publico__dica { margin-top: 22px; font-size: 15px; color: var(--suave); }
+@media (min-width: 860px) {
+  .publico { grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--linha); }
+  .publico > div { border-bottom: 0; padding: 36px 36px 40px 0; }
+  .publico > div + div { border-left: 1px solid var(--linha); padding-left: 36px; padding-right: 0; }
+}
+
+/* Quem vai te ensinar (seção escura) */
+.professora { display: grid; gap: 40px; align-items: start; }
+.professora__texto { display: grid; gap: 20px; justify-items: start; }
+.professora h2 { font-size: clamp(40px, 6vw, 64px); }
+.foto { width: 112px; height: 112px; overflow: hidden; display: grid; place-items: center; padding: 10px; border: 1px dashed var(--escuro-linha); color: var(--escuro-suave); font-size: 12px; text-align: center; }
+.foto img { width: 100%; height: 100%; object-fit: cover; }
+.foto:has(img) { padding: 0; border: 0; }
+.professora__texto p { font-size: 17px; color: var(--escuro-suave); max-width: 50ch; }
+.professora__texto p strong { color: var(--escuro-texto); font-weight: 500; }
+.pendente { font-style: italic; }
+.prova { display: grid; gap: 12px; margin: 0; }
+.prova__imagem { min-height: 300px; overflow: hidden; display: grid; place-items: center; text-align: center; padding: 24px; border: 1px dashed var(--escuro-linha); color: var(--escuro-suave); font-size: 14px; }
+.prova__imagem:has(img) { min-height: 0; padding: 0; border: 0; }
+.prova__imagem img { width: 100%; height: auto; }
+.prova__aviso { font-size: 13px; line-height: 1.5; color: var(--escuro-suave); }
+@media (min-width: 980px) { .professora { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); gap: 72px; } }
+
+/* Depoimentos */
+.depoimentos { display: grid; border-top: 1px solid var(--linha); }
+.depoimento { display: grid; gap: 18px; align-content: start; margin: 0; padding: 28px 0; border-bottom: 1px solid var(--linha); }
+.depoimento blockquote { margin: 0; font-family: var(--fonte-titulo); font-size: 22px; line-height: 1.3; }
+.depoimento figcaption { display: flex; align-items: center; gap: 12px; }
+.depoimento figcaption img { width: 44px; height: 44px; object-fit: cover; }
+.depoimento strong { display: block; font-size: 15px; font-weight: 500; }
+.depoimento span { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--suave); }
+@media (min-width: 860px) { .depoimentos { grid-template-columns: repeat(3, minmax(0, 1fr)); } .depoimento { padding: 32px 28px 32px 0; } }
+
+/* Oferta */
+.oferta { display: grid; gap: 32px; }
+.oferta__painel { background: var(--papel-claro); border: 1px solid var(--tinta); padding: 32px 22px 26px; display: grid; gap: 24px; }
+.oferta__cabeca { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; padding-bottom: 20px; border-bottom: 1px solid var(--linha); }
+.oferta__cabeca h2 { font-size: clamp(44px, 7vw, 64px); }
+.oferta .lista-icone { margin: 0; }
+.preco__valor { font-family: var(--fonte-titulo); font-size: clamp(56px, 11vw, 88px); line-height: 0.95; letter-spacing: -0.02em; }
+.preco__parcelas { margin-top: 8px; font-size: 15px; color: var(--suave); }
+.cupom { padding: 14px 16px; background: var(--roxo-fundo); border-left: 3px solid var(--roxo); font-size: 15px; line-height: 1.5; color: var(--tinta-2); }
+.cupom strong { color: var(--roxo); font-weight: 600; white-space: nowrap; }
+.cupom__titulo { display: block; font-weight: 600; color: var(--tinta); }
+.oferta__aviso { margin-top: -10px; font-size: 13.5px; color: var(--erro); }
+.oferta__seguro { margin-top: -8px; font-size: 13.5px; color: var(--suave); }
+.garantia { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px; align-items: start; }
+.garantia svg { color: var(--roxo); }
+.garantia h3 { font-size: 28px; }
+.garantia p { margin-top: 8px; color: var(--suave); max-width: 44ch; }
+@media (min-width: 900px) {
+  .oferta { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .oferta__painel { padding: 40px 40px 32px; }
+  .garantia { padding-top: 12px; }
+}
+
+/* Chamada final */
+.final h2 { font-size: clamp(40px, 7vw, 72px); max-width: 15ch; }
+.final .botao { margin-top: 32px; }
+</style>
+<script src="/contador.js" data-pagina="miai-ia-work" defer></script>
+</head>
+<body>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+    <nav class="topo__acoes" aria-label="Principal">
+      <a class="topo__link" id="topo-entrar" href="/conta">Entrar</a>
+      <a class="botao botao--tinta" href="#oferta">Quero entrar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══ Primeira dobra ═══ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__etiquetas">
+        <span class="rotulo rotulo--ponto">Para quem tem formação ou experiência numa área</span>
+        <span class="rotulo">Curso · IA Work</span>
+      </div>
+      <h1>Use o que você já sabe para treinar IA e receber acima de US$ 20 por hora.</h1>
+      <div class="hero__grade">
+        <div class="video" id="video-vendas">
+          <div class="video__vazio">
+            <span class="video__play" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span>
+            <span>Vídeo de vendas da Camila (3 a 5 min)</span>
+            <small>Coloque o link do vídeo no CONFIG (videoVendas)</small>
+          </div>
+        </div>
+        <div class="hero__lado">
+          <p>Empresas de inteligência artificial pagam especialistas para avaliar e corrigir as respostas dos seus modelos. No IA Work eu te mostro o caminho completo: das plataformas certas para a sua área ao currículo em inglês, aos testes de entrada e ao seu primeiro projeto.</p>
+          <a class="botao botao--tinta botao--grande" href="#oferta">Quero entrar no IA Work <span class="seta" aria-hidden="true">→</span></a>
+          <span class="nota">Acesso imediato · Garantia de 7 dias</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Áreas mais procuradas (a lista aparece duas vezes para a faixa correr sem emenda) -->
+  <div class="faixa" aria-label="Áreas mais procuradas: Tecnologia, Marketing, Medicina, Direito, Finanças, Educação, Engenharia e Idiomas">
+    <div class="faixa__trilho" aria-hidden="true">
+      <span>Áreas mais procuradas</span><span>Tecnologia</span><span>Marketing</span><span>Medicina</span><span>Direito</span><span>Finanças</span><span>Educação</span><span>Engenharia</span><span>Idiomas</span>
+      <span>Áreas mais procuradas</span><span>Tecnologia</span><span>Marketing</span><span>Medicina</span><span>Direito</span><span>Finanças</span><span>Educação</span><span>Engenharia</span><span>Idiomas</span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 O trabalho ═══ -->
+  <section class="secao" aria-labelledby="titulo-trabalho">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>01</b> O trabalho</span>
+        <h2 id="titulo-trabalho">O trabalho que a IA não consegue fazer sozinha.</h2>
+        <p>Um modelo de IA só melhora quando alguém que entende do assunto diz o que está certo e o que está errado. É por esse conhecimento que as empresas pagam.</p>
+      </div>
+      <ol class="linhas">
+        <li>
+          <span class="linhas__numero">01</span>
+          <h3>Avaliar respostas</h3>
+          <p>Você compara respostas da IA e diz qual está mais correta, segura e útil, com base na sua experiência.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">02</span>
+          <h3>Escrever e corrigir prompts</h3>
+          <p>Você cria perguntas difíceis da sua área e escreve a resposta ideal para a IA aprender com ela.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">03</span>
+          <h3>Analisar imagens e dados</h3>
+          <p>Você verifica se a IA interpretou corretamente imagens, documentos e informações técnicas.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ 02 Para quem é ═══ -->
+  <section class="secao" aria-labelledby="titulo-publico" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>02</b> Para quem é</span>
+        <h2 id="titulo-publico">Feito para quem já tem uma área.</h2>
+      </div>
+      <div class="publico">
+        <div>
+          <h3>O IA Work é para você se…</h3>
+          <ul class="lista-icone lista-icone--sim">
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tem formação ou experiência profissional numa área</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Lê e escreve em inglês, ou está disposto a melhorar</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Quer uma renda em dólar trabalhando remoto, no seu horário</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tem atenção a detalhes e gosta de explicar o que sabe</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Não é para você se…</h3>
+          <ul class="lista-icone lista-icone--nao">
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Procura dinheiro rápido ou garantido</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Não tem nenhuma área de conhecimento profissional</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Não quer passar por testes nem seguir regras de qualidade</li>
+          </ul>
+          <p class="publico__dica">Começando do zero? O <a class="link" href="https://www.iaacademy.bio/">treinamento gratuito da IA Academy</a> é o melhor primeiro passo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 03 O que você vai aprender ═══ -->
+  <section class="secao" aria-labelledby="titulo-modulos" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>03</b> Módulos</span>
+        <h2 id="titulo-modulos">O que você vai aprender.</h2>
+        <p>Do zero ao primeiro projeto, em módulos práticos e diretos.</p>
+      </div>
+      <ol class="linhas">
+        <li>
+          <span class="linhas__numero">M1</span>
+          <h3>O mercado de IA para especialistas</h3>
+          <p>Como funciona, quem paga, quanto se paga por área e o que esperar de verdade.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">M2</span>
+          <h3>As plataformas certas para a sua área</h3>
+          <p>Quais pagam especialistas, o que cada uma exige e onde você tem mais chances.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">M3</span>
+          <h3>Currículo e perfil em inglês</h3>
+          <p>Como apresentar a sua experiência do jeito que a triagem dessas empresas procura.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">M4</span>
+          <h3>Os testes de entrada</h3>
+          <p>Como se preparar para as avaliações e os erros que mais reprovam candidatos.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">M5</span>
+          <h3>Qualidade que mantém você nos projetos</h3>
+          <p>Como fazer as tarefas com o nível que garante acesso aos projetos mais bem pagos.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">M6</span>
+          <h3>Receber, declarar e organizar a rotina</h3>
+          <p>Contas para receber em dólar, impostos e como encaixar o trabalho na sua semana.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ 04 Quem vai te ensinar ═══ -->
+  <section class="secao secao--escura" aria-labelledby="titulo-professora">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>04</b> Quem vai te ensinar</span>
+      </div>
+      <div class="professora">
+        <div class="professora__texto">
+          <div class="foto" id="foto-camila">Foto da Camila</div>
+          <h2 id="titulo-professora">Oi, eu sou a Camila.</h2>
+          <p id="trajetoria" class="pendente">[Sua trajetória em 2 ou 3 linhas: a sua área, há quanto tempo trabalha com treinamento de IA e por que criou o IA Work.]</p>
+          <p>Com tarefas de avaliação profissional, eu já recebi <strong>mais de US$ 3.000</strong>. Tudo o que eu aprendi nesse caminho está no IA Work.</p>
+        </div>
+        <figure class="prova">
+          <div class="prova__imagem" id="print-ganhos">Print da sua conta com mais de US$ 3.000 recebidos, com o nome da plataforma, e-mail, IDs e dados de pagamento desfocados. Coloque o link no CONFIG (printGanhos).</div>
+          <figcaption class="prova__aviso">Resultado pessoal da Camila. Os ganhos variam conforme a área, o nível de inglês, a disponibilidade de projetos e o tempo dedicado.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Depoimentos (só aparece quando houver depoimentos no CONFIG) ═══ -->
+  <section class="secao" id="depoimentos" aria-labelledby="titulo-depoimentos" hidden>
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>05</b> Alunos</span>
+        <h2 id="titulo-depoimentos">Quem já está do lado de dentro.</h2>
+      </div>
+      <div class="depoimentos" id="lista-depoimentos"></div>
+    </div>
+  </section>
+
+  <!-- ═══ Oferta ═══ -->
+  <section class="secao" id="oferta" aria-labelledby="titulo-oferta">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>→</b> Inscrição</span>
+      </div>
+      <div class="oferta">
+        <div class="oferta__painel">
+          <div class="oferta__cabeca">
+            <h2 id="titulo-oferta">IA Work</h2>
+            <span class="rotulo">Acesso completo</span>
+          </div>
+          <ul class="lista-icone lista-icone--sim">
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>6 módulos práticos, do mercado ao primeiro projeto</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Modelos de currículo em inglês por área</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>O curso fica na sua conta da MIAI Academy</li>
+            <li id="item-prazo" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span></span></li>
+            <li id="item-suporte" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span></span></li>
+          </ul>
+          <div>
+            <p class="preco__valor" id="preco">R$ 497</p>
+            <p class="preco__parcelas" id="parcelas" hidden></p>
+          </div>
+          <p class="cupom" id="cupom" hidden>
+            <span class="cupom__titulo">Veio do treinamento gratuito da IA Academy?</span>
+            Use o cupom <strong id="cupom-codigo"></strong> no pagamento e pague apenas <strong id="cupom-preco"></strong>.
+          </p>
+          <a class="botao botao--tinta botao--grande botao--largo" id="btn-comprar" href="#oferta">Quero entrar no IA Work <span class="seta" aria-hidden="true">→</span></a>
+          <p class="oferta__aviso" id="aviso-checkout" hidden>Link do pagamento ainda não configurado (linkPagamento no catálogo, em miai/miai.js).</p>
+          <p class="oferta__seguro">Pagamento seguro · Acesso imediato após a confirmação. Já tem conta na MIAI? Pague com o mesmo e-mail para o curso aparecer nela.</p>
+        </div>
+        <div class="garantia">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.6"/></svg>
+          <div>
+            <h3>Garantia de 7 dias</h3>
+            <p>Se em até 7 dias você achar que o IA Work não é para você, devolvemos 100% do valor. Sem perguntas.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Perguntas frequentes ═══ -->
+  <section class="secao" aria-labelledby="titulo-faq" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>?</b> Perguntas</span>
+        <h2 id="titulo-faq">Dúvidas sobre o IA Work.</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Preciso falar inglês?</summary>
+          <p>Na maioria das plataformas, sim: o currículo e os testes de entrada são em inglês. Quanto melhor o seu inglês, mais projetos ficam disponíveis para você.</p>
+        </details>
+        <details>
+          <summary>Quanto eu vou ganhar?</summary>
+          <p>Não existe garantia de ganhos. Os valores dependem da plataforma, da sua área, do idioma e da quantidade de projetos disponíveis. Tarefas profissionais costumam pagar acima de US$ 20 por hora.</p>
+        </details>
+        <details>
+          <summary>Preciso ter diploma?</summary>
+          <p>Formação ou experiência comprovável numa área aumenta muito as suas chances na triagem. No curso eu mostro como apresentar o que você já tem.</p>
+        </details>
+        <details>
+          <summary>É o mesmo conteúdo do treinamento gratuito da IA Academy?</summary>
+          <p>Não. O gratuito ensina a gravar vídeos de tarefas do dia a dia. O IA Work é sobre tarefas profissionais de avaliação, que exigem conhecimento numa área e pagam mais.</p>
+        </details>
+        <details>
+          <summary>Como recebo o acesso?</summary>
+          <p>Assim que o pagamento é confirmado, você recebe por e-mail os dados para entrar na sua conta da MIAI Academy, onde o IA Work fica guardado.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Chamada final ═══ -->
+  <section class="secao secao--escura final" aria-labelledby="titulo-final">
+    <div class="container">
+      <h2 id="titulo-final">O seu conhecimento vale em dólar. Bora começar?</h2>
+      <a class="botao botao--claro botao--grande" href="#oferta">Quero entrar no IA Work <span class="seta" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape__grade">
+      <div>
+        <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+        <p>Os resultados mostrados nesta página são individuais e não representam garantia de ganhos. A MIAI Academy não tem vínculo com as plataformas citadas no curso.</p>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">MIAI Academy</span>
+        <a href="/">Todos os cursos</a>
+        <a href="/conta">Entrar</a>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">Legal</span>
+        <a id="link-termos" href="#">Termos</a>
+        <a id="link-privacidade" href="#">Privacidade</a>
+      </div>
+    </div>
+    <div class="rodape__base">
+      <span>© <span data-ano>2026</span> MIAI Academy</span>
+      <a href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/miai/miai.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÃO — preço, cupom e link do pagamento ficam no CATÁLOGO (miai/miai.js)
+// ═══════════════════════════════════════════════════════════════
+window.CONFIG = {
+  // Link de incorporação (embed) do vídeo de vendas, horizontal: Panda, YouTube, Vimeo...
+  videoVendas: '',
+
+  prazoAcesso: '',                 // ex.: '1 ano' → "Acesso por 1 ano" (vazio = não mostra)
+  suporte: '',                     // ex.: 'Comunidade exclusiva de alunos' (vazio = não mostra)
+
+  fotoCamila: '',                  // link da sua foto (quadrada)
+  printGanhos: '',                 // link do print dos seus ganhos, com os dados pessoais desfocados
+  trajetoria: '',                  // 2 ou 3 linhas sobre você
+
+  // Depoimentos reais, com autorização por escrito. Lista vazia = a seção não aparece.
+  // Ex.: { nome: 'Ana Souza', profissao: 'Advogada', foto: 'https://...', texto: '...' }
+  depoimentos: [],
+
+  linkTermos: '#',
+  linkPrivacidade: '#',
+};
+</script>
+<script>
+(function () {
+  'use strict';
+  const C = window.CONFIG;
+  const CURSO = Miai.curso('ia-work');
+  const $ = (sel) => document.querySelector(sel);
+  Miai.ajustarTopo();
+
+  // Quem veio da última aula do treinamento gratuito da IA Academy (/ia-work?origem=curso&lead=...) ganha o
+  // cupom já preenchido, e a compra fica ligada ao cadastro dele. Fica guardado na aba, para valer mesmo se a
+  // pessoa recarregar a página.
+  let veioDoCurso = false;
+  let lead = '';
+  try {
+    const params = new URLSearchParams(location.search);
+    if (params.get('origem') === 'curso') sessionStorage.setItem('iawork-origem', 'curso');
+    if (/^[0-9a-f-]{36}$/i.test(params.get('lead') || '')) sessionStorage.setItem('iawork-lead', params.get('lead'));
+    veioDoCurso = sessionStorage.getItem('iawork-origem') === 'curso';
+    lead = sessionStorage.getItem('iawork-lead') || '';
+  } catch (e) {}
+
+  // Link do Stripe com o e-mail de quem já entrou na MIAI neste aparelho, o cupom e o id do lead já preenchidos
+  function linkPagamento() {
+    let url;
+    try { url = new URL(CURSO.linkPagamento); } catch (e) { return CURSO.linkPagamento; }
+    if (!/(^|\.)stripe\.com$/.test(url.hostname)) return CURSO.linkPagamento;
+    const email = Miai.emailGuardado();
+    if (email) url.searchParams.set('prefilled_email', email);
+    if (veioDoCurso && CURSO.cupom && CURSO.cupom.codigo) url.searchParams.set('prefilled_promo_code', CURSO.cupom.codigo);
+    if (lead) url.searchParams.set('client_reference_id', lead);
+    url.searchParams.set('locale', 'pt-BR');
+    return url.toString();
+  }
+
+  // ── Vídeo de vendas
+  if (C.videoVendas) {
+    const frame = document.createElement('iframe');
+    frame.src = C.videoVendas;
+    frame.title = 'Vídeo de apresentação do IA Work';
+    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    $('#video-vendas').replaceChildren(frame);
+  }
+
+  // ── Oferta
+  $('#preco').textContent = CURSO.preco;
+  if (CURSO.parcelas) { $('#parcelas').textContent = CURSO.parcelas; $('#parcelas').hidden = false; }
+  if (C.prazoAcesso) { $('#item-prazo span').textContent = 'Acesso por ' + C.prazoAcesso; $('#item-prazo').hidden = false; }
+  if (C.suporte) { $('#item-suporte span').textContent = C.suporte; $('#item-suporte').hidden = false; }
+  if (CURSO.cupom && CURSO.cupom.codigo) {
+    $('#cupom-codigo').textContent = CURSO.cupom.codigo;
+    $('#cupom-preco').textContent = CURSO.cupom.preco;
+    $('#cupom').hidden = false;
+  }
+  const comprar = $('#btn-comprar');
+  if (CURSO.linkPagamento) {
+    comprar.href = linkPagamento();
+  } else {
+    comprar.setAttribute('aria-disabled', 'true');
+    comprar.addEventListener('click', (e) => e.preventDefault());
+    $('#aviso-checkout').hidden = false;
+  }
+
+  // ── Quem vai te ensinar
+  if (C.fotoCamila) {
+    const img = new Image();
+    img.src = C.fotoCamila;
+    img.alt = 'Camila';
+    $('#foto-camila').replaceChildren(img);
+  }
+  if (C.printGanhos) {
+    const img = new Image();
+    img.src = C.printGanhos;
+    img.alt = 'Print da conta da Camila com os ganhos recebidos';
+    img.loading = 'lazy';
+    $('#print-ganhos').replaceChildren(img);
+  }
+  if (C.trajetoria) { $('#trajetoria').textContent = C.trajetoria; $('#trajetoria').classList.remove('pendente'); }
+
+  // ── Depoimentos
+  const lista = (C.depoimentos || []).filter((d) => d && d.texto && d.nome);
+  if (lista.length) {
+    const caixa = $('#lista-depoimentos');
+    lista.forEach((d) => {
+      const fig = document.createElement('figure');
+      fig.className = 'depoimento';
+      const citacao = document.createElement('blockquote');
+      citacao.textContent = '“' + d.texto + '”';
+      const legenda = document.createElement('figcaption');
+      if (d.foto) {
+        const img = new Image();
+        img.src = d.foto;
+        img.alt = '';
+        img.loading = 'lazy';
+        legenda.appendChild(img);
+      }
+      const quem = document.createElement('div');
+      const nome = document.createElement('strong');
+      nome.textContent = d.nome;
+      quem.appendChild(nome);
+      if (d.profissao) {
+        const prof = document.createElement('span');
+        prof.textContent = d.profissao;
+        quem.appendChild(prof);
+      }
+      legenda.appendChild(quem);
+      fig.append(citacao, legenda);
+      caixa.appendChild(fig);
+    });
+    $('#depoimentos').hidden = false;
+  }
+
+  // ── Links
+  $('#link-termos').href = C.linkTermos;
+  $('#link-privacidade').href = C.linkPrivacidade;
+})();
+</script>
+</body>
+</html>

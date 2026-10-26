@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aulas · MIAI Academy</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F3F1EC">
+<link rel="icon" type="image/png" href="/miai/favicon.png">
+<link rel="apple-touch-icon" href="/miai/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/miai/miai.css">
+<!--
+  AULAS DE UM CURSO DA MIAI (endereço: miaiacademy.com/conta/<curso>, ex.: /conta/ia-work)
+  As aulas (títulos e vídeos) ficam no servidor (api/_cursos.js) e só chegam para quem comprou o curso.
+  Quem não entrou na conta vai para /conta e volta para cá depois de entrar.
+-->
+<style>
+.pagina { padding: 32px 0 88px; display: grid; gap: 32px; }
+.voltar { justify-self: start; font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--suave); text-decoration: none; }
+.voltar:hover { color: var(--tinta); }
+.boas-vindas { display: grid; gap: 18px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.boas-vindas h1 { font-size: clamp(44px, 8vw, 80px); }
+.boas-vindas .progresso { max-width: 420px; }
+
+.layout { display: grid; gap: 40px; align-items: start; }
+@media (min-width: 960px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 340px; gap: 48px; }
+  .lista { position: sticky; top: 84px; max-height: calc(100dvh - 100px); overflow: auto; }
+}
+
+.aula { display: grid; gap: 24px; min-width: 0; }
+.player { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--tinta); }
+.player--vertical { aspect-ratio: 9 / 16; max-width: 420px; margin-inline: auto; }
+.player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player video { background: #000; object-fit: contain; }
+.player__vazio { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 12px; padding: 24px; text-align: center; color: var(--escuro-texto); }
+.player__play { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--escuro-linha); background: rgba(243, 241, 236, 0.08); }
+.player__vazio strong { font-family: var(--fonte-titulo); font-size: 24px; font-weight: 400; }
+.player__vazio span:last-child { font-size: 14px; color: var(--escuro-suave); }
+
+.aula__info { display: grid; gap: 14px; }
+.aula__numero { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--roxo); font-variant-numeric: tabular-nums; }
+.aula__titulo { font-size: clamp(30px, 4.4vw, 44px); }
+.aula__titulo:focus { outline: none; }
+.aula__descricao { color: var(--suave); max-width: 64ch; }
+
+.materiais-caixa { display: grid; gap: 12px; margin-top: 8px; }
+.materiais { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--linha); }
+.materiais a { display: grid; grid-template-columns: 32px minmax(0, 1fr) 20px; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid var(--linha); text-decoration: none; }
+.materiais a:hover strong { color: var(--roxo); }
+.materiais__icone { width: 32px; height: 32px; display: grid; place-items: center; background: var(--roxo-fundo); color: var(--roxo); }
+.materiais__textos { display: grid; gap: 2px; min-width: 0; }
+.materiais__textos strong { font-weight: 500; overflow-wrap: anywhere; }
+.materiais__textos span { font-size: 14px; color: var(--suave); }
+.materiais__seta { color: var(--suave); }
+
+.aula__acoes { display: grid; gap: 10px; margin-top: 8px; }
+@media (min-width: 560px) { .aula__acoes { grid-template-columns: 1fr 1fr; } }
+#btn-concluir[aria-pressed="true"] { background: var(--verde-fundo); border-color: var(--verde); color: var(--verde); }
+
+.lista { display: grid; gap: 16px; align-content: start; }
+.lista__topo { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-top: 18px; border-top: 1px solid var(--tinta); }
+.lista__topo span { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.12em; color: var(--suave); font-variant-numeric: tabular-nums; }
+.lista ol { list-style: none; margin: 0; padding: 0; }
+.modulos { display: grid; gap: 22px; }
+.modulo__topo { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; align-items: end; padding-bottom: 8px; }
+.modulo__rotulo { font-family: var(--fonte-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--roxo); }
+.modulo__titulo { grid-column: 1; font-size: 20px; line-height: 1.15; }
+.modulo__conta { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-family: var(--fonte-mono); font-size: 11px; color: var(--suave); font-variant-numeric: tabular-nums; }
+.item {
+  width: 100%; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; align-items: center;
+  padding: 12px 10px 12px 8px; border: 0; border-top: 1px solid var(--linha); border-left: 2px solid transparent; background: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer; transition: background 0.15s;
+}
+.lista ol li:last-child .item { border-bottom: 1px solid var(--linha); }
+.item:hover { background: var(--papel-escuro); }
+.item[aria-current="true"] { background: var(--papel-claro); border-left-color: var(--roxo); }
+.item__num { width: 28px; height: 28px; display: grid; place-items: center; font-family: var(--fonte-mono); font-size: 12px; color: var(--suave); border: 1px solid var(--linha-forte); font-variant-numeric: tabular-nums; }
+.item.is-feita .item__num { background: var(--verde); border-color: var(--verde); color: var(--papel); }
+.item__textos { min-width: 0; display: grid; gap: 2px; }
+.item__titulo { font-size: 15px; font-weight: 500; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.item__meta { font-family: var(--fonte-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--suave); }
+
+.fim { padding: 32px 24px; display: grid; gap: 14px; justify-items: start; background: var(--tinta); color: var(--escuro-texto); }
+.fim .rotulo { color: var(--escuro-suave); }
+.fim h2 { font-size: clamp(30px, 5vw, 48px); }
+.fim p { color: var(--escuro-suave); max-width: 52ch; }
+
+.estado .botoes { display: grid; gap: 10px; }
+.confete { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+</style>
+<script src="/contador.js" data-pagina="miai-aulas" defer></script>
+</head>
+<body>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+    <nav class="topo__acoes" aria-label="Principal">
+      <a class="topo__link" href="/conta">Minha conta</a>
+      <button class="topo__link" id="btn-sair" type="button" hidden>Sair</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Carregando -->
+  <section class="estado" id="estado-carregando" aria-live="polite">
+    <span class="girando" aria-hidden="true"></span>
+    <p>Carregando as aulas…</p>
+  </section>
+
+  <!-- Logado, mas sem este curso -->
+  <section class="estado" id="estado-sem-acesso" hidden>
+    <span class="rotulo rotulo--ponto">Aulas</span>
+    <h1>Este curso não está na sua conta.</h1>
+    <p id="sem-acesso-texto">O curso é liberado assim que o pagamento é confirmado. Se você já comprou, saia e entre com o e-mail que usou no pagamento.</p>
+    <div class="botoes">
+      <a class="botao botao--tinta botao--grande botao--largo" id="btn-conhecer" href="/">Conhecer o curso</a>
+      <a class="botao botao--contorno botao--grande botao--largo" href="/conta">Ir para minha conta</a>
+    </div>
+  </section>
+
+  <!-- Erro de conexão -->
+  <section class="estado" id="estado-erro" hidden>
+    <span class="rotulo rotulo--ponto">Aulas</span>
+    <h1>Não conseguimos carregar as aulas.</h1>
+    <p>Confira sua internet e tente de novo.</p>
+    <button class="botao botao--tinta botao--grande botao--largo" id="btn-tentar" type="button">Tentar de novo</button>
+  </section>
+
+  <!-- Curso -->
+  <div class="pagina" id="curso" hidden>
+    <a class="voltar" href="/conta">← Meus cursos</a>
+    <section class="boas-vindas">
+      <span class="rotulo rotulo--ponto">Olá, <span id="aluno">aluno(a)</span></span>
+      <h1 id="curso-titulo">Curso</h1>
+      <div class="progresso">
+        <div class="progresso__barra" role="progressbar" aria-label="Progresso no curso" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="barra"></span></div>
+        <p id="progresso-texto"><strong>0 de 0</strong> aulas concluídas</p>
+      </div>
+    </section>
+
+    <section class="fim" id="fim" hidden>
+      <span class="rotulo rotulo--ponto">Curso concluído</span>
+      <h2>Parabéns, você assistiu a todas as aulas! 🎉</h2>
+      <p>Agora é colocar em prática. Você pode rever qualquer aula quando quiser.</p>
+      <button class="botao botao--claro" id="btn-rever" type="button">Rever a primeira aula</button>
+    </section>
+
+    <div class="layout">
+      <section class="aula" aria-labelledby="aula-titulo">
+        <div class="player" id="player"></div>
+        <div class="aula__info">
+          <p class="aula__numero" id="aula-numero"></p>
+          <h2 class="aula__titulo" id="aula-titulo"></h2>
+          <p class="aula__descricao" id="aula-descricao"></p>
+          <div class="materiais-caixa" id="materiais-caixa" hidden>
+            <p class="rotulo">Links da aula</p>
+            <ul class="materiais" id="materiais"></ul>
+          </div>
+          <div class="aula__acoes">
+            <button class="botao botao--contorno botao--grande" id="btn-concluir" type="button" aria-pressed="false">Marcar como concluída</button>
+            <button class="botao botao--tinta botao--grande" id="btn-proxima" type="button">Próxima aula</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="lista" aria-labelledby="lista-titulo">
+        <div class="lista__topo">
+          <h2 id="lista-titulo" class="rotulo">Aulas do curso</h2>
+          <span id="lista-contagem"></span>
+        </div>
+        <div class="modulos" id="lista-aulas"></div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="/miai/miai.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (sel, raiz = document) => raiz.querySelector(sel);
+  const $$ = (sel, raiz = document) => Array.from(raiz.querySelectorAll(sel));
+  const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  // Qual curso abrir: /conta/ia-work → "ia-work" (ou /miai/aulas.html?curso=ia-work)
+  const ENDERECO = (location.pathname.match(/^\/conta\/([a-z0-9-]+)\/?$/) || [])[1]
+    || new URLSearchParams(location.search).get('curso') || '';
+  const CATALOGO = Miai.curso(ENDERECO);
+  const ENDERECO_AULAS = '/api/aulas?curso=' + encodeURIComponent(ENDERECO);
+  const KEY_PROGRESSO = 'miai-progresso-' + ENDERECO;
+
+  function ler(chave) { try { return JSON.parse(localStorage.getItem(chave)) || {}; } catch (e) { return {}; } }
+  function gravar(chave, valor) { try { localStorage.setItem(chave, JSON.stringify(valor)); } catch (e) {} }
+  const progresso = Object.assign({ concluidas: [], atual: null }, ler(KEY_PROGRESSO));
+
+  if (CATALOGO) {
+    document.title = CATALOGO.nome + ' · MIAI Academy';
+    $('#btn-conhecer').href = '/' + CATALOGO.endereco;
+    $('#btn-conhecer').textContent = 'Conhecer o ' + CATALOGO.nome;
+  }
+
+  function mostrar(estado) {
+    $('#estado-carregando').hidden = estado !== 'carregando';
+    $('#estado-sem-acesso').hidden = estado !== 'sem-acesso';
+    $('#estado-erro').hidden = estado !== 'erro';
+    $('#curso').hidden = estado !== 'curso';
+    $('#btn-sair').hidden = !(estado === 'curso' || estado === 'sem-acesso');
+  }
+
+  // Sem login: vai para a conta e volta para cá depois de entrar
+  function pedirLogin() {
+    location.replace('/conta?volta=' + encodeURIComponent('/conta/' + ENDERECO));
+  }
+
+  async function iniciar() {
+    if (!CATALOGO) { location.replace('/conta'); return; }
+    mostrar('carregando');
+    try {
+      const resposta = await Miai.chamar(ENDERECO_AULAS);
+      if (!resposta) { pedirLogin(); return; }
+      if (resposta.status === 403) { mostrar('sem-acesso'); return; }
+      if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+      const dados = await resposta.json();
+      // O progresso salvo na conta vale mais que o deste aparelho; na primeira vez, o deste aparelho é enviado
+      const doServidor = dados.progresso && dados.progresso.concluidas;
+      if (Array.isArray(doServidor)) { progresso.concluidas = doServidor.slice(); gravar(KEY_PROGRESSO, progresso); }
+      else if (progresso.concluidas.length) sincronizar();
+      montarCurso(dados.curso, (dados.aluno && dados.aluno.nome) || '');
+    } catch (e) {
+      mostrar('erro');
+    }
+  }
+
+  $('#btn-sair').addEventListener('click', async () => {
+    await Miai.sair();
+    // O progresso fica guardado na conta; limpa daqui para não passar para outra pessoa neste aparelho
+    try { localStorage.removeItem(KEY_PROGRESSO); } catch (e) {}
+    location.replace('/conta');
+  });
+  $('#btn-tentar').addEventListener('click', iniciar);
+
+  // ── Curso
+  let curso = null;
+  let atual = 0;
+
+  function montarCurso(dados, nomeAluno) {
+    curso = dados;
+    $('#aluno').textContent = String(nomeAluno).trim().split(/\s+/)[0] || 'aluno(a)';
+    $('#curso-titulo').textContent = curso.titulo;
+    $('#player').classList.toggle('player--vertical', curso.formatoVideo === '9/16');
+
+    // As aulas vêm agrupadas em módulos; a navegação usa a sequência completa de aulas
+    curso.modulos = (curso.modulos && curso.modulos.length) ? curso.modulos : [{ titulo: '', aulas: curso.aulas || [] }];
+    curso.aulas = [];
+    curso.modulos.forEach((modulo, m) => {
+      modulo.aulas.forEach((aula) => curso.aulas.push(Object.assign({}, aula, { modulo: m })));
+    });
+    const variosModulos = curso.modulos.length > 1;
+
+    const lista = $('#lista-aulas');
+    lista.replaceChildren();
+    let indice = 0;
+    curso.modulos.forEach((modulo, m) => {
+      const secao = document.createElement('section');
+      secao.className = 'modulo';
+      if (variosModulos) {
+        secao.innerHTML = '<div class="modulo__topo"><p class="modulo__rotulo"></p><h3 class="modulo__titulo"></h3><span class="modulo__conta" data-modulo="' + m + '"></span></div>';
+        $('.modulo__rotulo', secao).textContent = 'Módulo ' + (m + 1);
+        $('.modulo__titulo', secao).textContent = modulo.titulo;
+      }
+      const ol = document.createElement('ol');
+      modulo.aulas.forEach((aula) => {
+        const i = indice++;
+        const li = document.createElement('li');
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'item';
+        botao.dataset.indice = i;
+        botao.innerHTML = '<span class="item__num" aria-hidden="true"></span><span class="item__textos"><span class="item__titulo"></span><span class="item__meta"></span></span>';
+        $('.item__titulo', botao).textContent = aula.titulo;
+        botao.addEventListener('click', () => abrirAula(i, true));
+        li.appendChild(botao);
+        ol.appendChild(li);
+      });
+      secao.appendChild(ol);
+      lista.appendChild(secao);
+    });
+
+    // Começa pela aula do link (#aula-3), pela última aberta ou pela primeira não concluída
+    const doLink = Number((location.hash.match(/^#aula-(\d+)$/) || [])[1]) - 1;
+    const primeiraPendente = curso.aulas.findIndex((_, i) => !progresso.concluidas.includes(i));
+    let inicio = doLink >= 0 ? doLink : (progresso.atual !== null ? progresso.atual : primeiraPendente);
+    if (!(inicio >= 0 && inicio < curso.aulas.length)) inicio = 0;
+
+    mostrar('curso');
+    abrirAula(inicio, false);
+  }
+
+  function abrirAula(i, rolar) {
+    atual = i;
+    progresso.atual = i;
+    gravar(KEY_PROGRESSO, progresso);
+    const aula = curso.aulas[i];
+    const total = curso.aulas.length;
+
+    const player = $('#player');
+    if (aula.video && /\.mp4($|\?)/i.test(aula.video)) {
+      // Arquivo .mp4 (Azure): player do navegador, com pausar, avançar, velocidade e tela cheia
+      const existente = $('video', player);
+      if (!existente || existente.dataset.aula !== aula.video) {
+        const video = document.createElement('video');
+        video.dataset.aula = aula.video;
+        // Sem capa, "#t=0.1" faz o navegador mostrar o comecinho do vídeo em vez de uma tela preta
+        video.src = aula.capa ? aula.video : aula.video + '#t=0.1';
+        video.controls = true;
+        video.playsInline = true;
+        video.preload = 'metadata';
+        video.setAttribute('controlslist', 'nodownload');
+        video.setAttribute('aria-label', aula.titulo);
+        if (aula.capa) video.poster = aula.capa;
+        player.replaceChildren(video);
+      }
+    } else if (aula.video) {
+      const existente = $('iframe', player);
+      if (!existente || existente.src !== aula.video) {
+        const frame = document.createElement('iframe');
+        frame.src = aula.video;
+        frame.title = aula.titulo;
+        frame.allow = 'accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen';
+        frame.allowFullscreen = true;
+        player.replaceChildren(frame);
+      }
+    } else if (aula.aviso) {
+      // Aula sem vídeo, só com material: o aviso aponta para os Links da aula (ex.: "Baixe o PDF abaixo")
+      player.innerHTML = '<div class="player__vazio"><span class="player__play" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg></span><strong></strong></div>';
+      $('strong', player).textContent = aula.aviso;
+    } else {
+      player.innerHTML = '<div class="player__vazio"><span class="player__play" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span><strong>Vídeo em breve</strong><span>Esta aula ainda está sendo preparada.</span></div>';
+    }
+
+    $('#aula-numero').textContent = [
+      curso.modulos.length > 1 ? 'Módulo ' + (aula.modulo + 1) : '',
+      'Aula ' + (i + 1) + ' de ' + total,
+      aula.duracao,
+    ].filter(Boolean).join(' · ');
+    $('#aula-titulo').textContent = aula.titulo;
+    $('#aula-descricao').textContent = aula.descricao || '';
+    $('#aula-descricao').hidden = !aula.descricao;
+
+    // Links da aula: { titulo, link, texto (opcional, aparece embaixo do título) }
+    const materiais = $('#materiais');
+    materiais.replaceChildren();
+    (aula.materiais || []).filter((m) => m && m.link).forEach((m) => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = m.link;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.innerHTML = '<span class="materiais__icone" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>'
+        + '<span class="materiais__textos"><strong></strong><span></span></span>'
+        + '<svg class="materiais__seta" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+      $('strong', a).textContent = m.titulo;
+      $('.materiais__textos span', a).textContent = m.texto || '';
+      $('.materiais__textos span', a).hidden = !m.texto;
+      li.appendChild(a);
+      materiais.appendChild(li);
+    });
+    $('#materiais-caixa').hidden = !materiais.children.length;
+
+    $('#btn-proxima').textContent = i === total - 1 ? 'Concluir curso' : 'Próxima aula';
+    try { history.replaceState(null, '', '#aula-' + (i + 1)); } catch (e) {}
+    atualizar();
+
+    if (rolar) {
+      const destino = $('.aula');
+      if (destino.getBoundingClientRect().top < 0 || window.innerWidth < 920) {
+        destino.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      }
+      const titulo = $('#aula-titulo');
+      titulo.setAttribute('tabindex', '-1');
+      titulo.focus({ preventScroll: true });
+    }
+  }
+
+  function atualizar() {
+    const total = curso.aulas.length;
+    const feitas = progresso.concluidas.filter((i) => i < total).length;
+    const pct = total ? Math.round((feitas / total) * 100) : 0;
+    $('#barra').style.width = pct + '%';
+    $('.progresso__barra').setAttribute('aria-valuenow', pct);
+    $('#progresso-texto').innerHTML = '<strong>' + feitas + ' de ' + total + '</strong> aulas concluídas';
+    $('#lista-contagem').textContent = feitas + '/' + total;
+    $('#fim').hidden = feitas < total;
+
+    const concluida = progresso.concluidas.includes(atual);
+    const botao = $('#btn-concluir');
+    botao.setAttribute('aria-pressed', concluida ? 'true' : 'false');
+    botao.textContent = concluida ? 'Aula concluída ✓' : 'Marcar como concluída';
+
+    $$('.item').forEach((item) => {
+      const i = Number(item.dataset.indice);
+      const feita = progresso.concluidas.includes(i);
+      item.classList.toggle('is-feita', feita);
+      if (i === atual) item.setAttribute('aria-current', 'true'); else item.removeAttribute('aria-current');
+      $('.item__num', item).innerHTML = feita
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
+        : String(i + 1);
+      const aula = curso.aulas[i];
+      $('.item__meta', item).textContent = [feita ? 'Concluída' : (i === atual ? 'Assistindo agora' : ''), aula.duracao].filter(Boolean).join(' · ');
+    });
+
+    $$('.modulo__conta').forEach((conta) => {
+      const m = Number(conta.dataset.modulo);
+      const doModulo = curso.aulas.map((a, i) => (a.modulo === m ? i : -1)).filter((i) => i >= 0);
+      const feitasModulo = doModulo.filter((i) => progresso.concluidas.includes(i)).length;
+      conta.textContent = feitasModulo + '/' + doModulo.length;
+    });
+  }
+
+  function marcar(i, feita) {
+    const ja = progresso.concluidas.includes(i);
+    if (feita && !ja) progresso.concluidas.push(i);
+    if (!feita && ja) progresso.concluidas = progresso.concluidas.filter((x) => x !== i);
+    gravar(KEY_PROGRESSO, progresso);
+    if (feita !== ja) sincronizar();
+  }
+
+  // Guarda as aulas concluídas na conta do aluno (vale em outros aparelhos e aparece em "Meus cursos")
+  let esperaSincronizar = null;
+  function sincronizar() {
+    clearTimeout(esperaSincronizar);
+    esperaSincronizar = setTimeout(() => {
+      Miai.chamar(ENDERECO_AULAS, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ concluidas: progresso.concluidas }),
+        keepalive: true,
+      }).catch(() => {});
+    }, 400);
+  }
+
+  // Comemora quando a última aula que faltava é concluída
+  function comemorarSeTerminou(antes) {
+    const total = curso.aulas.length;
+    if (antes >= total || progresso.concluidas.length < total) return;
+    $('#fim').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    confete();
+  }
+
+  $('#btn-concluir').addEventListener('click', () => {
+    const antes = progresso.concluidas.length;
+    marcar(atual, !progresso.concluidas.includes(atual));
+    atualizar();
+    comemorarSeTerminou(antes);
+  });
+
+  $('#btn-proxima').addEventListener('click', () => {
+    const total = curso.aulas.length;
+    const antes = progresso.concluidas.length;
+    marcar(atual, true);
+    if (atual < total - 1) {
+      abrirAula(atual + 1, true);
+      comemorarSeTerminou(antes);
+      return;
+    }
+    atualizar();
+    if (progresso.concluidas.length === total && antes === total) {
+      $('#fim').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    }
+    comemorarSeTerminou(antes);
+  });
+
+  $('#btn-rever').addEventListener('click', () => abrirAula(0, true));
+
+  // ── Confetes ao concluir o curso, nas cores da MIAI
+  function confete() {
+    if (reduceMotion) return;
+    const tela = document.createElement('canvas');
+    tela.className = 'confete';
+    tela.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(tela);
+    const ctx = tela.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let W = 0, H = 0;
+    function medir() {
+      W = window.innerWidth; H = window.innerHeight;
+      tela.width = W * dpr; tela.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    medir();
+    window.addEventListener('resize', medir);
+    const cores = ['#4C1D95', '#6D28D9', '#B79CF0', '#14130F', '#98948A', '#1F7A4D', '#E9E6DF'];
+    const total = Math.round(Math.min(240, Math.max(120, W * 0.4)));
+    const pecas = Array.from({ length: total }, () => ({
+      x: Math.random() * W, y: -20 - Math.random() * H,
+      w: 6 + Math.random() * 6, h: 9 + Math.random() * 8,
+      vy: 2.2 + Math.random() * 3, vx: -1 + Math.random() * 2,
+      giro: Math.random() * Math.PI * 2, vgiro: -0.15 + Math.random() * 0.3,
+      balanco: Math.random() * Math.PI * 2,
+      cor: cores[Math.floor(Math.random() * cores.length)], redondo: Math.random() < 0.25,
+    }));
+    const DURACAO = 6000;
+    const inicio = performance.now();
+    function quadro(agora) {
+      const passou = agora - inicio;
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalAlpha = passou > DURACAO - 1200 ? Math.max(0, (DURACAO - passou) / 1200) : 1;
+      pecas.forEach((p) => {
+        p.balanco += 0.06; p.x += p.vx + Math.sin(p.balanco) * 0.9; p.y += p.vy; p.giro += p.vgiro;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.giro); ctx.fillStyle = p.cor;
+        if (p.redondo) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill(); }
+        else { ctx.scale(1, Math.cos(p.balanco)); ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+        ctx.restore();
+      });
+      if (passou < DURACAO) requestAnimationFrame(quadro);
+      else { window.removeEventListener('resize', medir); tela.remove(); }
+    }
+    requestAnimationFrame(quadro);
+  }
+
+  iniciar();
+})();
+</script>
+</body>
+</html>

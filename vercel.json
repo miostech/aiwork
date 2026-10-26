@@ -21,9 +21,101 @@
       ],
       "destination": "https://www.iaacademy.bio/:caminho*",
       "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:pagina(inicio\\.html|cadastro\\.html|curso\\.html|painel|painel\\.html|aiwork\\.html|aiwork-obrigado\\.html)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.iaacademy.bio/:pagina",
+      "permanent": false
+    },
+    {
+      "source": "/aiwork",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/ia-work",
+      "permanent": false
+    },
+    {
+      "source": "/aiwork/obrigado",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/obrigado/ia-work",
+      "permanent": false
     }
   ],
   "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/index.html"
+    },
+    {
+      "source": "/conta",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/conta.html"
+    },
+    {
+      "source": "/conta/:curso",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/aulas.html"
+    },
+    {
+      "source": "/obrigado/:curso",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/obrigado.html"
+    },
+    {
+      "source": "/:curso([a-z0-9-]+)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/cursos/:curso.html"
+    },
+    {
+      "source": "/",
+      "destination": "/inicio.html"
+    },
     {
       "source": "/aiwork",
       "destination": "/aiwork.html"

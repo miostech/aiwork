@@ -1,17 +1,18 @@
 // Entrega as aulas de um curso para quem está logado e tem acesso liberado, e guarda o progresso do aluno.
-// Usado pela curso.html, que manda o token do login no cabeçalho Authorization.
-//   GET  /api/aulas              → curso gratuito (aulas em api/_aulas.js)
-//   GET  /api/aulas?curso=pago   → IA Work (aulas em api/_aulas-iawork.js)
+// Usado pela curso.html (IA Academy) e pela área de aulas da MIAI, que mandam o token do login no cabeçalho Authorization.
+//   GET  /api/aulas                 → curso gratuito (aulas em api/_aulas.js)
+//   GET  /api/aulas?curso=pago      → IA Work pelo nome no banco (como a curso.html da IA Academy pede)
+//   GET  /api/aulas?curso=ia-work   → um curso da MIAI pelo endereço (lista em api/_cursos.js)
 //   POST /api/aulas?curso=...  { concluidas: [0, 1, 4] } → grava as aulas concluídas (posição na lista, 0 = primeira)
 // O GET marca quando o aluno entrou no curso e devolve o progresso salvo ("progresso.concluidas") e
 // quais cursos o aluno tem ("cursos"), para a página mostrar o atalho para o outro.
 // Esses dados alimentam o painel (/painel): quem entrou no curso e quem concluiu todas as aulas.
 import { banco } from "./_supabase.js";
 import { CURSO as CURSO_GRATUITO } from "./_aulas.js";
-import { CURSO as CURSO_PAGO } from "./_aulas-iawork.js";
+import { CURSOS_MIAI, cursoPorEndereco, totalDeAulas } from "./_cursos.js";
 
-const CURSOS = { gratuito: CURSO_GRATUITO, pago: CURSO_PAGO };
-const totalDeAulas = (curso) => curso.modulos.reduce((soma, m) => soma + m.aulas.length, 0);
+// Aulas de cada curso pelo nome no banco (acessos.curso)
+const CURSOS = { gratuito: CURSO_GRATUITO, ...Object.fromEntries(CURSOS_MIAI.map((c) => [c.id, c.aulas])) };
 
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {
@@ -20,7 +21,8 @@ export default async function handler(req, res) {
   }
   res.setHeader("Cache-Control", "no-store");
 
-  const curso = req.query && req.query.curso === "pago" ? "pago" : "gratuito";
+  const pedido = String((req.query && req.query.curso) || "");
+  const curso = Object.hasOwn(CURSOS, pedido) ? pedido : (cursoPorEndereco(pedido) || { id: "gratuito" }).id;
   const token = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "").trim();
   if (!token) return res.status(401).json({ erro: "Faça login para ver as aulas." });
 
@@ -44,7 +46,7 @@ export default async function handler(req, res) {
       .from("acessos").select("id, curso, primeiro_acesso_em, aulas_concluidas, concluido_em")
       .eq("aluno_id", usuario.id).is("revogado_em", null);
     if (erroAcesso) throw erroAcesso;
-    const cursos = (acessos || []).map((a) => a.curso).filter((c) => CURSOS[c]);
+    const cursos = (acessos || []).map((a) => a.curso).filter((c) => Object.hasOwn(CURSOS, c));
     const acesso = (acessos || []).find((a) => a.curso === curso);
     if (!acesso) return res.status(403).json({ erro: "Seu acesso não está liberado.", cursos });
 

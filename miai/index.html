@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MIAI Academy · Cursos para conquistar as melhores oportunidades</title>
+<meta name="description" content="Cursos práticos para você conquistar as melhores oportunidades. Escolha um curso, pague só por ele e assista no seu ritmo, na sua conta da MIAI Academy.">
+<meta name="theme-color" content="#F3F1EC">
+<link rel="icon" type="image/png" href="/miai/favicon.png">
+<link rel="apple-touch-icon" href="/miai/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/miai/miai.css">
+<!--
+  PÁGINA INICIAL DA MIAI ACADEMY (endereço: miaiacademy.com)
+  Os cursos da lista vêm do CATÁLOGO em miai/miai.js. Os textos desta página ficam aqui mesmo.
+-->
+<!-- Google Analytics e Google Ads (os mesmos do site antigo da Mios Academy, miosacademy.com) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
+<style>
+/* Primeira dobra */
+.hero { padding: 40px 0 56px; }
+.hero__etiquetas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.hero__grade { display: grid; gap: 32px; margin-top: 48px; }
+.hero h1 { font-size: clamp(44px, 9vw, 88px); line-height: 0.98; max-width: 13ch; }
+.hero__lado { display: grid; gap: 22px; align-content: end; justify-items: start; }
+.hero__lado p { color: var(--suave); max-width: 34ch; }
+.hero__lado .link-botao { color: var(--tinta); text-decoration: none; }
+.hero__lado .link-botao:hover { text-decoration: underline; }
+@media (min-width: 900px) {
+  .hero { padding: 48px 0 72px; }
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; margin-top: 64px; }
+}
+
+/* Como funciona: três passos lado a lado, separados por linhas finas */
+.passos { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--linha); }
+.passo { display: grid; gap: 12px; align-content: start; padding: 28px 0; border-bottom: 1px solid var(--linha); }
+.passo h3 { font-size: 28px; }
+.passo p { color: var(--suave); max-width: 40ch; }
+@media (min-width: 860px) {
+  .passos { grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--linha); }
+  .passo { padding: 32px 28px 36px; border-bottom: 0; border-left: 1px solid var(--linha); }
+  .passo:first-child { border-left: 0; padding-left: 0; }
+}
+
+/* Chamada final (escura, como o "Vamos construir o seu próximo produto." da Mios Tech) */
+.final h2 { font-size: clamp(40px, 7vw, 72px); max-width: 14ch; }
+.final p { margin-top: 18px; color: var(--escuro-suave); max-width: 46ch; }
+.final__acoes { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; margin-top: 32px; }
+.final__acoes a:not(.botao) { color: var(--escuro-texto); font-size: 14px; text-underline-offset: 4px; }
+</style>
+<script src="/contador.js" data-pagina="miai-inicio" defer></script>
+</head>
+<body>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+    <nav class="topo__acoes" aria-label="Principal">
+      <a class="topo__link" id="topo-entrar" href="/conta">Entrar</a>
+      <a class="botao botao--tinta" href="#cursos">Ver cursos</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ═══ Primeira dobra ═══ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__etiquetas">
+        <span class="rotulo rotulo--ponto">Escola online da MIAI</span>
+        <span class="rotulo">Pague só pelo curso que escolher</span>
+      </div>
+      <div class="hero__grade">
+        <h1>Aprenda o que o mercado procura e conquiste as melhores oportunidades.</h1>
+        <div class="hero__lado">
+          <p>Cursos práticos e diretos ao ponto. Você escolhe o curso, paga só por ele e assiste no seu ritmo, na sua conta da MIAI Academy.</p>
+          <a class="botao botao--tinta botao--grande" href="#cursos">Ver os cursos <span class="seta" aria-hidden="true">→</span></a>
+          <a class="link-botao" href="/conta">Já sou aluno</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Faixa com os temas (a lista aparece duas vezes para a faixa correr sem emenda) -->
+  <div class="faixa" aria-hidden="true">
+    <div class="faixa__trilho">
+      <span>Cursos práticos</span><span>IA aplicada</span><span>Treinamento de IA</span><span>Renda em dólar</span><span>Trabalho remoto</span><span>Carreira internacional</span><span>No seu ritmo</span>
+      <span>Cursos práticos</span><span>IA aplicada</span><span>Treinamento de IA</span><span>Renda em dólar</span><span>Trabalho remoto</span><span>Carreira internacional</span><span>No seu ritmo</span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 Cursos (do CATÁLOGO em miai/miai.js) ═══ -->
+  <section class="secao" id="cursos" aria-labelledby="titulo-cursos">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>01</b> Cursos</span>
+        <h2 id="titulo-cursos">Escolha o seu próximo passo.</h2>
+        <p>Cada curso tem o seu próprio pagamento. Na sua conta aparecem só os cursos que você comprou.</p>
+      </div>
+      <ul class="cursos" id="lista-cursos"></ul>
+    </div>
+  </section>
+
+  <!-- ═══ 02 Como funciona ═══ -->
+  <section class="secao" aria-labelledby="titulo-como" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>02</b> Como funciona</span>
+        <h2 id="titulo-como">Do pagamento à primeira aula.</h2>
+      </div>
+      <ol class="passos">
+        <li class="passo">
+          <span class="rotulo"><b>01</b></span>
+          <h3>Escolha o curso</h3>
+          <p>Veja o que cada curso ensina, para quem ele é e quanto custa. Sem assinatura e sem pacote.</p>
+        </li>
+        <li class="passo">
+          <span class="rotulo"><b>02</b></span>
+          <h3>Pague só por ele</h3>
+          <p>Pagamento seguro pelo Stripe. Assim que ele é confirmado, o acesso chega no seu e-mail.</p>
+        </li>
+        <li class="passo">
+          <span class="rotulo"><b>03</b></span>
+          <h3>Assista na sua conta</h3>
+          <p>Entre com o seu e-mail e a sua senha. Os seus cursos e o seu progresso ficam todos num lugar só.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ 03 Perguntas frequentes ═══ -->
+  <section class="secao" aria-labelledby="titulo-faq" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>03</b> Perguntas</span>
+        <h2 id="titulo-faq">Dúvidas frequentes.</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>Preciso comprar todos os cursos?</summary>
+          <p>Não. Cada curso é vendido separado, com o seu próprio pagamento. Você compra só o que fizer sentido para você.</p>
+        </details>
+        <details>
+          <summary>Como recebo o acesso?</summary>
+          <p>Assim que o pagamento é confirmado, enviamos para o seu e-mail os dados para entrar na sua conta. No cartão leva poucos segundos; no Pix, o acesso chega assim que o pagamento é confirmado.</p>
+        </details>
+        <details>
+          <summary>Comprei um curso. Onde eu assisto?</summary>
+          <p>Em <a class="link" href="/conta">Minha conta</a>. Entre com o e-mail que você usou no pagamento e a senha que recebeu por e-mail.</p>
+        </details>
+        <details>
+          <summary>Esqueci a minha senha. E agora?</summary>
+          <p>Na tela de entrada da sua conta, use "Esqueci minha senha". Enviamos uma senha nova para o seu e-mail.</p>
+        </details>
+        <details>
+          <summary>Como falo com o suporte?</summary>
+          <p>Mande um e-mail para <a class="link" href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a>.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Chamada final ═══ -->
+  <section class="secao secao--escura final" aria-labelledby="titulo-final">
+    <div class="container">
+      <h2 id="titulo-final">Seu próximo passo começa com um curso.</h2>
+      <p>Escolha o curso, pague só por ele e comece hoje.</p>
+      <div class="final__acoes">
+        <a class="botao botao--claro botao--grande" href="#cursos">Ver os cursos <span class="seta" aria-hidden="true">→</span></a>
+        <a href="/conta">Já sou aluno</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape__grade">
+      <div>
+        <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+        <p>Cursos práticos para você conquistar as melhores oportunidades, no seu ritmo.</p>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">Cursos</span>
+        <div class="rodape__coluna" id="rodape-cursos"></div>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">Conta</span>
+        <a href="/conta">Entrar</a>
+        <a href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a>
+      </div>
+    </div>
+    <div class="rodape__base">
+      <span>© <span data-ano>2026</span> MIAI Academy</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/miai/miai.js"></script>
+<script>
+(function () {
+  'use strict';
+  Miai.ajustarTopo();
+  const lista = document.getElementById('lista-cursos');
+  const rodape = document.getElementById('rodape-cursos');
+  Miai.catalogo.forEach((curso, i) => {
+    lista.appendChild(Miai.linhaCurso(curso, i + 1));
+    const link = document.createElement('a');
+    link.href = '/' + curso.endereco;
+    link.textContent = curso.nome;
+    rodape.appendChild(link);
+  });
+})();
+</script>
+</body>
+</html>
