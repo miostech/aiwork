@@ -60,6 +60,21 @@ create table if not exists public.interessados (
   origem     text not null default 'miai'   -- página onde a pessoa pediu o aviso
 );
 
+-- ── Lista de espera de cada curso da MIAI (ex.: miaiacademy.com/ia-work/lista-de-espera) ──
+-- Uma linha por pessoa e curso; quem se inscreve de novo só atualiza o nome e o WhatsApp.
+create table if not exists public.lista_espera (
+  id          uuid primary key default gen_random_uuid(),
+  criado_em   timestamptz not null default now(),
+  curso       text not null,          -- endereço do curso na MIAI (ex.: 'ia-work')
+  email       text not null,
+  nome        text,
+  whatsapp    text,                   -- +5511912345678
+  origem      text,                   -- de onde veio (ex.: 'formacao' = botão da última aula da Formação)
+  avisado_em  timestamptz,            -- quando a pessoa recebeu o aviso da turma nova
+  unique (curso, email)
+);
+alter table public.lista_espera enable row level security;
+
 -- ── Validações: cada print enviado e o resultado da conferência da IA ──
 create table if not exists public.validacoes (
   id           uuid primary key default gen_random_uuid(),

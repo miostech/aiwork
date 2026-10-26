@@ -7,6 +7,7 @@ import { banco } from "./_supabase.js";
 const PAGINAS = [
   "inicio", "cadastro", "aiwork", "aiwork-obrigado", "curso",                    // IA Academy
   "miai-inicio", "miai-ia-work", "miai-obrigado", "miai-conta", "miai-aulas",     // MIAI Academy
+  "miai-lista-espera",
 ];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ROBOS = /bot|crawl|spider|preview|headless|lighthouse|pingdom|monitor/i;

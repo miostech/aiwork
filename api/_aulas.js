@@ -173,9 +173,9 @@ export const CURSO = {
           capa: "/capas/aula-9.jpg",
           materiais: [
             {
-              titulo: "Conhecer o IA Work",
-              texto: "A página do curso completo, com o desconto de quem fez a Formação",
-              link: "/aiwork?origem=curso",
+              titulo: "Lista de espera do IA Work",
+              texto: "Receba o aviso quando abrir a próxima turma (só 20 vagas)",
+              link: "https://www.miaiacademy.com/ia-work/lista-de-espera?origem=formacao",
             },
             {
               titulo: "Canal da IA Academy no WhatsApp",
@@ -183,12 +183,14 @@ export const CURSO = {
               link: "https://whatsapp.com/channel/0029Vb9E7Ow0rGiEGxEOY30F",
             },
           ],
-          // Chamada para o curso pago, mostrada abaixo da descrição desta aula
+          // Chamada para o curso pago, mostrada abaixo da descrição desta aula. Enquanto as aulas do IA Work são
+          // finalizadas, leva para a lista de espera; depois volte para "/aiwork?origem=curso" (página de venda com o
+          // cupom ACADEMY de quem fez a Formação).
           oferta: {
-            titulo: "Conheça o IA Work",
-            texto: "O curso completo para usar a sua área de conhecimento em tarefas profissionais de IA, que pagam acima de US$ 20 por hora.",
-            botao: "Quero conhecer o IA Work",
-            link: "/aiwork?origem=curso",   // ?origem=curso já preenche o cupom ACADEMY de quem fez a Formação
+            titulo: "IA Work: lista de espera aberta",
+            texto: "O curso completo para usar a sua área de conhecimento em tarefas profissionais de IA, que pagam acima de US$ 20 por hora. Cada turma tem só 20 vagas: entre na lista para receber o aviso assim que a próxima abrir.",
+            botao: "Quero entrar na lista de espera",
+            link: "https://www.miaiacademy.com/ia-work/lista-de-espera?origem=formacao",
           },
         },
       ],

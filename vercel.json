@@ -203,6 +203,16 @@
       "destination": "/miai/obrigado.html"
     },
     {
+      "source": "/ia-work/lista-de-espera",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/cursos/ia-work-lista-de-espera.html"
+    },
+    {
       "source": "/:curso([a-z0-9-]+)",
       "has": [
         {

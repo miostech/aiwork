@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lista de espera do IA Work · MIAI Academy</title>
+<meta name="description" content="A próxima turma do IA Work terá só 20 vagas. Entre na lista de espera e receba o aviso por e-mail e WhatsApp assim que as inscrições abrirem.">
+<meta name="theme-color" content="#F3F1EC">
+<link rel="icon" type="image/png" href="/miai/favicon.png">
+<link rel="apple-touch-icon" href="/miai/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="stylesheet" href="/miai/miai.css">
+<!--
+  LISTA DE ESPERA DO IA WORK (endereço: miaiacademy.com/ia-work/lista-de-espera)
+  Enquanto as aulas do IA Work são finalizadas, o botão da última aula da Formação IA Academy traz para cá
+  (?origem=formacao). Cada inscrição vai para a tabela "lista_espera" (curso = 'ia-work') pela função /api/avise.
+  Textos: edite direto no HTML abaixo.
+-->
+<!-- Google Analytics e Google Ads (os mesmos das outras páginas da MIAI) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
+<style>
+/* Primeira dobra: no celular, texto → inscrição → motivos; no computador, a inscrição fica fixa à direita */
+.hero { padding: 40px 0 64px; }
+.hero__etiquetas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.hero__grade { display: grid; gap: 32px; margin-top: 36px; align-items: start; grid-template-areas: "texto" "inscricao" "motivos"; }
+.hero__texto { grid-area: texto; display: grid; gap: 22px; }
+.hero h1 { font-size: clamp(40px, 7.4vw, 76px); line-height: 1; max-width: 14ch; }
+.hero__texto > p { color: var(--suave); max-width: 50ch; font-size: 17px; }
+.selo-formacao { padding: 14px 16px; background: var(--roxo-fundo); border-left: 3px solid var(--roxo); color: var(--tinta); max-width: 50ch; }
+.selo-formacao[hidden] { display: none; }
+
+.motivos { grid-area: motivos; list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.motivos li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 12px; align-items: start; }
+.motivos svg { color: var(--roxo); margin-top: 2px; }
+.motivos strong { display: block; font-weight: 700; }
+.motivos span { color: var(--suave); }
+
+/* Cartão da inscrição */
+.inscricao { grid-area: inscricao; display: grid; gap: 18px; padding: 26px 22px 24px; background: var(--papel-claro); border: 1px solid var(--linha-forte); }
+.vagas { display: flex; align-items: baseline; gap: 10px; padding-bottom: 16px; border-bottom: 1px solid var(--linha); }
+.vagas strong { font-family: var(--fonte-titulo); font-weight: 600; font-size: 52px; line-height: 1; color: var(--roxo); }
+.vagas span { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); }
+.inscricao h2 { font-size: 30px; }
+.inscricao form { display: grid; gap: 14px; }
+.inscricao .nota-form { font-size: 13px; color: var(--suave); }
+.inscricao .nota-form a { color: var(--suave); }
+.escondido { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.pronto { display: grid; gap: 14px; }
+.pronto[hidden], .inscricao form[hidden] { display: none; }
+.pronto h2 { color: var(--verde); }
+.pronto p { color: var(--suave); }
+
+@media (min-width: 900px) {
+  .hero { padding: 48px 0 88px; }
+  .hero__grade { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-areas: "texto inscricao" "motivos inscricao"; gap: 32px 56px; margin-top: 52px; }
+  .inscricao { position: sticky; top: 24px; padding: 32px 30px 28px; }
+}
+
+/* Módulos em linhas numeradas, como na página do IA Work */
+.linhas { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--linha); }
+.linhas li { display: grid; gap: 10px; padding: 26px 0; border-top: 1px solid var(--linha); }
+.linhas__numero { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; color: var(--roxo); }
+.linhas h3 { font-size: clamp(24px, 3.4vw, 34px); }
+.linhas p { color: var(--suave); max-width: 48ch; }
+@media (min-width: 860px) {
+  .linhas li { grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; padding: 30px 0; }
+  .linhas__numero { padding-top: 12px; }
+  .linhas p { padding-top: 6px; }
+}
+
+/* Chamada final */
+.chamada { display: grid; gap: 22px; justify-items: start; }
+.chamada h2 { font-size: clamp(34px, 6vw, 58px); max-width: 16ch; }
+.chamada p { color: var(--escuro-suave); max-width: 52ch; }
+</style>
+</head>
+<body>
+<script src="/contador.js" data-pagina="miai-lista-espera" defer></script>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+    <nav class="topo__acoes" aria-label="Principal">
+      <a class="topo__link" id="topo-entrar" href="/conta">Entrar</a>
+      <a class="botao botao--tinta" href="#lista">Entrar na lista</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ═══ Primeira dobra ═══ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__etiquetas">
+        <span class="rotulo rotulo--ponto">Curso · <b>IA Work</b></span>
+        <span class="rotulo">Lista de espera aberta</span>
+      </div>
+      <div class="hero__grade">
+        <div class="hero__texto">
+          <h1>A próxima turma do IA Work terá só 20 vagas.</h1>
+          <p>O IA Work é o curso completo para usar a sua área de conhecimento em tarefas de inteligência artificial que pagam acima de US$ 20 por hora. As aulas estão na reta final e a próxima turma ainda não tem data. Entre na lista de espera para receber o aviso assim que as inscrições abrirem.</p>
+          <p class="selo-formacao" id="selo-formacao" hidden><strong>Você fez a Formação IA Academy.</strong> Quando a turma abrir, você tem a condição especial de quem fez a Formação.</p>
+        </div>
+
+        <ul class="motivos">
+            <li>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><path d="M16 5.2a3 3 0 0 1 0 5.6"/><path d="M17.5 14.6c1.6.6 2.7 2.1 3 4.4"/></svg>
+              <div><strong>Só 20 vagas por turma</strong><span>Turmas pequenas, de no máximo 20 pessoas. Quando as inscrições abrirem, as vagas ficam com quem garantir primeiro.</span></div>
+            </li>
+            <li>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9z"/><path d="M10.3 20a1.9 1.9 0 0 0 3.4 0"/></svg>
+              <div><strong>Aviso por e-mail e WhatsApp</strong><span>Quem está na lista recebe o aviso no momento em que a turma abrir, para não perder a vaga.</span></div>
+            </li>
+            <li>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+              <div><strong>Gratuito e sem compromisso</strong><span>Entrar na lista não custa nada e não obriga você a comprar.</span></div>
+            </li>
+          </ul>
+
+        <aside class="inscricao" id="lista" aria-labelledby="titulo-lista">
+          <div class="vagas"><strong>20</strong><span>vagas por turma</span></div>
+          <form id="form-lista" novalidate>
+            <h2 id="titulo-lista">Entre na lista de espera</h2>
+            <div class="campo">
+              <label for="f-nome">Nome</label>
+              <input id="f-nome" type="text" autocomplete="name" placeholder="Seu nome" required>
+            </div>
+            <div class="campo">
+              <label for="f-email">E-mail</label>
+              <input id="f-email" type="email" autocomplete="email" inputmode="email" placeholder="seu@email.com" required>
+            </div>
+            <div class="campo">
+              <label for="f-whatsapp">WhatsApp com DDD</label>
+              <input id="f-whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="(11) 91234-5678" required>
+            </div>
+            <input class="escondido" type="text" name="site" id="f-site" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button class="botao botao--tinta botao--grande botao--largo" id="btn-lista" type="submit">Quero entrar na lista de espera <span class="seta" aria-hidden="true">→</span></button>
+            <p class="aviso-erro" id="erro-lista" role="alert"></p>
+            <p class="nota-form">Fora do Brasil? Coloque o código do país, como +351. Seus dados ficam só com a MIAI Academy (<a href="/privacidade">política de privacidade</a>).</p>
+          </form>
+          <div class="pronto" id="pronto" role="status" hidden>
+            <h2>Pronto, você está na lista!</h2>
+            <p>Assim que a próxima turma do IA Work abrir, você recebe o aviso por e-mail e WhatsApp. Como são só 20 vagas, fique de olho e responda rápido.</p>
+            <a class="botao botao--contorno" id="voltar-formacao" href="https://www.iaacademy.bio/curso" hidden>Voltar para as aulas da Formação</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ O que você vai aprender ═══ -->
+  <section class="secao" aria-labelledby="titulo-modulos" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>IA Work</b> Módulos</span>
+        <h2 id="titulo-modulos">O que você vai aprender.</h2>
+        <p>Do zero ao primeiro projeto, em módulos práticos e diretos.</p>
+      </div>
+      <ol class="linhas">
+        <li><span class="linhas__numero">M1</span><h3>O mercado de IA para especialistas</h3><p>Como funciona, quem paga, quanto se paga por área e o que esperar de verdade.</p></li>
+        <li><span class="linhas__numero">M2</span><h3>As plataformas certas para a sua área</h3><p>Quais pagam especialistas, o que cada uma exige e onde você tem mais chances.</p></li>
+        <li><span class="linhas__numero">M3</span><h3>Currículo e perfil em inglês</h3><p>Como apresentar a sua experiência do jeito que a triagem dessas empresas procura.</p></li>
+        <li><span class="linhas__numero">M4</span><h3>Os testes de entrada</h3><p>Como se preparar para as avaliações e os erros que mais reprovam candidatos.</p></li>
+        <li><span class="linhas__numero">M5</span><h3>Qualidade que mantém você nos projetos</h3><p>Como fazer as tarefas com o nível que garante acesso aos projetos mais bem pagos.</p></li>
+        <li><span class="linhas__numero">M6</span><h3>Receber, declarar e organizar a rotina</h3><p>Contas para receber em dólar, impostos e como encaixar o trabalho na sua semana.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ Chamada final ═══ -->
+  <section class="secao secao--escura">
+    <div class="container chamada">
+      <span class="rotulo"><b>20</b> vagas por turma</span>
+      <h2>Não fique de fora da próxima turma.</h2>
+      <p>As inscrições abrem uma vez e as vagas são limitadas. Entrando na lista agora, você recebe o aviso por e-mail e WhatsApp e tem tempo de garantir a sua vaga.</p>
+      <a class="botao botao--claro botao--grande" href="#lista">Quero entrar na lista de espera <span class="seta" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape__grade">
+      <div>
+        <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+        <p>Não existe garantia de ganhos nem de aprovação nas plataformas. A MIAI Academy não tem vínculo com as plataformas citadas no curso.</p>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">MIAI Academy</span>
+        <a href="/">Todos os cursos</a>
+        <a href="/conta">Entrar</a>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">Legal</span>
+        <a href="/termos">Termos</a>
+        <a href="/privacidade">Privacidade</a>
+        <a href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a>
+      </div>
+    </div>
+    <div class="rodape__base">
+      <span>© <span data-ano>2026</span> MIAI Academy</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/miai/miai.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ═══════════════════════════════════════════════════════════════
+  //  CONFIGURAÇÃO
+  // ═══════════════════════════════════════════════════════════════
+  const C = {
+    curso: 'ia-work',                                   // endereço do curso no CATÁLOGO (miai/miai.js)
+    enderecoLista: '/api/avise',                        // grava na tabela lista_espera
+    linkFormacao: 'https://www.iaacademy.bio/curso',    // "Voltar para as aulas" de quem veio da Formação
+  };
+
+  const $ = (sel) => document.querySelector(sel);
+  Miai.ajustarTopo();
+
+  // ?origem=formacao: veio do botão da última aula da Formação IA Academy
+  const parametro = new URLSearchParams(location.search).get('origem') || '';
+  const origem = /^[a-z0-9-]{1,40}$/.test(parametro) ? parametro : '';
+  const daFormacao = origem === 'formacao';
+  $('#selo-formacao').hidden = !daFormacao;
+  $('#voltar-formacao').href = C.linkFormacao;
+
+  const CHAVE = 'lista-espera-' + C.curso;   // quem já entrou neste aparelho vê direto a confirmação
+  function mostrarPronto() {
+    $('#form-lista').hidden = true;
+    $('#pronto').hidden = false;
+    $('#voltar-formacao').hidden = !daFormacao;
+  }
+  try { if (localStorage.getItem(CHAVE) === '1') mostrarPronto(); } catch (e) { /* sem localStorage */ }
+
+  const email = Miai.emailGuardado();
+  if (email) $('#f-email').value = email;
+
+  let enviando = false;
+  $('#form-lista').addEventListener('submit', async (evento) => {
+    evento.preventDefault();
+    if (enviando) return;
+    const erro = $('#erro-lista');
+    const dados = {
+      curso: C.curso,
+      nome: $('#f-nome').value.trim(),
+      email: $('#f-email').value.trim(),
+      whatsapp: $('#f-whatsapp').value.trim(),
+      origem: origem || 'miai',
+      site: $('#f-site').value,
+    };
+    erro.textContent = '';
+    if (dados.nome.length < 2) { erro.textContent = 'Digite o seu nome.'; $('#f-nome').focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) { erro.textContent = 'Digite um e-mail válido.'; $('#f-email').focus(); return; }
+    if (dados.whatsapp.replace(/\D/g, '').length < 10) { erro.textContent = 'Digite o seu WhatsApp com DDD.'; $('#f-whatsapp').focus(); return; }
+
+    enviando = true;
+    const botao = $('#btn-lista');
+    const textoBotao = botao.firstChild.textContent;
+    botao.firstChild.textContent = 'Enviando… ';
+    botao.disabled = true;
+    try {
+      const r = await fetch(C.enderecoLista, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+      const corpo = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(corpo.erro || 'Não conseguimos guardar agora. Tente de novo em instantes.');
+      try { localStorage.setItem(CHAVE, '1'); } catch (e) { /* sem localStorage */ }
+      try { if (typeof window.gtag === 'function') window.gtag('event', 'generate_lead', { curso: C.curso, origem: dados.origem }); } catch (e) {}
+      mostrarPronto();
+    } catch (e) {
+      erro.textContent = e.message;
+    } finally {
+      enviando = false;
+      botao.disabled = false;
+      botao.firstChild.textContent = textoBotao;
+    }
+  });
+})();
+</script>
+</body>
+</html>
