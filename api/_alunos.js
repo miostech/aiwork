@@ -93,5 +93,5 @@ export function linkCurso(curso = "gratuito") {
   const miai = cursoPorId(curso);
   if (miai && linkMiai()) return linkMiai("/conta/" + miai.endereco);
   const base = (process.env.SITE_URL || "https://www.iaacademy.bio").replace(/\/+$/, "");
-  return base + "/curso.html" + (curso === "pago" ? "?curso=pago" : "");
+  return base + "/curso" + (curso === "pago" ? "?curso=pago" : "");
 }

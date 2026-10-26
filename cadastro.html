@@ -317,7 +317,7 @@ body {
   </ol>
 
   <!-- ═══ Pagamento: o cadastro só continua depois que o pagamento da Formação é confirmado ═══
-       O Stripe devolve a pessoa para cadastro.html?pagamento=<sessão>; a página confere em /api/pagamento. -->
+       O Stripe devolve a pessoa para /cadastro?pagamento=<sessão>; a página confere em /api/pagamento. -->
   <section class="card pagamento" id="pagamento" aria-live="polite" hidden>
     <div data-pag="verificando">
       <span class="pagamento__girando" aria-hidden="true"></span>
@@ -588,7 +588,7 @@ window.CONFIG = {
   // Etapa 3 (desativada): link de uma imagem de exemplo para a validação (vazio = não mostra exemplo).
   // imagemExemploValidacao: '',
 
-  linkCurso: 'curso.html',  // área do curso (o aluno entra com o e-mail e a senha que recebeu)
+  linkCurso: '/curso',  // área do curso (o aluno entra com o e-mail e a senha que recebeu)
 
   // Canal do WhatsApp mostrado na etapa final (vazio = não mostra).
   canalWhatsApp: 'https://whatsapp.com/channel/0029Vb9E7Ow0rGiEGxEOY30F',

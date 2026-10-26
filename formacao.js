@@ -2,7 +2,7 @@
 // ═══════════════════════════════════════════════════════════════
 //  PREÇO, CUPOM E LINK DO PAGAMENTO — troque aqui (Formacao.urlPagamento monta o link com os dados da pessoa)
 // ═══════════════════════════════════════════════════════════════
-// O link do Stripe devolve a pessoa para cadastro.html?pagamento=... depois do pagamento, e o servidor libera as
+// O link do Stripe devolve a pessoa para /cadastro?pagamento=... depois do pagamento, e o servidor libera as
 // aulas (api/stripe-webhook.js). O id desse link também está em api/_cursos.js (CURSOS_IA_ACADEMY).
 //
 // Moeda: no Brasil a página mostra o preço em reais; fora, em dólar (precoFora), como o Stripe cobra. O país vem de

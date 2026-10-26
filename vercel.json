@@ -94,7 +94,29 @@
       "permanent": false
     },
     {
-      "source": "/:pagina(inicio\\.html|cadastro\\.html|curso\\.html|painel|painel\\.html)",
+      "source": "/inicio.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.iaacademy.bio/",
+      "permanent": false
+    },
+    {
+      "source": "/:pagina(cadastro|curso|painel)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.iaacademy.bio/:pagina",
+      "permanent": false
+    },
+    {
+      "source": "/:pagina(cadastro|curso|painel)\\.html",
       "has": [
         {
           "type": "host",
@@ -119,6 +141,16 @@
       "source": "/aiwork/obrigado",
       "destination": "https://www.miaiacademy.com/obrigado/ia-work",
       "permanent": false
+    },
+    {
+      "source": "/inicio.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:pagina(cadastro|curso|painel|aiwork)\\.html",
+      "destination": "/:pagina",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -175,6 +207,14 @@
     {
       "source": "/",
       "destination": "/inicio.html"
+    },
+    {
+      "source": "/cadastro",
+      "destination": "/cadastro.html"
+    },
+    {
+      "source": "/curso",
+      "destination": "/curso.html"
     },
     {
       "source": "/aiwork",

@@ -2,7 +2,7 @@
 //  AULAS DO IA WORK (curso pago) — edite aqui títulos, descrições e vídeos
 // ═══════════════════════════════════════════════════════════════
 // Funciona igual a api/_aulas.js (curso gratuito): os vídeos só são entregues para quem
-// comprou o IA Work. A área do aluno abre este curso em /curso.html?curso=pago.
+// comprou o IA Work. A área do aluno abre este curso em /curso?curso=pago.
 //
 // video:     link de incorporação (embed) do Panda Video. Vazio = mostra "vídeo em breve".
 // duracao:   texto livre, ex.: '12 min'. Vazio = não mostra.

@@ -344,7 +344,7 @@ body {
   <header class="topbar rise" style="--i:0">
     <a class="logo" href="#" aria-label="Início"><span>IA</span> <span class="logo__accent">Academy</span></a>
     <!-- Para quem já pagou voltar às aulas: a área do aluno pede o e-mail e a senha -->
-    <a class="topbar__entrar" href="/curso.html"><span class="topbar__entrar-pergunta">Já tenho acesso? </span><strong>Entrar</strong></a>
+    <a class="topbar__entrar" href="/curso"><span class="topbar__entrar-pergunta">Já tenho acesso? </span><strong>Entrar</strong></a>
   </header>
 
   <section class="vsl" aria-labelledby="titulo">
@@ -463,7 +463,7 @@ window.CONFIG = {
   liberarAposSegundos: 134.3,
 
   // Depois do formulário a pessoa vai para o pagamento (preço, cupom e link em /formacao.js).
-  // O Stripe devolve para cadastro.html, que segue com as orientações.
+  // O Stripe devolve para /cadastro (cadastro.html), que segue com as orientações.
 
   // Função que guarda cada inscrito no banco (Supabase).
   enderecoLeads: '/api/lead',
@@ -785,7 +785,7 @@ window.CONFIG = {
     botao.firstChild.textContent = 'Carregando… ';
     await guardarLead();
     // segue para o pagamento com o e-mail, o cupom e o id do cadastro já preenchidos;
-    // depois do pagamento o Stripe devolve a pessoa para cadastro.html
+    // depois do pagamento o Stripe devolve a pessoa para /cadastro
     try {
       location.href = window.Formacao.urlPagamento({ email: email, leadId: state.leadId });
     } catch (e) {}

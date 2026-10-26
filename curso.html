@@ -417,13 +417,13 @@ window.CONFIG = {
 
   const C = window.CONFIG;
   const KEY = 'inscricao-curso-gratuito';   // mesmo lugar do funil: nome e e-mail da pessoa
-  // Qual curso abrir: /curso.html (Formação IA Academy, no banco "gratuito") ou /curso.html?curso=pago (IA Work).
+  // Qual curso abrir: /curso (Formação IA Academy, no banco "gratuito") ou /curso?curso=pago (IA Work).
   // Cada um guarda o seu progresso.
   const CURSO = new URLSearchParams(location.search).get('curso') === 'pago' ? 'pago' : 'gratuito';
   const KEY_PROGRESSO = CURSO === 'pago' ? 'curso-progresso-pago' : 'curso-progresso';
   const OUTRO = {
-    gratuito: { href: 'curso.html?curso=pago', curso: 'pago', texto: 'Ir para o IA Work →' },
-    pago: { href: 'curso.html', curso: 'gratuito', texto: '← Ir para a Formação IA Academy' },
+    gratuito: { href: '/curso?curso=pago', curso: 'pago', texto: 'Ir para o IA Work →' },
+    pago: { href: '/curso', curso: 'gratuito', texto: '← Ir para a Formação IA Academy' },
   }[CURSO];
   const reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const $ = (sel, root = document) => root.querySelector(sel);
