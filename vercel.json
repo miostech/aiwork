@@ -39,6 +39,17 @@
       "permanent": true
     },
     {
+      "source": "/miai/",
+      "missing": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.miaiacademy.com/",
+      "permanent": true
+    },
+    {
       "source": "/miai/index.html",
       "missing": [
         {
