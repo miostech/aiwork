@@ -10,6 +10,7 @@
 //   EMAIL_REMETENTE_MIAI  opcional, ex.: MIAI Academy <acesso@miaiacademy.com> (domínio verificado no Resend).
 //                         Vazio = usa o endereço do EMAIL_REMETENTE com o nome "MIAI Academy".
 import { Resend } from "resend";
+import { linkMiai } from "./_cursos.js";
 
 const MODELOS = {
   acesso: {
@@ -401,6 +402,8 @@ function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, n
   const fonteTitulo = "Bitter,Georgia,'Times New Roman',serif";
   const fonteEtiqueta = fonte;   // maiúsculas espaçadas
   const fonteSenha = "'SFMono-Regular',Menlo,Consolas,monospace";
+  // Logo roxo publicado no site (o mesmo projeto atende a MIAI e a IA Academy, então os dois endereços servem)
+  const logo = (linkMiai() || "https://www.iaacademy.bio") + "/miai/logo-miai-email.png";
   return `<!doctype html>
 <html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -433,8 +436,14 @@ function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, n
           <!-- Logo -->
           <tr>
             <td style="padding:0 0 20px;">
-              <span style="font-family:${fonte};font-size:32px;font-weight:800;letter-spacing:-1px;color:#5E1D93;">miai</span>
-              <span style="font-family:${fonteEtiqueta};font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#6A675E;">&nbsp;Academy</span>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    <img src="${logo}" width="110" height="35" alt="miai" style="display:block;width:110px;height:35px;border:0;outline:none;text-decoration:none;font-family:${fonte};font-size:28px;font-weight:800;color:#5E1D93;">
+                  </td>
+                  <td style="vertical-align:middle;padding:5px 0 0 10px;font-family:${fonteEtiqueta};font-size:11px;font-weight:600;letter-spacing:1.6px;text-transform:uppercase;color:#6A675E;">Academy</td>
+                </tr>
+              </table>
             </td>
           </tr>
 
