@@ -1,0 +1,74 @@
+/* Termos de uso e política de privacidade (termos.html e privacidade.html), nos dois domínios.
+   As cores e a marca do topo seguem o site: <html data-marca="miai"> no miaiacademy.com, IA Academy no resto. */
+:root {
+  --bg: #FDF6F4;
+  --superficie: #FFFAF8;
+  --tinta: #2A1D22;
+  --suave: #6E5A60;
+  --linha: #F4E1DA;
+  --destaque: #B04668;
+  --destaque-fundo: #F7E0E6;
+  --fonte-logo: "Anton", "Arial Narrow", Impact, sans-serif;
+  --fonte-titulo: "Bitter", Georgia, "Times New Roman", serif;
+  --fonte: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+html[data-marca="miai"] {
+  --bg: #F3F1EC;
+  --superficie: #FAF9F6;
+  --tinta: #14130F;
+  --suave: #6A675E;
+  --linha: rgba(20, 19, 15, 0.12);
+  --destaque: #5E1D93;
+  --destaque-fundo: rgba(94, 29, 147, 0.08);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--tinta);
+  font-family: var(--fonte); font-size: 16px; line-height: 1.65;
+}
+a { color: var(--destaque); text-underline-offset: 3px; }
+
+.pagina { max-width: 760px; margin: 0 auto; padding: 20px 16px 56px; }
+
+/* ── Topo: uma marca por domínio */
+.topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--linha); }
+.marca-ia {
+  font-family: var(--fonte-logo); font-size: 22px; line-height: 1; letter-spacing: 0.01em;
+  text-transform: uppercase; color: var(--tinta); text-decoration: none;
+}
+.marca-ia span { color: var(--destaque); }
+.marca-miai {
+  display: none; width: 74px; height: 26px; background: var(--destaque);
+  -webkit-mask: url(/miai/logo-miai.png) left center / contain no-repeat; mask: url(/miai/logo-miai.png) left center / contain no-repeat;
+}
+html[data-marca="miai"] .marca-ia { display: none; }
+html[data-marca="miai"] .marca-miai { display: block; }
+.topo__outro { font-size: 14px; color: var(--suave); text-decoration: none; }
+.topo__outro:hover { color: var(--tinta); text-decoration: underline; }
+
+/* ── Texto */
+.cabeca { padding: clamp(28px, 7vw, 48px) 0 8px; }
+h1 { font-family: var(--fonte-titulo); font-weight: 600; font-size: clamp(30px, 7vw, 42px); line-height: 1.15; margin: 0; }
+.atualizado { margin: 10px 0 0; font-size: 14px; color: var(--suave); }
+.resumo {
+  margin: 24px 0 8px; padding: 16px 18px; border-radius: 14px;
+  background: var(--destaque-fundo); color: var(--tinta);
+}
+.resumo p { margin: 0; }
+.resumo ul { margin: 8px 0 0; padding-left: 20px; }
+h2 { font-family: var(--fonte-titulo); font-weight: 600; font-size: 22px; line-height: 1.3; margin: 36px 0 8px; scroll-margin-top: 16px; }
+p, li { max-width: 68ch; }
+p { margin: 0 0 12px; }
+ul { margin: 0 0 12px; padding-left: 22px; }
+li { margin-bottom: 6px; }
+strong { font-weight: 700; }
+
+/* ── Rodapé */
+.rodape {
+  margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--linha);
+  display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; color: var(--suave);
+}
+.rodape a { color: var(--suave); }

@@ -148,12 +148,20 @@
       "permanent": true
     },
     {
-      "source": "/:pagina(cadastro|curso|painel|aiwork)\\.html",
+      "source": "/:pagina(cadastro|curso|painel|aiwork|termos|privacidade)\\.html",
       "destination": "/:pagina",
       "permanent": true
     }
   ],
   "rewrites": [
+    {
+      "source": "/termos",
+      "destination": "/termos.html"
+    },
+    {
+      "source": "/privacidade",
+      "destination": "/privacidade.html"
+    },
     {
       "source": "/",
       "has": [
