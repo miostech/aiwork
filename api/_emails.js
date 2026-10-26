@@ -402,8 +402,8 @@ function emailMiai({ titulo, previa, selo, chamada, texto, rotuloSenha, botao, n
   const fonteTitulo = "Bitter,Georgia,'Times New Roman',serif";
   const fonteEtiqueta = fonte;   // maiúsculas espaçadas
   const fonteSenha = "'SFMono-Regular',Menlo,Consolas,monospace";
-  // Logo roxo publicado no site (o mesmo projeto atende a MIAI e a IA Academy, então os dois endereços servem)
-  const logo = (linkMiai() || "https://www.iaacademy.bio") + "/miai/logo-miai-email.png";
+  // Logo roxo publicado no site da MIAI
+  const logo = (linkMiai() || "https://www.miaiacademy.com") + "/miai/logo-miai-email.png";
   return `<!doctype html>
 <html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
 <head>

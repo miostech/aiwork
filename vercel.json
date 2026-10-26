@@ -28,6 +28,61 @@
       "permanent": true
     },
     {
+      "source": "/miai",
+      "missing": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.miaiacademy.com/",
+      "permanent": true
+    },
+    {
+      "source": "/miai/index.html",
+      "missing": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.miaiacademy.com/",
+      "permanent": true
+    },
+    {
+      "source": "/miai/:pagina(conta\\.html|aulas\\.html|obrigado\\.html)",
+      "missing": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.miaiacademy.com/conta",
+      "permanent": true
+    },
+    {
+      "source": "/miai/cursos/:curso([a-z0-9-]+)\\.html",
+      "missing": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.miaiacademy.com/:curso",
+      "permanent": true
+    },
+    {
+      "source": "/aiwork.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/ia-work",
+      "permanent": false
+    },
+    {
       "source": "/:pagina(inicio\\.html|cadastro\\.html|curso\\.html|painel|painel\\.html)",
       "has": [
         {
