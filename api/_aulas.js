@@ -28,7 +28,7 @@ export const CURSO = {
           titulo: "Por que empresas de IA pagam em dólar para você gravar a sua rotina",
           descricao: "",
           duracao: "9 min",
-          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%201%20-%20iaacademy.mp4",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%201%20-%20iaacademy%20sem%20creditos.mp4",
           capa: "/capas/aula-1.jpg",
           materiais: [
             {
@@ -42,7 +42,7 @@ export const CURSO = {
           titulo: "O kit para começar com o celular que você já tem",
           descricao: "",
           duracao: "9 min",
-          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%202%20-%20iaacademy.mp4",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%202%20-%20iaacademy%20sem%20creditos.mp4",
           capa: "/capas/aula-2.jpg",
           materiais: [
             {
@@ -66,7 +66,7 @@ export const CURSO = {
           titulo: "Hub: libere a sua conta e grave o primeiro vídeo",
           descricao: "",
           duracao: "8 min",
-          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%203%20-%20iaacademy.mp4",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%203%20-%20iaacademy%20sem%20creditos.mp4",
           capa: "/capas/aula-3.jpg",
           materiais: [
             {
@@ -100,7 +100,7 @@ export const CURSO = {
           titulo: "O segredo dos vídeos aprovados (e os 3 erros que bloqueiam a sua conta)",
           descricao: "",
           duracao: "11 min",
-          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%204%20-%20iaacademy.mp4",
+          video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%204%20-%20iaacademy%20sem%20creditos.mp4",
           capa: "/capas/aula-4.jpg",
           materiais: [
             {
