@@ -168,6 +168,8 @@ create trigger leads_conferencia
 -- As vendas contam todas as compras do período, separadas em Formação IA Academy (compras.curso = 'gratuito',
 -- o nome antigo do curso) e IA Work (compras.curso = 'pago'). "Pagaram" liga a compra da Formação ao lead pelo id
 -- enviado ao Stripe (compras.referencia), pela conta ou pelo e-mail.
+-- Receita: "receita" soma as compras em reais (Brasil) e "receita_usd" as em dólar (outros países, que o Stripe
+-- converte do preço em dólar); os valores ficam em centavos da própria moeda.
 create or replace function public.painel_funil(desde timestamptz default null)
 returns jsonb
 language sql stable
@@ -203,18 +205,21 @@ as $$
     ),
     'vendas', jsonb_build_object(
       'pagas',      (select count(*) from c where status = 'pago'),
-      'receita',    (select coalesce(sum(valor), 0) from c where status = 'pago'),
+      'receita',    (select coalesce(sum(valor), 0) from c where status = 'pago' and coalesce(moeda, 'brl') = 'brl'),
+      'receita_usd', (select coalesce(sum(valor), 0) from c where status = 'pago' and moeda = 'usd'),
       'com_cupom',  (select count(*) from c where status = 'pago' and coalesce(desconto, 0) > 0),
       'aguardando', (select count(*) from c where status = 'aguardando'),
       'reembolsos', (select count(*) from c where status = 'reembolsado'),
       'formacao', jsonb_build_object(
         'pagas',      (select count(*) from c where curso = 'gratuito' and status = 'pago'),
-        'receita',    (select coalesce(sum(valor), 0) from c where curso = 'gratuito' and status = 'pago'),
+        'receita',    (select coalesce(sum(valor), 0) from c where curso = 'gratuito' and status = 'pago' and coalesce(moeda, 'brl') = 'brl'),
+        'receita_usd', (select coalesce(sum(valor), 0) from c where curso = 'gratuito' and status = 'pago' and moeda = 'usd'),
         'com_cupom',  (select count(*) from c where curso = 'gratuito' and status = 'pago' and coalesce(desconto, 0) > 0)
       ),
       'iawork', jsonb_build_object(
         'pagas',      (select count(*) from c where curso = 'pago' and status = 'pago'),
-        'receita',    (select coalesce(sum(valor), 0) from c where curso = 'pago' and status = 'pago'),
+        'receita',    (select coalesce(sum(valor), 0) from c where curso = 'pago' and status = 'pago' and coalesce(moeda, 'brl') = 'brl'),
+        'receita_usd', (select coalesce(sum(valor), 0) from c where curso = 'pago' and status = 'pago' and moeda = 'usd'),
         'com_cupom',  (select count(*) from c where curso = 'pago' and status = 'pago' and coalesce(desconto, 0) > 0)
       )
     ),

@@ -8,7 +8,7 @@ import Stripe from "stripe";
 import { CURSOS_IA_ACADEMY } from "./_cursos.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_nao_configurada");
-const LINKS = CURSOS_IA_ACADEMY.map((c) => c.linkPagamento);
+const LINKS = CURSOS_IA_ACADEMY.flatMap((c) => c.linksPagamento).filter(Boolean);
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {

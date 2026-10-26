@@ -11,9 +11,9 @@
 // Variáveis de ambiente:
 //   STRIPE_SECRET_KEY      chave secreta do Stripe (sk_live_... ou sk_test_...)
 //   STRIPE_WEBHOOK_SECRET  segredo do webhook (whsec_...), em Stripe → Desenvolvedores → Webhooks
-//   STRIPE_PAYMENT_LINK    id do link de pagamento do IA Work (plink_...), usado em api/_cursos.js. A conta do Stripe
-//                          também recebe pagamentos de outros produtos: só as compras feitas pelos links dos cursos
-//                          liberam alguma coisa.
+//   STRIPE_PAYMENT_LINK    opcional: id de mais um link de pagamento do IA Work (plink_...), aceito junto com os de
+//                          api/_cursos.js. A conta do Stripe também recebe pagamentos de outros produtos: só as compras
+//                          feitas pelos links dos cursos liberam alguma coisa.
 //   + as do Supabase (api/_supabase.js) e do Resend (api/_emails.js)
 import Stripe from "stripe";
 import { banco, normalizarEmail } from "./_supabase.js";

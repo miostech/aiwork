@@ -19,7 +19,7 @@
       professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
       preco: 'R$ 497',
       parcelas: '',                        // ex.: 'ou 12x de R$ 49,70 no cartão' (vazio = não mostra)
-      linkPagamento: 'https://buy.stripe.com/9B65kFeGO0qd8qXdXI67S00',
+      linkPagamento: 'https://buy.stripe.com/fZu00lgOW4GtbD9bPA67S03',   // US$ 99, com R$ 497 fixo no Brasil
       // Cupom de quem veio da Formação IA Academy (/ia-work?origem=curso)
       cupom: { codigo: 'ACADEMY', preco: 'R$ 197' },
     },

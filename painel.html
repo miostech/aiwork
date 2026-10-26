@@ -295,6 +295,7 @@ window.CONFIG = {
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const inteiro = new Intl.NumberFormat('pt-BR');
   const reais = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+  const dolares = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'USD' });
   const pct = (a, b) => (b > 0 ? Math.round((a / b) * 1000) / 10 : 0).toLocaleString('pt-BR') + '%';
 
   let sb = null;
@@ -580,11 +581,13 @@ window.CONFIG = {
     const plural = (n, um, varios) => (n === 1 ? um : varios);
     const fo = v.formacao || { pagas: 0, receita: 0, com_cupom: 0 };
     const iw = v.iawork || { pagas: 0, receita: 0, com_cupom: 0 };
+    // Quem paga fora do Brasil paga em dólar: a receita em dólar aparece ao lado da em reais, sem conversão
+    const recebido = (r) => reais.format(r.receita / 100) + (r.receita_usd ? ' + ' + dolares.format(r.receita_usd / 100) : '');
     const cartoes = [
       [inteiro.format(fo.pagas), plural(fo.pagas, 'Formação paga', 'Formações pagas'), true],
-      [reais.format(fo.receita / 100), 'recebido da Formação', true],
+      [recebido(fo), 'recebido da Formação', true],
       [inteiro.format(iw.pagas), plural(iw.pagas, 'IA Work pago', 'IA Work pagos'), true],
-      [reais.format(iw.receita / 100), 'recebido do IA Work', true],
+      [recebido(iw), 'recebido do IA Work', true],
       [inteiro.format(fo.com_cupom), 'Formações com cupom'],
       [pct(f.compraram, f.pagaram), 'de quem pagou a Formação comprou o IA Work'],
       [inteiro.format(d.visitas.aiwork), plural(d.visitas.aiwork, 'pessoa visitou a página do IA Work', 'pessoas visitaram a página do IA Work')],
