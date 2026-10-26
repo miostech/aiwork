@@ -12,13 +12,13 @@
 
   const FORMACAO = {
     nome: 'Formação IA Academy',
-    // US$ 19 no Stripe, com R$ 98 fixo para quem está no Brasil (nos outros países o Stripe converte para a moeda local)
+    // US$ 98 no Stripe, com R$ 98 fixo para quem está no Brasil (nos outros países o Stripe converte para a moeda local)
     preco: 'R$ 98',
-    precoFora: 'US$ 19',
-    linkPagamento: 'https://buy.stripe.com/5kQbJ32Y61uh7mT7zk67S02',
+    precoFora: 'US$ 98',
+    linkPagamento: 'https://buy.stripe.com/3cI00l9mu3CpcHd2f067S04',
     // Cupom da Black Friday: vai preenchido no pagamento até o fim do dia 30/11/2026 (horário de Brasília),
     // quando o código também expira no Stripe. Depois disso a página mostra só o preço cheio.
-    cupom: { codigo: 'BLACKFRIDAY', preco: 'R$ 28', precoFora: 'US$ 6', ate: '2026-12-01T02:59:59Z', ateTexto: '30/11' },
+    cupom: { codigo: 'BLACKFRIDAY', preco: 'R$ 28', precoFora: 'US$ 28', ate: '2026-12-01T02:59:59Z', ateTexto: '30/11' },
   };
 
   const foraDoBrasil = () => !!(window.Pais && window.Pais.foraDoBrasil());

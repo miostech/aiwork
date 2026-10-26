@@ -25,8 +25,8 @@ export const CURSOS_MIAI = [
     endereco: "ia-work",   // miaiacademy.com/ia-work (vendas) e miaiacademy.com/conta/ia-work (aulas)
     id: "pago",            // nome no banco (acessos.curso e compras.curso): o IA Work nasceu como "pago" na IA Academy
     nome: "IA Work",
-    // US$ 99 (R$ 497 no Brasil); o antigo era só em reais
-    linksPagamento: ["plink_1UUsf2RY9p8vsUUsv2vZuZMC", "plink_1USLFxRY9p8vsUUshLZlyAb9", process.env.STRIPE_PAYMENT_LINK],
+    // US$ 497 (R$ 497 no Brasil); depois os antigos: US$ 99 e o só em reais
+    linksPagamento: ["plink_1UUt0pRY9p8vsUUs8Yq5Miq1", "plink_1UUsf2RY9p8vsUUsv2vZuZMC", "plink_1USLFxRY9p8vsUUshLZlyAb9", process.env.STRIPE_PAYMENT_LINK],
     aulas: AULAS_IAWORK,
   },
 ];
@@ -39,8 +39,8 @@ export const CURSOS_IA_ACADEMY = [
     id: "gratuito",        // nome no banco: era o curso gratuito (continua assim para manter o histórico e o painel)
     nome: "Formação IA Academy",
     site: "iaacademy",     // e-mail de acesso da IA Academy, com o link da área do aluno de lá
-    // US$ 19 (R$ 98 no Brasil); o antigo era só em reais
-    linksPagamento: ["plink_1UUsf2RY9p8vsUUs3jVvTTDK", "plink_1UUresRY9p8vsUUs8Pm4dSUd", process.env.STRIPE_PAYMENT_LINK_FORMACAO],
+    // US$ 98 (R$ 98 no Brasil); depois os antigos: US$ 19 e o só em reais
+    linksPagamento: ["plink_1UUt0oRY9p8vsUUs3WsVrQbX", "plink_1UUsf2RY9p8vsUUs3jVvTTDK", "plink_1UUresRY9p8vsUUs8Pm4dSUd", process.env.STRIPE_PAYMENT_LINK_FORMACAO],
   },
 ];
 

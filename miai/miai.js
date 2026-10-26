@@ -18,11 +18,11 @@
       novo: true,                          // selo "Novo" e destaque no topo da página inicial
       professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
       preco: 'R$ 497',                     // no Brasil
-      precoFora: 'US$ 99',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
+      precoFora: 'US$ 497',                // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',                        // ex.: 'ou 12x de R$ 49,70 no cartão' (vazio = não mostra; só no Brasil)
-      linkPagamento: 'https://buy.stripe.com/fZu00lgOW4GtbD9bPA67S03',   // US$ 99, com R$ 497 fixo no Brasil
+      linkPagamento: 'https://buy.stripe.com/fZu3cxfKSa0N8qX9Hs67S05',   // US$ 497, com R$ 497 fixo no Brasil
       // Cupom de quem veio da Formação IA Academy (/ia-work?origem=curso)
-      cupom: { codigo: 'ACADEMY', preco: 'R$ 197', precoFora: 'US$ 39' },
+      cupom: { codigo: 'ACADEMY', preco: 'R$ 197', precoFora: 'US$ 197' },
     },
   ];
 
