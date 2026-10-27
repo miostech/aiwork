@@ -34,10 +34,10 @@ export const CURSOS_MIAI = [
   },
   {
     endereco: "sabido",      // miaiacademy.com/sabido (vendas) e miaiacademy.com/conta/sabido (aulas)
-    id: "canal-dark",        // nome no banco (acessos.curso) e na loja dos plugins: o Sabido nasceu como "canal-dark"
+    id: "canal-dark",        // nome no banco (acessos.curso): o Sabido nasceu como "canal-dark"
     nome: "Sabido",
     // plugin do Claude Code liberado por este curso: "name" do plugin.json, repositório privado e o texto da loja
-    plugin: "canal-dark",
+    plugin: "sabido",
     repo: "miostech/miai-plugin-canal-dark",
     descricaoPlugin: "Vídeos para canal dark (TikTok, Reels, Shorts) narrados em português, com apresentador 2D e voz gratuita.",
     // US$ 97 (R$ 97 no Brasil); STRIPE_PAYMENT_LINK_CANAL_DARK, se definida, é aceita junto

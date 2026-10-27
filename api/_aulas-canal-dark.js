@@ -23,7 +23,7 @@ export const CURSO = {
         },
         {
           titulo: "Configurar o seu canal",
-          descricao: "Rode /canal-dark:configurar-canal: nicho, tom, nome, bordão, voz e o apresentador 2D.",
+          descricao: "Rode /sabido:configurar-canal: nicho, tom, nome, bordão, voz e o apresentador 2D.",
           duracao: "",
           video: "",
           materiais: [],
@@ -48,7 +48,7 @@ export const CURSO = {
     {
       titulo: "O seu avatar e o seu estilo",
       aulas: [
-        { titulo: "Criar um apresentador próprio", descricao: "Avatar com o seu rosto de desenho, poses e figurinos (/canal-dark:criar-avatar).", duracao: "", video: "", materiais: [] },
+        { titulo: "Criar um apresentador próprio", descricao: "Avatar com o seu rosto de desenho, poses e figurinos (/sabido:criar-avatar).", duracao: "", video: "", materiais: [] },
         { titulo: "Ajustes finos", descricao: "Trocar voz, ritmo, bordão e pedir mudanças num vídeo pronto.", duracao: "", video: "", materiais: [] },
       ],
     },
