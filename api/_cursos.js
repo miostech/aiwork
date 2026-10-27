@@ -14,7 +14,8 @@
 // linksPagamento: o primeiro é o link atual; os seguintes são links antigos do mesmo curso, que continuam liberando
 // o acesso de quem abriu o pagamento antes da troca.
 //   3. crie a página de vendas em miai/cursos/<endereco>.html e o bloco do curso no CATÁLOGO de miai/miai.js
-//   4. curso que libera um plugin do Claude Code: "plugin" com o nome dele (api/_plugins.js e a loja miai-plugins)
+//   4. curso que libera um plugin do Claude Code: "plugin", "repo" e "descricaoPlugin" (api/_plugins.js e api/_loja.js);
+//      o GITHUB_TOKEN da Vercel precisa ler o repositório novo
 //
 // Variável de ambiente:
 //   MIAI_URL  endereço da MIAI Academy (ex.: https://miaiacademy.com). Enquanto estiver vazia, os e-mails de
@@ -35,8 +36,10 @@ export const CURSOS_MIAI = [
     endereco: "canal-dark",  // miaiacademy.com/canal-dark (vendas) e miaiacademy.com/conta/canal-dark (aulas)
     id: "canal-dark",
     nome: "Canal Dark com IA",
-    // plugin do Claude Code liberado por este curso ("name" do plugin; a loja fica no repositório miostech/miai-plugins)
+    // plugin do Claude Code liberado por este curso: "name" do plugin.json, repositório privado e o texto da loja
     plugin: "canal-dark",
+    repo: "miostech/miai-plugin-canal-dark",
+    descricaoPlugin: "Vídeos para canal dark (TikTok, Reels, Shorts) narrados em português, com apresentador 2D e voz gratuita.",
     // crie o link de pagamento no Stripe e coloque o id (plink_...) aqui ou em STRIPE_PAYMENT_LINK_CANAL_DARK
     linksPagamento: [process.env.STRIPE_PAYMENT_LINK_CANAL_DARK],
     aulas: AULAS_CANAL_DARK,
