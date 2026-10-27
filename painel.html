@@ -11,7 +11,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bitter:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <!--
   PAINEL (endereço: /painel)
-  Funil da Formação IA Academy e vendas (Formação e IA Work). Entra com o mesmo login da área do aluno,
+  Funil da Formação IA Academy, vendas e os números de cada curso (Formação, Sabido e IA Work: visitantes da página
+  de vendas, compras e alunos; as páginas de cada curso ficam em paginasVenda, em api/_cursos.js). Entra com o mesmo login da área do aluno,
   mas só os e-mails da variável ADMIN_EMAILS (na Vercel) conseguem ver os números.
 -->
 <style>
@@ -141,6 +142,13 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
 .tabela td { padding: 10px 6px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
 .tabela th:not(:first-child), .tabela td:not(:first-child) { text-align: right; }
 
+/* Por curso */
+.abas-cursos { margin-top: 16px; }
+.card h3 { margin: 24px 0 0; font-size: 16px; font-weight: 700; }
+/* Recebido em mais de uma moeda: o cartão ocupa duas colunas e o valor pode quebrar a linha */
+.numero--largo { grid-column: span 2; }
+.numero--largo strong { white-space: normal; }
+
 .aviso { margin: 0; padding: 12px 14px; border-radius: 14px; background: #FFF6E8; border: 1px solid #F2D7A6; color: #7A4A0B; font-size: 14px; }
 .nota { margin: 0; font-size: 13px; color: var(--muted); }
 
@@ -224,6 +232,17 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       </section>
       <p class="aviso" id="aviso-conferencia" hidden><span id="aviso-texto"></span> <button class="copiar" id="btn-conferir" type="button">Conferir agora</button></p>
     </div>
+
+    <section class="card" id="secao-cursos" aria-labelledby="t-cursos" style="grid-column:1/-1" hidden>
+      <h2 id="t-cursos">Por curso</h2>
+      <p class="sub">Escolha o curso para ver quem visitou a página de vendas, quem comprou e os alunos. O número ao lado do nome é de compras pagas no período.</p>
+      <div class="filtros abas-cursos" id="abas-cursos" role="group" aria-label="Escolher o curso"></div>
+      <p class="sub" id="sub-curso"></p>
+      <div class="numeros" id="curso-numeros"></div>
+      <h3>Quem comprou</h3>
+      <ol class="lista-leads" id="curso-compras"></ol>
+      <p class="nota" id="curso-compras-vazio" hidden></p>
+    </section>
 
     <section class="card" id="secao-espera" aria-labelledby="t-espera" style="grid-column:1/-1" hidden>
       <h2 id="t-espera">Lista de espera do IA Work</h2>
@@ -615,10 +634,116 @@ window.CONFIG = {
     setTimeout(() => { ev.target.textContent = 'Copiar todos os e-mails'; }, 1800);
   });
 
+  // ── Por curso: uma aba para cada curso (a lista e a ordem vêm da api/painel.js)
+  const PAGINAS_VENDA = {
+    inicio: 'iaacademy.bio', 'miai-ia-academy': 'miaiacademy.com/ia-academy',
+    'miai-sabido': 'miaiacademy.com/sabido', 'miai-canal-dark': 'miaiacademy.com/canal-dark (endereço antigo)',
+    aiwork: 'iaacademy.bio/aiwork', 'miai-ia-work': 'miaiacademy.com/ia-work',
+  };
+  const SITUACOES = { pago: ['Pago', 'venda'], aguardando: ['Pix aguardando', 'alerta'], reembolsado: ['Reembolsado', 'erro'] };
+  // Moedas sem centavos no Stripe (o valor já vem inteiro)
+  const SEM_CENTAVOS = ['bif', 'clp', 'djf', 'gnf', 'jpy', 'kmf', 'krw', 'mga', 'pyg', 'rwf', 'ugx', 'vnd', 'vuv', 'xaf', 'xof', 'xpf'];
+  function dinheiro(centavos, moeda) {
+    const m = String(moeda || 'brl').toLowerCase();
+    const valor = SEM_CENTAVOS.includes(m) ? centavos : centavos / 100;
+    try { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: m.toUpperCase() }).format(valor); }
+    catch (e) { return valor.toLocaleString('pt-BR') + ' ' + m.toUpperCase(); }
+  }
+  // Cada moeda separada, sem conversão: reais primeiro, depois dólar e as outras
+  const ORDEM_MOEDAS = ['brl', 'usd'];
+  function recebidoEm(receitas) {
+    const moedas = Object.keys(receitas || {}).filter((m) => receitas[m] > 0)
+      .sort((a, b) => ((ORDEM_MOEDAS.indexOf(a) + 1) || 9) - ((ORDEM_MOEDAS.indexOf(b) + 1) || 9));
+    return moedas.length ? moedas.map((m) => dinheiro(receitas[m], m)).join(' + ') : reais.format(0);
+  }
+  let cursoAberto = null;
+  try { cursoAberto = localStorage.getItem('painel-curso'); } catch (e) {}
+
+  function desenharCursos(cursos, nomePeriodo) {
+    $('#secao-cursos').hidden = !(cursos && cursos.length);
+    if (!cursos || !cursos.length) return;
+    if (!cursos.some((c) => c.id === cursoAberto)) cursoAberto = cursos[0].id;
+    const abas = $('#abas-cursos');
+    abas.replaceChildren();
+    cursos.forEach((c) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(c.id === cursoAberto));
+      b.textContent = c.nome;
+      const conta = document.createElement('span');
+      conta.textContent = inteiro.format(c.vendas.pagas);
+      b.appendChild(conta);
+      b.addEventListener('click', () => {
+        cursoAberto = c.id;
+        try { localStorage.setItem('painel-curso', c.id); } catch (e) {}
+        desenharCursos(cursos, nomePeriodo);
+      });
+      abas.appendChild(b);
+    });
+
+    const c = cursos.find((x) => x.id === cursoAberto);
+    const v = c.vendas;
+    const a = c.alunos;
+    const plural = (n, um, varios) => (n === 1 ? um : varios);
+    const paginas = c.paginas.map((p) => PAGINAS_VENDA[p] || p);
+    $('#sub-curso').textContent = 'Visitantes e compras ' + nomePeriodo + '. Página de vendas: ' + paginas.join(' e ')
+      + '. "Alunos com acesso" conta todo mundo que tem o curso hoje, desde o começo (inclui acessos dados à mão).';
+    const cartoes = [
+      [inteiro.format(c.visitantes), plural(c.visitantes, 'pessoa visitou a página de vendas', 'pessoas visitaram a página de vendas')],
+      [inteiro.format(v.pagas), plural(v.pagas, 'compra paga', 'compras pagas'), true],
+      [recebidoEm(v.receitas), 'recebido (cada moeda separada, sem conversão)', true, Object.keys(v.receitas || {}).length > 1],
+      [pct(v.pagas, c.visitantes), 'dos visitantes compraram'],
+      [inteiro.format(v.com_cupom), plural(v.com_cupom, 'compra com cupom', 'compras com cupom')],
+      [inteiro.format(a.ativos), plural(a.ativos, 'aluno com acesso', 'alunos com acesso'), true],
+      a.novos !== null && [inteiro.format(a.novos), plural(a.novos, 'aluno novo ', 'alunos novos ') + nomePeriodo],
+      [inteiro.format(a.entraram), plural(a.entraram, 'aluno abriu as aulas', 'alunos abriram as aulas')],
+      [inteiro.format(a.concluiram), plural(a.concluiram, 'aluno concluiu o curso', 'alunos concluíram o curso')],
+      v.aguardando > 0 && [inteiro.format(v.aguardando), 'Pix aguardando pagamento'],
+      v.reembolsos > 0 && [inteiro.format(v.reembolsos), plural(v.reembolsos, 'reembolso', 'reembolsos')],
+    ].filter(Boolean);
+    const numeros = $('#curso-numeros');
+    numeros.replaceChildren();
+    cartoes.forEach(([valor, rotulo, destaque, largo]) => {
+      const div = document.createElement('div');
+      div.className = 'numero' + (destaque ? ' numero--destaque' : '') + (largo ? ' numero--largo' : '');
+      div.innerHTML = '<strong></strong><span></span>';
+      $('strong', div).textContent = valor;
+      $('span', div).textContent = rotulo;
+      numeros.appendChild(div);
+    });
+
+    const lista = $('#curso-compras');
+    lista.replaceChildren();
+    c.compras.forEach((x) => {
+      const li = document.createElement('li');
+      li.className = 'lead';
+      li.innerHTML = '<div class="lead__topo"><span class="lead__nome"></span><span class="lead__data"></span></div>'
+        + '<dl class="lead__dados">'
+        + '<div><dt>E-mail</dt><dd class="d-email"></dd></div>'
+        + '<div><dt>Valor</dt><dd class="d-valor"></dd></div>'
+        + '<div><dt>Situação</dt><dd class="d-situacao"></dd></div>'
+        + '</dl>';
+      $('.lead__nome', li).textContent = x.nome || '—';
+      $('.lead__data', li).textContent = quando(x.criado_em);
+      const email = document.createElement('a');
+      email.href = 'mailto:' + x.email;
+      email.textContent = x.email;
+      $('.d-email', li).appendChild(email);
+      $('.d-valor', li).textContent = x.valor === null ? '—'
+        : dinheiro(x.valor, x.moeda) + (x.desconto > 0 ? ' (cupom de ' + dinheiro(x.desconto, x.moeda) + ')' : '');
+      const [situacao, tipo] = SITUACOES[x.status] || [x.status, ''];
+      $('.d-situacao', li).appendChild(selo(situacao, tipo));
+      lista.appendChild(li);
+    });
+    $('#curso-compras-vazio').hidden = c.compras.length > 0;
+    $('#curso-compras-vazio').textContent = 'Nenhuma compra ' + nomePeriodo + '.';
+  }
+
   function desenhar(d) {
     const nomePeriodo = d.periodo.dias ? 'nos últimos ' + d.periodo.dias + ' dias' : 'desde o começo';
     const f = d.funil;
     desenharListaEspera(d.lista_espera, d.periodo, nomePeriodo);
+    desenharCursos(d.cursos, nomePeriodo);
 
     // Funil
     $('#sub-funil').textContent = 'Visitantes da página inicial e pessoas que preencheram o formulário ' + nomePeriodo + ', e até onde cada uma chegou.';

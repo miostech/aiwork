@@ -1,13 +1,16 @@
 // Painel (/painel): números do funil e das vendas, lista de leads e conferência da Hub.
 // Só para os e-mails em ADMIN_EMAILS (separados por vírgula), que entram com o mesmo login da área do aluno.
-//   GET  /api/painel?dias=7|30|90                       → números (sem "dias" = desde o começo) e a lista de espera
+//   GET  /api/painel?dias=7|30|90                       → números (sem "dias" = desde o começo), a lista de espera
 //                                                          dos cursos (lista_espera, inteira, a mais recente primeiro)
+//                                                          e os números de cada curso ("cursos": visitantes, vendas,
+//                                                          alunos e as últimas compras)
 //   GET  /api/painel?leads=1&filtro=pendente&busca=&pagina=0 → lista de leads (50 por página)
 //   POST /api/painel { lead, conferencia }              → muda a conferência da Hub do lead:
 //        "confirmado", "nao_encontrado" (tira o acesso só de quem entrou quando o curso era gratuito) ou "pendente"
 // As contas e a lista vêm das funções painel_funil e painel_leads (supabase/schema.sql).
 import { banco, normalizarEmail } from "./_supabase.js";
 import { CURSO as CURSO_GRATUITO } from "./_aulas.js";
+import { CURSOS_MIAI, CURSOS_IA_ACADEMY } from "./_cursos.js";
 
 const ADMINS = String(process.env.ADMIN_EMAILS || "").split(",").map(normalizarEmail).filter(Boolean);
 const FILTROS = ["pendente", "confirmado", "nao_encontrado", "todos"];
@@ -22,6 +25,79 @@ function inicioDoPeriodo(dias) {
   const inicio = new Date(hoje + "T00:00:00-03:00");
   inicio.setUTCDate(inicio.getUTCDate() - (dias - 1));
   return inicio.toISOString();
+}
+
+// ── Por curso: a Formação e os cursos da MIAI, do mais novo para o mais antigo
+const CURSOS_PAINEL = [...CURSOS_IA_ACADEMY, ...[...CURSOS_MIAI].reverse()];
+const POR_LEITURA = 1000;   // o Supabase devolve no máximo 1.000 linhas por pedido
+
+async function contar(consulta) {
+  const { count, error } = await consulta;
+  if (error) throw error;
+  return count || 0;
+}
+
+// Visitantes diferentes das páginas de vendas no período (quem volta em outro dia conta uma vez só)
+async function visitantesDe(db, paginas, desde) {
+  if (!paginas.length) return 0;
+  const vistos = new Set();
+  for (let de = 0; ; de += POR_LEITURA) {
+    let consulta = db.from("visitas").select("visitante").in("pagina", paginas).order("id").range(de, de + POR_LEITURA - 1);
+    if (desde) consulta = consulta.gte("criado_em", desde);
+    const { data, error } = await consulta;
+    if (error) throw error;
+    data.forEach((v) => vistos.add(v.visitante));
+    if (data.length < POR_LEITURA) return vistos.size;
+  }
+}
+
+// Receita somada por moeda, sem conversão ({ brl: 5300, usd: 5300, eur: 4944 }, em centavos)
+function somaPorMoeda(compras) {
+  const soma = {};
+  for (const c of compras) {
+    const moeda = c.moeda || "brl";
+    soma[moeda] = (soma[moeda] || 0) + (c.valor || 0);
+  }
+  return soma;
+}
+
+async function numerosDosCursos(db, desde) {
+  let consulta = db.from("compras").select("curso, status, valor, moeda, desconto, nome, email, criado_em")
+    .in("curso", CURSOS_PAINEL.map((c) => c.id)).order("criado_em", { ascending: false }).limit(5000);
+  if (desde) consulta = consulta.gte("criado_em", desde);
+  const { data: compras, error } = await consulta;
+  if (error) throw error;
+
+  return Promise.all(CURSOS_PAINEL.map(async (curso) => {
+    // Alunos: quem tem o acesso ativo hoje (desde o começo); "novos" = liberados no período
+    const acessos = () => db.from("acessos").select("id", { count: "exact", head: true }).eq("curso", curso.id).is("revogado_em", null);
+    const [visitantes, ativos, novos, entraram, concluiram] = await Promise.all([
+      visitantesDe(db, curso.paginasVenda || [], desde),
+      contar(acessos()),
+      desde ? contar(acessos().gte("criado_em", desde)) : null,
+      contar(acessos().not("primeiro_acesso_em", "is", null)),
+      contar(acessos().not("concluido_em", "is", null)),
+    ]);
+    const doCurso = compras.filter((c) => c.curso === curso.id);
+    const pagas = doCurso.filter((c) => c.status === "pago");
+    return {
+      id: curso.id,
+      nome: curso.nome,
+      paginas: curso.paginasVenda || [],
+      visitantes,
+      vendas: {
+        pagas: pagas.length,
+        receitas: somaPorMoeda(pagas),
+        com_cupom: pagas.filter((c) => (c.desconto || 0) > 0).length,
+        aguardando: doCurso.filter((c) => c.status === "aguardando").length,
+        reembolsos: doCurso.filter((c) => c.status === "reembolsado").length,
+      },
+      alunos: { ativos, novos, entraram, concluiram },
+      // Quem comprou no período, a compra mais recente primeiro (sem as que falharam)
+      compras: doCurso.filter((c) => c.status !== "falhou").slice(0, 100)
+        .map(({ status, valor, moeda, desconto, nome, email, criado_em }) => ({ status, valor, moeda, desconto, nome, email, criado_em })),
+    };
+  }));
 }
 
 export default async function handler(req, res) {
@@ -89,9 +165,14 @@ export default async function handler(req, res) {
     const { data: espera, error: erroEspera } = await db.from("lista_espera")
       .select("curso, nome, email, whatsapp, origem, criado_em").order("criado_em", { ascending: false }).limit(1000);
     if (erroEspera) console.error("Não foi possível ler a lista de espera:", erroEspera.message);
+    // Por curso: idem, se der erro o resto aparece
+    const cursos = await numerosDosCursos(db, desde).catch((erro) => {
+      console.error("Não foi possível somar os números por curso:", erro.message || erro);
+      return null;
+    });
     return res.status(200).json({
       periodo: { dias: desde ? dias : null, desde }, atualizado_em: new Date().toISOString(), ...numeros,
-      lista_espera: erroEspera ? null : espera,
+      lista_espera: erroEspera ? null : espera, cursos,
     });
   } catch (erro) {
     console.error("Erro no painel:", erro);

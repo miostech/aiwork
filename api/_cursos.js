@@ -16,6 +16,8 @@
 //   3. crie a página de vendas em miai/cursos/<endereco>.html e o bloco do curso no CATÁLOGO de miai/miai.js
 //   4. curso que libera um plugin do Claude Code: "plugin", "repo" e "descricaoPlugin" (api/_plugins.js e api/_loja.js);
 //      o GITHUB_TOKEN da Vercel precisa ler o repositório novo
+//   5. paginasVenda: o nome da página de vendas no contador de visitas (data-pagina do contador.js, que precisa estar
+//      em PAGINAS de api/visita.js); o painel conta os visitantes delas na parte "Por curso"
 //
 // Variável de ambiente:
 //   MIAI_URL  endereço da MIAI Academy (ex.: https://miaiacademy.com). Enquanto estiver vazia, os e-mails de
@@ -28,6 +30,7 @@ export const CURSOS_MIAI = [
     endereco: "ia-work",   // miaiacademy.com/ia-work (vendas) e miaiacademy.com/conta/ia-work (aulas)
     id: "pago",            // nome no banco (acessos.curso e compras.curso): o IA Work nasceu como "pago" na IA Academy
     nome: "IA Work",
+    paginasVenda: ["aiwork", "miai-ia-work"],   // iaacademy.bio/aiwork e miaiacademy.com/ia-work
     // US$ 497 (R$ 497 no Brasil); depois os antigos: US$ 99 e o só em reais
     linksPagamento: ["plink_1UUt0pRY9p8vsUUs8Yq5Miq1", "plink_1UUsf2RY9p8vsUUsv2vZuZMC", "plink_1USLFxRY9p8vsUUshLZlyAb9", process.env.STRIPE_PAYMENT_LINK],
     aulas: AULAS_IAWORK,
@@ -36,6 +39,7 @@ export const CURSOS_MIAI = [
     endereco: "sabido",      // miaiacademy.com/sabido (vendas) e miaiacademy.com/conta/sabido (aulas)
     id: "canal-dark",        // nome no banco (acessos.curso) e na loja dos plugins: o Sabido nasceu como "canal-dark"
     nome: "Sabido",
+    paginasVenda: ["miai-sabido", "miai-canal-dark"],   // miaiacademy.com/sabido e o endereço antigo, /canal-dark
     // plugin do Claude Code liberado por este curso: "name" do plugin.json, repositório privado e o texto da loja
     plugin: "sabido",        // "name" do plugin.json (renomeado de canal-dark na versão 0.2.0); o aluno instala com sabido@miai
     repo: "miostech/miai-plugin-canal-dark",
@@ -53,7 +57,8 @@ export const CURSOS_IA_ACADEMY = [
     endereco: "formacao",
     id: "gratuito",        // nome no banco: era o curso gratuito (continua assim para manter o histórico e o painel)
     nome: "Formação IA Academy",
-    site: "iaacademy",     // e-mail de acesso da IA Academy, com o link da área do aluno de lá
+    paginasVenda: ["inicio", "miai-ia-academy"],   // a página inicial de iaacademy.bio e miaiacademy.com/ia-academy
+    site: "iaacademy",    // e-mail de acesso da IA Academy, com o link da área do aluno de lá
     enderecoMiai: "ia-academy",                 // também à venda em miaiacademy.com/ia-academy
     linkAulas: "https://www.iaacademy.bio/curso", // na conta da MIAI, o curso leva para as aulas de lá
     // US$ 98 (R$ 98 no Brasil); depois os antigos: US$ 19 e o só em reais
