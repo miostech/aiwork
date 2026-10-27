@@ -51,7 +51,8 @@ export const CURSO = {
           passos: [
             "Deixe o vídeo num lugar fácil, como a pasta Downloads ou a Mesa.",
             "No Claude Code, escreva: `edita a aula 1: ` e arraste o arquivo para a conversa.",
-            "O Claude mostra a transcrição e pergunta o que precisar: nomes que o Whisper errou, links que você citou, prints prometidos na fala.",
+            "O Claude propõe os cortes de pausas, respirações e frases repetidas (quando você erra e repete, fica a última tentativa) e só corta depois que você aprovar.",
+            "Depois ele pergunta o que precisar: nomes que o Whisper errou, links que você citou, prints prometidos na fala.",
             "Antes de renderizar, ele confere uma prévia com os cards e a legenda sobre o seu vídeo e evita cobrir as suas mãos.",
             "No fim você recebe o arquivo pronto, o tamanho, o que entrou na edição e os capítulos com os minutos para a página do curso.",
           ],
