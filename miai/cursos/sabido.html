@@ -124,11 +124,37 @@
 .final h2 { font-size: clamp(40px, 7vw, 72px); max-width: 15ch; }
 .final .botao { margin-top: 32px; }
 
-/* Reels do Instagram (@sabido4884): no topo, no lugar do vídeo horizontal, e na seção de exemplos */
-/* no topo o Reel troca a classe "video" (moldura horizontal, iframe esticado) por esta, para ficar em pé */
+/* Reels do @sabido4884 em cartões 9:16, como no celular. Sem "video" no CONFIG, o cartão é desenhado e abre o
+   Reel no Instagram; com "video" (um .mp4 vertical), ele toca o vídeo mudo e em loop, como no feed */
+.reels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (min-width: 860px) { .reels { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; } }
+.reel {
+  position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+  aspect-ratio: 9 / 16; padding: 14px; overflow: hidden; border-radius: 16px; color: #F3F1EC; text-decoration: none;
+  background: radial-gradient(130% 75% at 15% 0%, #23707C 0%, #0F3D47 48%, #071D23 100%);
+  box-shadow: 0 18px 40px -24px rgba(20, 19, 15, 0.55); transition: transform 0.2s;
+}
+.reel:nth-child(4n+2) { background: radial-gradient(130% 75% at 15% 0%, #7A4FB8 0%, #3B1D66 48%, #1A0D2E 100%); }
+.reel:nth-child(4n+3) { background: radial-gradient(130% 75% at 15% 0%, #B0503B 0%, #5C1F1A 48%, #260C0A 100%); }
+.reel:nth-child(4n+4) { background: radial-gradient(130% 75% at 15% 0%, #B8913B 0%, #5E4416 48%, #241906 100%); }
+a.reel:hover { transform: translateY(-3px); }
+.reel:focus-visible { outline: 3px solid var(--roxo); outline-offset: 3px; }
+.reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+.reel__topo, .reel__titulo, .reel__base { position: relative; }
+.reel__topo { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
+.reel__avatar { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #F3F1EC; color: #0F3D47; font-size: 12px; font-weight: 700; }
+.reel__titulo { margin: 0; font-family: var(--fonte-titulo); font-weight: 600; font-size: clamp(19px, 2.3vw, 26px); line-height: 1.08; text-transform: uppercase; }
+.reel__titulo small { display: block; margin-top: 10px; font-family: var(--fonte); font-weight: 500; font-size: 13px; line-height: 1.35; text-transform: none; opacity: 0.82; }
+.reel__base { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; font-weight: 600; }
+.reel__play { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: rgba(243, 241, 236, 0.18); }
+a.reel:hover .reel__play { background: rgba(243, 241, 236, 0.3); }
+.reel--video .reel__titulo, .reel--video .reel__play { display: none; }
+.reel--video .reel__base { align-self: flex-start; padding: 4px 10px; border-radius: 999px; background: rgba(7, 29, 35, 0.6); }
+/* topo: com vídeo próprio do primeiro Reel, ele fica em pé ao lado do texto; sem vídeo, o topo é só texto */
 .video-reel { display: flex; justify-content: center; align-self: start; }
-.reels { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; align-items: start; }
-.video-reel .instagram-media, .reels .instagram-media { margin: 0 auto !important; min-width: 280px !important; max-width: 400px !important; width: 100% !important; }
+.video-reel .reel { width: min(100%, 320px); }
+.hero__grade--texto .hero__lado p { max-width: 62ch; font-size: 18px; }
+@media (min-width: 900px) { .hero__grade--texto { grid-template-columns: minmax(0, 1fr); } }
 .prova-canal { display: grid; gap: 18px; justify-items: start; margin-bottom: 32px; }
 .prova-canal__numeros { display: flex; flex-wrap: wrap; gap: 12px 32px; }
 .prova-canal__numeros strong { display: block; font-family: var(--fonte-titulo); font-weight: 600; font-size: clamp(30px, 4vw, 40px); line-height: 1; color: var(--roxo); }
@@ -425,13 +451,14 @@ window.CONFIG = {
   // Link de incorporação (embed) do vídeo de demonstração, horizontal: Panda, YouTube, Vimeo...
   videoVendas: '',
 
-  // Reels do perfil do Sabido no Instagram (@sabido4884), feitos com o plugin. O primeiro aparece no topo (quando não
-  // há videoVendas) e os outros na seção de exemplos. Para trocar, copie o link do Reel (instagram.com/reel/...).
+  // Reels do perfil do Sabido no Instagram (@sabido4884), feitos com o plugin, em cartões 9:16 na seção de exemplos.
+  // video: link do .mp4 vertical (ex.: no Azure). Com ele o cartão toca o vídeo e o primeiro Reel vai para o topo;
+  // vazio = cartão desenhado com o título, que abre o Reel no Instagram. Visualizações de 27/10/2026.
   reels: [
-    'https://www.instagram.com/reel/Dez9heyKqDT/',   // 105 mil visualizações (27/10/2026)
-    'https://www.instagram.com/reel/De-WN61KTc9/',   // 71,4 mil
-    'https://www.instagram.com/reel/De2ad32KRAl/',   // 48,4 mil
-    'https://www.instagram.com/reel/DexLC88qlB4/',   // 11,5 mil
+    { link: 'https://www.instagram.com/reel/Dez9heyKqDT/', titulo: 'Caso Shirley Ann', legenda: 'O ataque de tubarão-branco que chocou a Austrália em 1985', views: '105 mil', video: '' },
+    { link: 'https://www.instagram.com/reel/De-WN61KTc9/', titulo: 'R$ 164 milhões', legenda: 'O túnel de 80 metros até o cofre do Banco Central, em Fortaleza', views: '77,3 mil', video: '' },
+    { link: 'https://www.instagram.com/reel/De2ad32KRAl/', titulo: 'Fugiu de quase 300 policiais', legenda: 'Os 20 dias da caçada a Lázaro Barbosa, em 2021', views: '48,4 mil', video: '' },
+    { link: 'https://www.instagram.com/reel/DexLC88qlB4/', titulo: 'Presa no Egito', legenda: 'A influenciadora brasileira detida por causa de vídeos gravados em Alexandria', views: '11,5 mil', video: '' },
   ],
   perfilInstagram: 'https://www.instagram.com/sabido4884/',
 
@@ -477,33 +504,46 @@ window.CONFIG = {
     $('#video-vendas').replaceChildren(frame);
   }
 
-  // Reels do Instagram: o primeiro no topo (se não houver videoVendas) e os outros nos exemplos.
-  // O embed.js do Instagram troca cada bloco pelo player oficial.
-  const reels = (C.reels || []).filter((r) => /^https:\/\/www\.instagram\.com\/(reel|p)\/[\w-]+\/?$/.test(r));
-  function blocoReel(link) {
-    const bloco = document.createElement('blockquote');
-    bloco.className = 'instagram-media';
-    bloco.dataset.instgrmPermalink = link;
-    bloco.dataset.instgrmVersion = '14';
-    const a = document.createElement('a');
-    a.href = link; a.target = '_blank'; a.rel = 'noopener';
-    a.textContent = 'Ver este vídeo no Instagram';
-    bloco.appendChild(a);
-    return bloco;
+  // Reels em cartões 9:16. Com vídeo próprio, o cartão toca mudo e em loop (tocar liga e desliga o som); sem vídeo,
+  // é um cartão desenhado com o título que abre o Reel no Instagram.
+  const reels = (C.reels || []).filter((r) => r && /^https:\/\/www\.instagram\.com\/(reel|p)\/[\w-]+\/?$/.test(r.link || ''));
+  function cartaoReel(r) {
+    const el = document.createElement(r.video ? 'div' : 'a');
+    el.className = 'reel' + (r.video ? ' reel--video' : '');
+    if (!r.video) {
+      el.href = r.link; el.target = '_blank'; el.rel = 'noopener';
+      el.setAttribute('aria-label', 'Assistir no Instagram: ' + r.titulo);
+    }
+    el.innerHTML = '<div class="reel__topo"><span class="reel__avatar" aria-hidden="true">S</span><span>@sabido4884</span></div>'
+      + '<p class="reel__titulo"><span></span><small></small></p>'
+      + '<div class="reel__base"><span class="reel__views"></span><span class="reel__play" aria-hidden="true">'
+      + '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg></span></div>';
+    el.querySelector('.reel__titulo span').textContent = r.titulo || '';
+    el.querySelector('.reel__titulo small').textContent = r.legenda || '';
+    el.querySelector('.reel__views').textContent = r.views ? r.views + ' visualizações' : 'Assistir';
+    if (r.video) {
+      const v = document.createElement('video');
+      v.src = r.video; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true; v.preload = 'metadata';
+      v.setAttribute('aria-label', (r.titulo || 'Vídeo do Sabido') + ' (toque para ligar o som)');
+      v.addEventListener('click', () => { v.muted = !v.muted; if (v.paused) v.play(); });
+      el.prepend(v);
+    }
+    return el;
   }
   if (reels.length) {
     const lista = reels.slice();
-    if (!C.videoVendas) {
+    if (!C.videoVendas && lista[0].video) {
       $('#video-vendas').className = 'video-reel';
-      $('#video-vendas').replaceChildren(blocoReel(lista.shift()));
+      $('#video-vendas').replaceChildren(cartaoReel(lista.shift()));
     }
-    lista.forEach((link) => $('#lista-reels').appendChild(blocoReel(link)));
+    lista.forEach((r) => $('#lista-reels').appendChild(cartaoReel(r)));
     if (C.perfilInstagram) $('#link-perfil').href = C.perfilInstagram;
     $('#exemplos').hidden = false;
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://www.instagram.com/embed.js';
-    document.body.appendChild(script);
+  }
+  // Sem vídeo para o topo, ele fica só com o texto (sem o quadro vazio de "vídeo de demonstração")
+  if (!C.videoVendas && !$('#video-vendas .reel')) {
+    $('#video-vendas').hidden = true;
+    $('.hero__grade').classList.add('hero__grade--texto');
   }
 
   const exemplos = (C.exemplos || []).filter((e) => e && (e.video || e.capa));
