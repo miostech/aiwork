@@ -15,7 +15,7 @@ export const CURSO = {
       aulas: [
         {
           titulo: "Instalar o plugin no Claude Code",
-          descricao: "Instale o Claude Code, o Python e o ffmpeg e cole os dois comandos abaixo. Eles são pessoais: funcionam só com a sua licença.",
+          descricao: "Você só precisa do Claude Code, com uma assinatura do Claude. Cole os dois comandos abaixo e o plugin cuida do resto: se faltar alguma coisa no seu computador, o próprio Claude avisa e ajuda a instalar.",
           duracao: "",
           video: "",
           instalacao: true,
