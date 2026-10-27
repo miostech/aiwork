@@ -59,9 +59,8 @@ export const CURSOS_MIAI = [
     plugin: "editfy",        // o aluno instala com editfy@miai
     repo: "miostech/miai-plugin-editfy",
     descricaoPlugin: "Edita as suas videoaulas: legenda, cards, capítulos, inserções de telas e prints e a versão leve para a sua plataforma.",
-    // US$ 97 (R$ 97 no Brasil): coloque aqui o id do link de pagamento do Stripe (plink_...) quando ele existir;
-    // STRIPE_PAYMENT_LINK_EDITFY, se definida, é aceita junto
-    linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITFY].filter(Boolean),
+    // US$ 97 (R$ 97 no Brasil); STRIPE_PAYMENT_LINK_EDITFY, se definida, é aceita junto
+    linksPagamento: ["plink_1UVEa7RY9p8vsUUsYbv4uc39", process.env.STRIPE_PAYMENT_LINK_EDITFY].filter(Boolean),
     aulas: AULAS_EDITFY,
   },
   {
@@ -72,9 +71,8 @@ export const CURSOS_MIAI = [
     plugin: "editfy-reels",   // o aluno instala com editfy-reels@miai
     repo: "miostech/miai-plugin-editfy-reels",
     descricaoPlugin: "Edita os seus vídeos verticais: legenda com a palavra falada em destaque, título, cards e 45 efeitos que seguem o seu rosto, prontos para o Reels, TikTok e Shorts.",
-    // US$ 97 (R$ 97 no Brasil): coloque aqui o id do link de pagamento do Stripe (plink_...) quando ele existir;
-    // STRIPE_PAYMENT_LINK_EDITFY_REELS, se definida, é aceita junto
-    linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITFY_REELS].filter(Boolean),
+    // US$ 97 (R$ 97 no Brasil); STRIPE_PAYMENT_LINK_EDITFY_REELS, se definida, é aceita junto
+    linksPagamento: ["plink_1UVEa9RY9p8vsUUsdFHAlweg", process.env.STRIPE_PAYMENT_LINK_EDITFY_REELS].filter(Boolean),
     aulas: AULAS_EDITFY_REELS,
   },
 ];

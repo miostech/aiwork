@@ -47,7 +47,6 @@
     {
       endereco: 'editfy',                  // miaiacademy.com/editfy (vendas) e /conta/editfy (aulas)
       nome: 'Editfy',
-      oculto: true,                        // fora da vitrine até o link de pagamento existir. Tire esta linha para mostrar.
       area: 'Inteligência Artificial',
       chamada: 'Grave a aula e receba ela editada: legenda, cards, capítulos, telas e a versão leve para a sua plataforma, feitos pela IA no seu computador.',
       detalhes: ['Plugin do Claude Code', 'Mac e Windows', 'Garantia de 7 dias'],
@@ -58,12 +57,11 @@
       preco: 'R$ 97',                      // no Brasil
       precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',
-      linkPagamento: '',                   // link do Stripe (https://buy.stripe.com/...) de US$ 97, com R$ 97 fixo no Brasil
+      linkPagamento: 'https://buy.stripe.com/5kQ00leGO1uh22zaLw67S07',   // US$ 97, com R$ 97 fixo no Brasil
     },
     {
       endereco: 'editfy-reels',            // miaiacademy.com/editfy-reels (vendas) e /conta/editfy-reels (aulas)
       nome: 'Editfy Reels',
-      oculto: true,                        // fora da vitrine até o link de pagamento existir. Tire esta linha para mostrar.
       area: 'Inteligência Artificial',
       chamada: 'Grave na vertical e receba o vídeo pronto para postar: legenda em destaque, título, cards e 45 efeitos que seguem o seu rosto, feitos pela IA no seu computador.',
       detalhes: ['Plugin do Claude Code', 'Reels, TikTok e Shorts', 'Garantia de 7 dias'],
@@ -74,7 +72,7 @@
       preco: 'R$ 97',                      // no Brasil
       precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',
-      linkPagamento: '',                   // link do Stripe (https://buy.stripe.com/...) de US$ 97, com R$ 97 fixo no Brasil
+      linkPagamento: 'https://buy.stripe.com/28E7sNfKSfl7fTp7zk67S08',   // US$ 97, com R$ 97 fixo no Brasil
     },
     {
       // A Formação da IA Academy também à venda na MIAI. Depois do pagamento a pessoa segue o fluxo da IA Academy
