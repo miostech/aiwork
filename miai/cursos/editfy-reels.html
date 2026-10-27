@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Editfy Reels · Vídeos verticais editados com IA · MIAI Academy</title>
+<meta name="description" content="Grave na vertical e receba o vídeo pronto para postar: legenda com a palavra falada em destaque, título do gancho, cards, prints e 45 efeitos que seguem o seu rosto, com o Editfy Reels, o plugin de edição de Reels, TikTok e Shorts para o Claude Code.">
+<meta name="theme-color" content="#F3F1EC">
+<link rel="icon" type="image/png" href="/miai/favicon.png">
+<link rel="apple-touch-icon" href="/miai/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<link rel="stylesheet" href="/miai/miai.css">
+<!--
+  PÁGINA DE VENDAS DO EDITFY REELS, EDIÇÃO DE VÍDEOS VERTICAIS COM IA (endereço: miaiacademy.com/editfy-reels)
+  1. Preço e link do pagamento: bloco do Editfy Reels (endereco 'editfy-reels') no CATÁLOGO (miai/miai.js).
+  2. Vídeo de demonstração e depoimentos: bloco CONFIG no final deste arquivo.
+  3. Textos: edite direto no HTML abaixo.
+-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
+<style>
+/* Primeira dobra */
+.hero { padding: 40px 0 64px; }
+.hero__etiquetas { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.hero h1 { margin-top: 40px; font-size: clamp(42px, 8vw, 84px); line-height: 0.98; max-width: 15ch; }
+.hero__grade { display: grid; gap: 28px; margin-top: 40px; }
+.hero__lado { display: grid; gap: 22px; align-content: start; justify-items: start; }
+.hero__lado p { color: var(--suave); max-width: 46ch; }
+.nota { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--suave); }
+.hero__grade > .video { width: min(100%, 360px); justify-self: center; }
+@media (min-width: 900px) {
+  .hero { padding: 48px 0 88px; }
+  .hero h1 { margin-top: 56px; }
+  .hero__grade { grid-template-columns: 360px minmax(0, 1fr); gap: 56px; margin-top: 56px; align-items: center; }
+  .hero__grade > .video { justify-self: start; }
+}
+.hero__grade--texto .hero__lado p { max-width: 62ch; font-size: 18px; }
+@media (min-width: 900px) { .hero__grade--texto { grid-template-columns: minmax(0, 1fr); } }
+
+/* Vídeo de antes e depois (9:16): mudo e em loop; o botão liga o som do começo */
+.video { position: relative; aspect-ratio: 9 / 16; overflow: hidden; border-radius: 18px; background: var(--tinta); }
+.video video, .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: cover; }
+.video__som {
+  position: absolute; left: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+  border: 0; border-radius: 999px; background: rgba(20, 19, 15, 0.78); color: #F3F1EC; font: inherit; font-size: 13.5px;
+  font-weight: 600; cursor: pointer;
+}
+.video__som:hover { background: rgba(20, 19, 15, 0.92); }
+.video__som:focus-visible { outline: 3px solid #F3F1EC; outline-offset: 2px; }
+
+/* Listas numeradas em linhas */
+.linhas { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--linha); }
+.linhas li { display: grid; gap: 10px; padding: 26px 0; border-top: 1px solid var(--linha); }
+.linhas__numero { font-family: var(--fonte-etiqueta); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; color: var(--roxo); }
+.linhas h3 { font-size: clamp(26px, 3.6vw, 36px); }
+.linhas p { color: var(--suave); max-width: 48ch; }
+@media (min-width: 860px) {
+  .linhas li { grid-template-columns: 56px minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; padding: 32px 0; }
+  .linhas__numero { padding-top: 12px; }
+  .linhas p { padding-top: 6px; }
+}
+
+/* O que entra na edição: grade de itens */
+.itens { display: grid; gap: 0; border-top: 1px solid var(--linha); }
+.itens > div { padding: 22px 0; border-bottom: 1px solid var(--linha); }
+.itens h3 { font-size: clamp(22px, 2.6vw, 26px); }
+.itens p { margin-top: 8px; color: var(--suave); }
+@media (min-width: 860px) { .itens { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 36px; } }
+
+/* Para quem é */
+.publico { display: grid; border-top: 1px solid var(--linha); }
+.publico > div { padding: 28px 0 32px; border-bottom: 1px solid var(--linha); }
+.publico h3 { font-size: clamp(26px, 3.6vw, 34px); }
+.lista-icone { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 14px; }
+.lista-icone li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: start; line-height: 1.5; }
+.lista-icone svg { margin-top: 2px; }
+.lista-icone--sim svg { color: var(--roxo); }
+.lista-icone--nao svg { color: var(--apagado); }
+@media (min-width: 860px) {
+  .publico { grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--linha); }
+  .publico > div { border-bottom: 0; padding: 36px 36px 40px 0; }
+  .publico > div + div { border-left: 1px solid var(--linha); padding-left: 36px; padding-right: 0; }
+}
+
+/* Depoimentos */
+.depoimentos { display: grid; border-top: 1px solid var(--linha); }
+.depoimento { display: grid; gap: 18px; align-content: start; margin: 0; padding: 28px 0; border-bottom: 1px solid var(--linha); }
+.depoimento blockquote { margin: 0; font-family: var(--fonte-titulo); font-size: 22px; line-height: 1.3; }
+.depoimento strong { display: block; font-size: 15px; font-weight: 500; }
+@media (min-width: 860px) { .depoimentos { grid-template-columns: repeat(3, minmax(0, 1fr)); } .depoimento { padding: 32px 28px 32px 0; } }
+
+/* Oferta */
+.oferta { display: grid; gap: 32px; }
+.oferta__painel { background: var(--papel-claro); border: 1px solid var(--tinta); padding: 32px 22px 26px; display: grid; gap: 24px; }
+.oferta__cabeca { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; padding-bottom: 20px; border-bottom: 1px solid var(--linha); }
+.oferta__cabeca h2 { font-size: clamp(44px, 7vw, 64px); }
+.oferta .lista-icone { margin: 0; }
+.preco__valor { font-family: var(--fonte-titulo); font-size: clamp(56px, 11vw, 88px); font-weight: 600; line-height: 0.95; letter-spacing: -0.02em; }
+.preco__parcelas { margin-top: 8px; font-size: 15px; color: var(--suave); }
+.preco__de { margin-bottom: 6px; font-size: 17px; color: var(--suave); }
+.preco__de s { text-decoration-thickness: 1.5px; }
+.cupom { padding: 14px 16px; background: var(--roxo-fundo); border-left: 3px solid var(--roxo); font-size: 15px; line-height: 1.5; color: var(--tinta-2); }
+.cupom strong { color: var(--roxo); font-weight: 600; white-space: nowrap; }
+.cupom__titulo { display: block; font-weight: 600; color: var(--tinta); }
+.oferta__aviso { margin-top: -10px; font-size: 13.5px; color: var(--erro); }
+.oferta__seguro { margin-top: -8px; font-size: 13.5px; color: var(--suave); }
+.garantia { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px; align-items: start; }
+.garantia svg { color: var(--roxo); }
+.garantia h3 { font-size: 28px; }
+.garantia p { margin-top: 8px; color: var(--suave); max-width: 44ch; }
+@media (min-width: 900px) {
+  .oferta { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+  .oferta__painel { padding: 40px 40px 32px; }
+  .garantia { padding-top: 12px; }
+}
+
+/* Chamada final */
+.final h2 { font-size: clamp(40px, 7vw, 72px); max-width: 15ch; }
+.final .botao { margin-top: 32px; }
+</style>
+
+<script src="/contador.js" data-pagina="miai-editfy-reels" defer></script>
+</head>
+<body>
+
+<header class="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+    <nav class="topo__acoes" aria-label="Principal">
+      <a class="topo__link" id="topo-entrar" href="/conta">Entrar</a>
+      <a class="botao botao--tinta" href="#oferta">Quero o meu</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══ Primeira dobra ═══ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__etiquetas">
+        <span class="rotulo rotulo--ponto">Para quem posta vídeos falando para a câmera</span>
+        <span class="rotulo">Editfy Reels · Reels, TikTok e Shorts</span>
+      </div>
+      <h1>Grave na vertical. Poste editado.</h1>
+      <div class="hero__grade">
+        <div class="video" id="video-vendas"></div>
+        <div class="hero__lado">
+          <p>O Editfy Reels é um plugin para o Claude Code que edita os seus vídeos verticais. Você manda o vídeo e a IA transcreve, coloca a legenda com a palavra falada em destaque, o título dos primeiros segundos, os cards, a plaquinha com o seu nome e o seu @, os prints que você mostra e efeitos que seguem o seu rosto, acerta o volume, confere tudo e entrega o vídeo pronto para postar. No curso você aprende a instalar, configurar o seu visual e editar os seus vídeos.</p>
+          <a class="botao botao--tinta botao--grande" href="#oferta">Quero o Editfy Reels <span class="seta" aria-hidden="true">→</span></a>
+          <span class="nota">Acesso imediato · Garantia de 7 dias</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="faixa" aria-label="O que entra na edição: legenda em destaque, título do gancho, 45 efeitos, cards, prints e telas, volume certinho, para Reels, TikTok e Shorts">
+    <div class="faixa__trilho" aria-hidden="true">
+      <span>Legenda em destaque</span><span>Título do gancho</span><span>45 efeitos</span><span>Cards</span><span>Prints e telas</span><span>Volume certinho</span><span>Reels, TikTok e Shorts</span><span>Mac e Windows</span>
+      <span>Legenda em destaque</span><span>Título do gancho</span><span>45 efeitos</span><span>Cards</span><span>Prints e telas</span><span>Volume certinho</span><span>Reels, TikTok e Shorts</span><span>Mac e Windows</span>
+    </div>
+  </div>
+
+  <!-- ═══ 01 Como funciona ═══ -->
+  <section class="secao" aria-labelledby="titulo-como">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>01</b> Como funciona</span>
+        <h2 id="titulo-como">Você grava. A IA edita.</h2>
+        <p>Tudo roda no seu computador, dentro do Claude Code. A transcrição e os efeitos são feitos no próprio computador: sem pagar por vídeo.</p>
+      </div>
+      <ol class="linhas">
+        <li>
+          <span class="linhas__numero">01</span>
+          <h3>Configure o seu visual uma vez</h3>
+          <p>O seu nome, o seu @ e as cores da sua marca. A palavra falada na legenda e os cards saem nas suas cores.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">02</span>
+          <h3>Mande o vídeo e peça os efeitos</h3>
+          <p>Diga "edita esse reel" ou "coloca a palavra DÓLAR gigante atrás de mim". O Claude sugere o título e os efeitos e mostra uma prévia antes de renderizar.</p>
+        </li>
+        <li>
+          <span class="linhas__numero">03</span>
+          <h3>Poste</h3>
+          <p>Sai o vídeo em 1080x1920, já conferido, com nada importante embaixo da descrição ou dos botões do app, e uma sugestão de legenda para o post.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ 02 O que entra na edição ═══ -->
+  <section class="secao" aria-labelledby="titulo-edicao" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>02</b> A edição</span>
+        <h2 id="titulo-edicao">O que o seu vídeo ganha.</h2>
+      </div>
+      <div class="itens">
+        <div><h3>Legenda em destaque</h3><p>Poucas palavras por vez, a palavra que você está falando na cor da sua marca, com nomes e números corrigidos.</p></div>
+        <div><h3>Título do gancho</h3><p>A ideia do vídeo em destaque nos primeiros segundos, para quem está rolando o feed parar.</p></div>
+        <div><h3>45 efeitos</h3><p>Holofote, palavra gigante atrás de você, prints girando em volta da cabeça, checklist, mensagens e mais: eles seguem o seu rosto e ficam atrás de você.</p></div>
+        <div><h3>Cards e prints</h3><p>Os pontos principais em cards, e prints e telas do celular na hora certa, com dados pessoais escondidos.</p></div>
+        <div><h3>Volume e ritmo</h3><p>Volume no padrão das redes, ruído reduzido e aproximações de corte que deixam o vídeo mais vivo.</p></div>
+        <div><h3>Conferência</h3><p>Antes de entregar, o Editfy Reels confere se a voz está sincronizada, se nada cobre o seu rosto e se nada fica embaixo dos botões do app.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 03 Para quem é ═══ -->
+  <section class="secao" aria-labelledby="titulo-publico" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>03</b> Para quem é</span>
+        <h2 id="titulo-publico">Para quem quer postar mais sem virar editor.</h2>
+      </div>
+      <div class="publico">
+        <div>
+          <h3>O Editfy Reels é para você se…</h3>
+          <ul class="lista-icone lista-icone--sim">
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Grava vídeos falando para a câmera, na vertical, com o celular</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tem um computador (Mac ou Windows) e uma assinatura do Claude</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Quer vídeos com cara profissional sem contratar editor nem passar horas no CapCut</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Posta no Reels, TikTok ou Shorts e mostra telas, apps e prints</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Não é para você se…</h3>
+          <ul class="lista-icone lista-icone--nao">
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Quer editar pelo celular (o plugin roda no computador)</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Quer música e efeitos sonoros (o Editfy Reels cuida da imagem e da voz)</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Faz vídeos sem aparecer falando, só com imagens e narração</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 04 Módulos ═══ -->
+  <section class="secao" aria-labelledby="titulo-modulos" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>04</b> Módulos</span>
+        <h2 id="titulo-modulos">O que vem no curso.</h2>
+      </div>
+      <ol class="linhas">
+        <li><span class="linhas__numero">M1</span><h3>Comece aqui</h3><p>Instalar o plugin, configurar o seu visual e editar o seu primeiro vídeo.</p></li>
+        <li><span class="linhas__numero">M2</span><h3>Deixando o vídeo melhor</h3><p>Os 45 efeitos e quando usar cada um, legenda, título, cards e prints.</p></li>
+        <li><span class="linhas__numero">M3</span><h3>Postar</h3><p>Levar o vídeo para o celular sem perder qualidade e postar no Reels, TikTok e Shorts.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══ Depoimentos (só aparece quando houver depoimentos no CONFIG) ═══ -->
+  <section class="secao" id="depoimentos" aria-labelledby="titulo-depoimentos" hidden>
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>05</b> Alunos</span>
+        <h2 id="titulo-depoimentos">Quem já está postando.</h2>
+      </div>
+      <div class="depoimentos" id="lista-depoimentos"></div>
+    </div>
+  </section>
+
+  <!-- ═══ Oferta ═══ -->
+  <section class="secao" id="oferta" aria-labelledby="titulo-oferta">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>→</b> Inscrição</span>
+      </div>
+      <div class="oferta">
+        <div class="oferta__painel">
+          <div class="oferta__cabeca">
+            <h2 id="titulo-oferta">Editfy Reels</h2>
+            <span class="rotulo">Vídeos verticais com IA · curso + plugin</span>
+          </div>
+          <ul class="lista-icone lista-icone--sim">
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plugin Editfy Reels para o Claude Code, com as atualizações (licença para 1 computador)</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>45 efeitos que seguem o seu rosto, com o seu nome, o seu @ e as suas cores</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Funciona no Mac e no Windows · aulas de instalação, edição e como postar</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>O curso fica na sua conta da MIAI Academy</li>
+            <li id="item-suporte" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span></span></li>
+          </ul>
+          <div>
+            <p class="preco__de" id="preco-de" hidden>De <s></s> por</p>
+            <p class="preco__valor" id="preco"></p>
+            <p class="preco__parcelas" id="parcelas" hidden></p>
+          </div>
+          <p class="cupom" id="cupom" hidden>
+            <span class="cupom__titulo">Oferta até <span id="cupom-ate"></span></span>
+            O cupom <strong id="cupom-codigo"></strong> já vai aplicado no pagamento.
+          </p>
+          <a class="botao botao--tinta botao--grande botao--largo" id="btn-comprar" href="#oferta">Quero o Editfy Reels <span class="seta" aria-hidden="true">→</span></a>
+          <p class="oferta__aviso" id="aviso-checkout" hidden>Link do pagamento ainda não configurado (linkPagamento no catálogo, em miai/miai.js).</p>
+          <p class="oferta__seguro">Pagamento seguro · Acesso imediato após a confirmação. Já tem conta na MIAI? Pague com o mesmo e-mail para o curso aparecer nela.</p>
+        </div>
+        <div class="garantia">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.6"/></svg>
+          <div>
+            <h3>Garantia de 7 dias</h3>
+            <p>Se em até 7 dias você achar que o Editfy Reels não é para você, devolvemos 100% do valor. O plugin para de funcionar com o reembolso.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Perguntas frequentes ═══ -->
+  <section class="secao" aria-labelledby="titulo-faq" style="padding-top: 0">
+    <div class="container">
+      <div class="secao__topo">
+        <span class="rotulo"><b>?</b> Perguntas</span>
+        <h2 id="titulo-faq">Dúvidas sobre o Editfy Reels.</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>O que eu preciso ter?</summary>
+          <p>Um computador Mac ou Windows, com uns 6 GB livres, e uma assinatura do Claude, para usar o Claude Code. O resto o plugin prepara sozinho no primeiro vídeo: se faltar alguma coisa no seu computador, o próprio Claude avisa e ajuda a instalar.</p>
+        </details>
+        <details>
+          <summary>Preciso saber programar ou editar vídeo?</summary>
+          <p>Não. Você conversa com o Claude em português; ele roda tudo. Você só cola dois comandos na instalação e diz o que quer no vídeo.</p>
+        </details>
+        <details>
+          <summary>Que tipo de vídeo ele edita?</summary>
+          <p>Vídeos verticais (9:16) com você falando para a câmera, gravados no celular. Vídeo horizontal também serve: ele recorta na vertical. Os efeitos que ficam atrás de você aparecem melhor quando há um pouco de espaço em volta da sua cabeça.</p>
+        </details>
+        <details>
+          <summary>Quanto tempo leva para editar um vídeo?</summary>
+          <p>Depende do computador. Num Mac com chip Apple, um vídeo de 1 minuto fica pronto em uns 5 minutos, contando a transcrição, os efeitos e a conferência. No Windows sem placa de vídeo NVIDIA, leva mais tempo.</p>
+        </details>
+        <details>
+          <summary>Tem custo por vídeo?</summary>
+          <p>Não. A transcrição, os efeitos e a edição rodam no seu computador, sem pagar por vídeo. Você só precisa da sua assinatura do Claude.</p>
+        </details>
+        <details>
+          <summary>Os vídeos são meus?</summary>
+          <p>Sim. Os vídeos que você edita são seus. Use só imagens suas ou que você tem autorização para usar.</p>
+        </details>
+        <details>
+          <summary>Como recebo o acesso?</summary>
+          <p>Assim que o pagamento é confirmado, você recebe por e-mail os dados da sua conta na MIAI Academy. Na primeira aula estão os seus comandos pessoais de instalação.</p>
+        </details>
+        <details>
+          <summary>Ele coloca música?</summary>
+          <p>Não. O Editfy Reels cuida da imagem e da voz: legenda, título, cards, efeitos, prints e volume. A música você escolhe no próprio app na hora de postar, onde ela não dá problema de direitos autorais.</p>
+        </details>
+        <details>
+          <summary>Já tenho o Editfy de aulas. Funciona junto?</summary>
+          <p>Sim. Os dois usam o mesmo ambiente e o mesmo perfil no seu computador, então a instalação do Editfy Reels é mais rápida e o seu visual já vem pronto. São produtos separados: um edita aulas na horizontal, o outro vídeos verticais.</p>
+        </details>
+        <details>
+          <summary>O plugin recebe atualizações?</summary>
+          <p>Sim. As melhorias chegam pela mesma loja que você adiciona na instalação, sem comprar de novo.</p>
+        </details>
+        <details>
+          <summary>Posso instalar em mais de um computador?</summary>
+          <p>Não. A licença é pessoal e vale para 1 computador. Os comandos de instalação e o link da sua loja são só seus: não compartilhe com ninguém. Se a licença for usada em mais de um computador ou compartilhada, ela pode ser desativada (veja os <a class="link" href="/termos#acesso">termos de uso</a>).</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Chamada final ═══ -->
+  <section class="secao secao--escura final" aria-labelledby="titulo-final">
+    <div class="container">
+      <h2 id="titulo-final">Os seus vídeos prontos para postar, sem virar editor. Bora começar?</h2>
+      <a class="botao botao--claro botao--grande" href="#oferta">Quero o Editfy Reels <span class="seta" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape__grade">
+      <div>
+        <a class="marca" href="/" aria-label="MIAI Academy, início"><span class="logo" aria-hidden="true"></span><span class="marca__nome">Academy</span></a>
+        <p>O Claude e o Claude Code são produtos da Anthropic; a MIAI Academy não tem vínculo com a Anthropic.</p>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">MIAI Academy</span>
+        <a href="/">Todos os cursos</a>
+        <a href="/conta">Entrar</a>
+      </div>
+      <div class="rodape__coluna">
+        <span class="rotulo">Legal</span>
+        <a id="link-termos" href="#">Termos</a>
+        <a id="link-privacidade" href="#">Privacidade</a>
+      </div>
+    </div>
+    <div class="rodape__base">
+      <span>© <span data-ano>2026</span> MIAI Academy</span>
+      <a href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/pais.js"></script>
+<script src="/miai/miai.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÃO — preço e link do pagamento ficam no CATÁLOGO (miai/miai.js)
+// ═══════════════════════════════════════════════════════════════
+window.CONFIG = {
+  // Link de incorporação (embed) de um vídeo de vendas vertical (Panda, YouTube, Vimeo...). Com ele, o vídeo de
+  // antes e depois abaixo não aparece.
+  videoVendas: '',
+
+  // Antes e depois (9:16, leve): começa mudo e em loop; o botão liga o som do começo. Vazio = o topo fica só com o texto.
+  videoTopo: '/miai/cursos/editfy-reels/demonstracao.mp4',
+  capaTopo: '/miai/cursos/editfy-reels/demonstracao-capa.jpg',
+
+  suporte: '',                     // ex.: 'Comunidade exclusiva de alunos' (vazio = não mostra)
+
+  // Depoimentos reais, com autorização por escrito. Lista vazia = a seção não aparece.
+  // Ex.: { nome: 'Ana Souza', texto: '...' }
+  depoimentos: [],
+
+  linkTermos: '/termos',
+  linkPrivacidade: '/privacidade',
+};
+</script>
+<script>
+(function () {
+  'use strict';
+  const C = window.CONFIG;
+  const CURSO = Miai.curso('editfy-reels');
+  const $ = (sel) => document.querySelector(sel);
+  Miai.ajustarTopo();
+
+  const cupomAtivo = !!(CURSO.cupom && CURSO.cupom.codigo && (!CURSO.cupom.ate || Date.now() <= Date.parse(CURSO.cupom.ate)));
+
+  // Link do Stripe com o e-mail de quem já entrou na MIAI neste aparelho e o cupom (enquanto valer) já preenchidos
+  function linkPagamento() {
+    let url;
+    try { url = new URL(CURSO.linkPagamento); } catch (e) { return CURSO.linkPagamento; }
+    if (!/(^|\.)stripe\.com$/.test(url.hostname)) return CURSO.linkPagamento;
+    const email = Miai.emailGuardado();
+    if (email) url.searchParams.set('prefilled_email', email);
+    if (cupomAtivo) url.searchParams.set('prefilled_promo_code', CURSO.cupom.codigo);
+    url.searchParams.set('locale', 'pt-BR');
+    return url.toString();
+  }
+
+  // Topo: vídeo de vendas (embed) ou o antes e depois, mudo e em loop, que só toca quando aparece na tela
+  const ICONE_SOM = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  const ICONE_MUDO = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
+  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (C.videoVendas) {
+    const frame = document.createElement('iframe');
+    frame.src = C.videoVendas;
+    frame.title = 'Demonstração do Editfy Reels';
+    frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    $('#video-vendas').replaceChildren(frame);
+  } else if (C.videoTopo) {
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata';
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+    v.src = C.videoTopo;
+    if (C.capaTopo) v.poster = C.capaTopo;
+    v.setAttribute('aria-label', 'Antes e depois de um vídeo vertical editado pelo Editfy Reels');
+    const som = document.createElement('button');
+    som.type = 'button';
+    som.className = 'video__som';
+    const mostrar = () => { som.innerHTML = v.muted ? ICONE_SOM + '<span>Ativar o som</span>' : ICONE_MUDO + '<span>Tirar o som</span>'; };
+    const alternar = () => {
+      if (v.muted) { v.muted = false; v.currentTime = 0; v.play().catch(() => {}); }
+      else v.muted = true;
+      mostrar();
+    };
+    som.addEventListener('click', alternar);
+    v.addEventListener('click', alternar);
+    v.addEventListener('volumechange', mostrar);
+    mostrar();
+    $('#video-vendas').replaceChildren(v, som);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((es) => es.forEach((e) => {
+        if (e.isIntersecting && !semMovimento) v.play().catch(() => {});
+        else if (!e.isIntersecting) v.pause();
+      }), { threshold: 0.4 }).observe($('#video-vendas'));
+    } else if (!semMovimento) {
+      v.autoplay = true;
+    }
+  } else {
+    $('#video-vendas').hidden = true;
+    $('.hero__grade').classList.add('hero__grade--texto');
+  }
+
+  function mostrarPreco() {
+    if (cupomAtivo) {
+      $('#preco-de s').textContent = Miai.precoDe(CURSO);
+      $('#preco').textContent = Miai.precoCupomDe(CURSO);
+    } else {
+      $('#preco').textContent = Miai.precoDe(CURSO);
+    }
+    $('#parcelas').textContent = Miai.parcelasDe(CURSO);
+    $('#parcelas').hidden = !Miai.parcelasDe(CURSO);
+  }
+  $('#preco-de').hidden = !cupomAtivo;
+  mostrarPreco();
+  Miai.pais.then(mostrarPreco);
+  if (cupomAtivo) {
+    $('#cupom-codigo').textContent = CURSO.cupom.codigo;
+    $('#cupom-ate').textContent = CURSO.cupom.ateTexto || '';
+    $('#cupom').hidden = false;
+  }
+  if (C.suporte) { $('#item-suporte span').textContent = C.suporte; $('#item-suporte').hidden = false; }
+  const comprar = $('#btn-comprar');
+  if (CURSO.linkPagamento) {
+    comprar.href = linkPagamento();
+  } else {
+    comprar.setAttribute('aria-disabled', 'true');
+    comprar.addEventListener('click', (e) => e.preventDefault());
+    $('#aviso-checkout').hidden = false;
+  }
+
+  const lista = (C.depoimentos || []).filter((d) => d && d.texto && d.nome);
+  if (lista.length) {
+    const caixa = $('#lista-depoimentos');
+    lista.forEach((d) => {
+      const fig = document.createElement('figure');
+      fig.className = 'depoimento';
+      const citacao = document.createElement('blockquote');
+      citacao.textContent = '“' + d.texto + '”';
+      const legenda = document.createElement('figcaption');
+      const nome = document.createElement('strong');
+      nome.textContent = d.nome;
+      legenda.appendChild(nome);
+      fig.append(citacao, legenda);
+      caixa.appendChild(fig);
+    });
+    $('#depoimentos').hidden = false;
+  }
+
+  $('#link-termos').href = C.linkTermos;
+  $('#link-privacidade').href = C.linkPrivacidade;
+})();
+</script>
+</body>
+</html>

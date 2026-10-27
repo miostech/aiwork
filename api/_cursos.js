@@ -25,6 +25,7 @@
 import { CURSO as AULAS_IAWORK } from "./_aulas-iawork.js";
 import { CURSO as AULAS_CANAL_DARK } from "./_aulas-canal-dark.js";
 import { CURSO as AULAS_EDITFY } from "./_aulas-editfy.js";
+import { CURSO as AULAS_EDITFY_REELS } from "./_aulas-editfy-reels.js";
 
 export const CURSOS_MIAI = [
   {
@@ -62,6 +63,19 @@ export const CURSOS_MIAI = [
     // STRIPE_PAYMENT_LINK_EDITFY, se definida, é aceita junto
     linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITFY].filter(Boolean),
     aulas: AULAS_EDITFY,
+  },
+  {
+    endereco: "editfy-reels", // miaiacademy.com/editfy-reels (vendas) e miaiacademy.com/conta/editfy-reels (aulas)
+    id: "editfy-reels",       // nome no banco (acessos.curso) e na loja dos plugins
+    nome: "Editfy Reels",
+    paginasVenda: ["miai-editfy-reels"],
+    plugin: "editfy-reels",   // o aluno instala com editfy-reels@miai
+    repo: "miostech/miai-plugin-editfy-reels",
+    descricaoPlugin: "Edita os seus vídeos verticais: legenda com a palavra falada em destaque, título, cards e 45 efeitos que seguem o seu rosto, prontos para o Reels, TikTok e Shorts.",
+    // US$ 97 (R$ 97 no Brasil): coloque aqui o id do link de pagamento do Stripe (plink_...) quando ele existir;
+    // STRIPE_PAYMENT_LINK_EDITFY_REELS, se definida, é aceita junto
+    linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITFY_REELS].filter(Boolean),
+    aulas: AULAS_EDITFY_REELS,
   },
 ];
 
