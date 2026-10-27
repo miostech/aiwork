@@ -18,7 +18,7 @@
       cor: '#5E1D93',                      // cor da capa desenhada (cada curso com a sua)
       capa: '',                            // imagem própria da capa (16:9). Vazio = capa desenhada com a cor acima
       novo: true,                          // selo "Novo" e destaque no topo da página inicial
-      professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
+      professor: { nome: 'Camila', foto: '/miai/professores/camila-ia-academy.jpg' },
       preco: 'R$ 497',                     // no Brasil
       precoFora: 'US$ 497',                // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',                        // ex.: 'ou 12x de R$ 49,70 no cartão' (vazio = não mostra; só no Brasil)
@@ -53,7 +53,7 @@
       cor: '#B04668',
       capa: '',
       novo: true,
-      professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
+      professor: { nome: 'Camila', foto: '/miai/professores/camila-ia-academy.jpg' },
       preco: 'R$ 97',                      // no Brasil
       precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',
@@ -68,7 +68,7 @@
       cor: '#C2410C',
       capa: '',
       novo: true,
-      professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
+      professor: { nome: 'Camila', foto: '/miai/professores/camila-ia-academy.jpg' },
       preco: 'R$ 97',                      // no Brasil
       precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',
