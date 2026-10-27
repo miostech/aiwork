@@ -155,6 +155,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/plugins",
+      "destination": "/api/conta?plugins=1"
+    },
+    {
       "source": "/termos",
       "destination": "/termos.html"
     },

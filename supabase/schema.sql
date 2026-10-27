@@ -367,3 +367,13 @@ select
 from public.leads
 group by 1
 order by 1 desc;
+
+-- ── Licenças dos plugins do Claude Code (ex.: Canal Dark): uma por aluno, criada na aula "Instalar o plugin" ──
+-- A licença vale para os plugins dos cursos com acesso ativo do aluno (api/_plugins.js). Reembolso = acesso
+-- revogado = o plugin para de funcionar. Só o servidor lê e grava (sem política para o navegador).
+create table if not exists public.licencas_plugin (
+  aluno_id  uuid primary key references public.alunos (id) on delete cascade,
+  codigo    text not null unique,  -- MIAI-XXXX-XXXX-XXXX, vai no link da loja do aluno
+  criada_em timestamptz not null default now()
+);
+alter table public.licencas_plugin enable row level security;

@@ -57,6 +57,16 @@
 .materiais__textos span { font-size: 14px; color: var(--suave); }
 .materiais__seta { color: var(--suave); }
 
+/* Aula "Instalar o plugin": os comandos pessoais do aluno (api/_plugins.js) */
+.instalacao { display: grid; gap: 12px; margin-top: 8px; }
+.instalacao__passo { display: grid; gap: 6px; }
+.instalacao__passo span { font-size: 14px; color: var(--suave); }
+.instalacao__linha { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
+.instalacao code { display: block; padding: 12px 14px; background: #15121c; color: #f3f1ec; font: 14px/1.5 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.instalacao__copiar { padding: 0 16px; border: 1px solid var(--linha); background: transparent; font: inherit; font-weight: 600; cursor: pointer; }
+.instalacao__copiar:hover { color: var(--roxo); border-color: var(--roxo); }
+.instalacao__nota { font-size: 14px; color: var(--suave); margin: 0; }
+
 .aula__acoes { display: grid; gap: 10px; margin-top: 8px; }
 @media (min-width: 560px) { .aula__acoes { grid-template-columns: 1fr 1fr; } }
 #btn-concluir[aria-pressed="true"] { background: var(--verde-fundo); border-color: var(--verde); color: var(--verde); }
@@ -159,6 +169,11 @@
           <p class="aula__numero" id="aula-numero"></p>
           <h2 class="aula__titulo" id="aula-titulo"></h2>
           <p class="aula__descricao" id="aula-descricao"></p>
+          <div class="instalacao" id="instalacao" hidden>
+            <p class="rotulo">Seus comandos de instalação</p>
+            <div id="instalacao-passos"><p class="instalacao__nota">Carregando os seus comandos…</p></div>
+            <p class="instalacao__nota">Cole um comando de cada vez no Claude Code, feche e abra de novo e rode <code style="display:inline;padding:2px 6px">/canal-dark:configurar-canal</code> numa pasta para os seus vídeos. Os comandos são pessoais: não compartilhe.</p>
+          </div>
           <div class="materiais-caixa" id="materiais-caixa" hidden>
             <p class="rotulo">Links da aula</p>
             <ul class="materiais" id="materiais"></ul>
@@ -375,6 +390,9 @@
     });
     $('#materiais-caixa').hidden = !materiais.children.length;
 
+    $('#instalacao').hidden = !aula.instalacao;
+    if (aula.instalacao) carregarInstalacao();
+
     $('#btn-proxima').textContent = i === total - 1 ? 'Concluir curso' : 'Próxima aula';
     try { history.replaceState(null, '', '#aula-' + (i + 1)); } catch (e) {}
     atualizar();
@@ -387,6 +405,38 @@
       const titulo = $('#aula-titulo');
       titulo.setAttribute('tabindex', '-1');
       titulo.focus({ preventScroll: true });
+    }
+  }
+
+  // Comandos pessoais de instalação do plugin (a licença é criada na primeira vez que o aluno abre esta aula)
+  let instalacaoCarregada = false;
+  async function carregarInstalacao() {
+    if (instalacaoCarregada) return;
+    const caixa = $('#instalacao-passos');
+    try {
+      const resposta = await Miai.chamar('/api/plugins?acao=minha');
+      if (!resposta) { pedirLogin(); return; }
+      const dados = await resposta.json();
+      if (!resposta.ok) throw new Error(dados.erro || 'HTTP ' + resposta.status);
+      caixa.replaceChildren();
+      const rotulos = ['1. Adicione a loja da MIAI (só uma vez)', '2. Instale o plugin'];
+      dados.comandos.forEach((comando, i) => {
+        const passo = document.createElement('div');
+        passo.className = 'instalacao__passo';
+        passo.innerHTML = '<span></span><div class="instalacao__linha"><code></code><button type="button" class="instalacao__copiar">Copiar</button></div>';
+        $('span', passo).textContent = rotulos[Math.min(i, 1)];
+        $('code', passo).textContent = comando;
+        $('button', passo).addEventListener('click', async (e) => {
+          try { await navigator.clipboard.writeText(comando); e.target.textContent = 'Copiado!'; }
+          catch (erro) { e.target.textContent = 'Selecione e copie'; }
+          setTimeout(() => { e.target.textContent = 'Copiar'; }, 2500);
+        });
+        caixa.appendChild(passo);
+      });
+      instalacaoCarregada = true;
+    } catch (e) {
+      caixa.innerHTML = '<p class="instalacao__nota"></p>';
+      $('p', caixa).textContent = (e && e.message) || 'Não foi possível carregar os seus comandos agora. Recarregue a página.';
     }
   }
 

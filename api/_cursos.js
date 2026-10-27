@@ -14,11 +14,13 @@
 // linksPagamento: o primeiro é o link atual; os seguintes são links antigos do mesmo curso, que continuam liberando
 // o acesso de quem abriu o pagamento antes da troca.
 //   3. crie a página de vendas em miai/cursos/<endereco>.html e o bloco do curso no CATÁLOGO de miai/miai.js
+//   4. curso que libera um plugin do Claude Code: "plugin" com o nome dele (api/_plugins.js e a loja miai-plugins)
 //
 // Variável de ambiente:
 //   MIAI_URL  endereço da MIAI Academy (ex.: https://miaiacademy.com). Enquanto estiver vazia, os e-mails de
 //             compra continuam como antes, com o link da área do aluno da IA Academy.
 import { CURSO as AULAS_IAWORK } from "./_aulas-iawork.js";
+import { CURSO as AULAS_CANAL_DARK } from "./_aulas-canal-dark.js";
 
 export const CURSOS_MIAI = [
   {
@@ -28,6 +30,16 @@ export const CURSOS_MIAI = [
     // US$ 497 (R$ 497 no Brasil); depois os antigos: US$ 99 e o só em reais
     linksPagamento: ["plink_1UUt0pRY9p8vsUUs8Yq5Miq1", "plink_1UUsf2RY9p8vsUUsv2vZuZMC", "plink_1USLFxRY9p8vsUUshLZlyAb9", process.env.STRIPE_PAYMENT_LINK],
     aulas: AULAS_IAWORK,
+  },
+  {
+    endereco: "canal-dark",  // miaiacademy.com/canal-dark (vendas) e miaiacademy.com/conta/canal-dark (aulas)
+    id: "canal-dark",
+    nome: "Canal Dark com IA",
+    // plugin do Claude Code liberado por este curso ("name" do plugin; a loja fica no repositório miostech/miai-plugins)
+    plugin: "canal-dark",
+    // crie o link de pagamento no Stripe e coloque o id (plink_...) aqui ou em STRIPE_PAYMENT_LINK_CANAL_DARK
+    linksPagamento: [process.env.STRIPE_PAYMENT_LINK_CANAL_DARK],
+    aulas: AULAS_CANAL_DARK,
   },
 ];
 
