@@ -153,6 +153,15 @@ a.reel:hover .reel__play { background: rgba(243, 241, 236, 0.3); }
 /* topo: com vídeo próprio do primeiro Reel, ele fica em pé ao lado do texto; sem vídeo, o topo é só texto */
 .video-reel { display: flex; justify-content: center; align-self: start; }
 .video-reel .reel { width: min(100%, 320px); }
+.reel--topo { width: min(100%, 340px) !important; background: #0F3D47; }
+.reel__som {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 0; border-radius: 999px;
+  background: rgba(7, 29, 35, 0.78); color: #F3F1EC; font: inherit; font-size: 13.5px; font-weight: 600;
+  white-space: nowrap; cursor: pointer; box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.6);
+}
+.reel__som:hover { background: rgba(7, 29, 35, 0.92); }
+.reel__som:focus-visible { outline: 3px solid #F3F1EC; outline-offset: 2px; }
 .hero__grade--texto .hero__lado p { max-width: 62ch; font-size: 18px; }
 @media (min-width: 900px) { .hero__grade--texto { grid-template-columns: minmax(0, 1fr); } }
 .prova-canal { display: grid; gap: 18px; justify-items: start; margin-bottom: 32px; }
@@ -451,6 +460,11 @@ window.CONFIG = {
   // Link de incorporação (embed) do vídeo de demonstração, horizontal: Panda, YouTube, Vimeo...
   videoVendas: '',
 
+  // Vídeo de demonstração em pé (9:16), no topo ao lado do texto: começa mudo e em loop, como no feed, e o botão
+  // liga o som do começo. Arquivo leve (720x1280) na pasta miai/cursos/sabido/. Vazio = não aparece.
+  videoTopo: '/miai/cursos/sabido/demonstracao.mp4',
+  capaTopo: '/miai/cursos/sabido/demonstracao-capa.jpg',
+
   // Reels do perfil do Sabido no Instagram (@sabido4884), feitos com o plugin, em cartões 9:16 na seção de exemplos.
   // video: link do .mp4 vertical (ex.: no Azure). Com ele o cartão toca o vídeo e o primeiro Reel vai para o topo;
   // vazio = cartão desenhado com o título, que abre o Reel no Instagram. Visualizações de 27/10/2026.
@@ -530,9 +544,39 @@ window.CONFIG = {
     }
     return el;
   }
+  // Vídeo de demonstração em pé no topo
+  if (!C.videoVendas && C.videoTopo) {
+    const caixa = document.createElement('div');
+    caixa.className = 'reel reel--video reel--topo';
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.preload = 'auto';
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', '');   // o iPhone só toca sozinho com estes dois
+    v.src = C.videoTopo;
+    v.autoplay = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (C.capaTopo) v.poster = C.capaTopo;
+    v.setAttribute('aria-label', 'Vídeo de demonstração do Sabido');
+    const som = document.createElement('button');
+    som.type = 'button';
+    som.className = 'reel__som';
+    const ICONE_SOM = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+    const ICONE_MUDO = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
+    const mostrarBotao = () => { som.innerHTML = v.muted ? ICONE_SOM + '<span>Ativar o som</span>' : ICONE_MUDO + '<span>Tirar o som</span>'; };
+    function alternarSom() {
+      if (v.muted) { v.muted = false; v.currentTime = 0; } else { v.muted = true; }
+      v.play().catch(() => {});
+      mostrarBotao();
+    }
+    som.addEventListener('click', alternarSom);
+    v.addEventListener('click', alternarSom);
+    mostrarBotao();
+    caixa.append(v, som);
+    $('#video-vendas').className = 'video-reel';
+    $('#video-vendas').replaceChildren(caixa);
+  }
+
   if (reels.length) {
     const lista = reels.slice();
-    if (!C.videoVendas && lista[0].video) {
+    if (!C.videoVendas && !C.videoTopo && lista[0].video) {
       $('#video-vendas').className = 'video-reel';
       $('#video-vendas').replaceChildren(cartaoReel(lista.shift()));
     }
