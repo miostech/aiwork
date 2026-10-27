@@ -24,6 +24,7 @@
 //             compra continuam como antes, com o link da área do aluno da IA Academy.
 import { CURSO as AULAS_IAWORK } from "./_aulas-iawork.js";
 import { CURSO as AULAS_CANAL_DARK } from "./_aulas-canal-dark.js";
+import { CURSO as AULAS_EDITFY } from "./_aulas-editfy.js";
 
 export const CURSOS_MIAI = [
   {
@@ -47,6 +48,20 @@ export const CURSOS_MIAI = [
     // US$ 97 (R$ 97 no Brasil); STRIPE_PAYMENT_LINK_CANAL_DARK, se definida, é aceita junto
     linksPagamento: ["plink_1UV9VIRY9p8vsUUsNov5otoO", process.env.STRIPE_PAYMENT_LINK_CANAL_DARK],
     aulas: AULAS_CANAL_DARK,
+  },
+  {
+    endereco: "editfy",      // miaiacademy.com/editfy (vendas) e miaiacademy.com/conta/editfy (aulas)
+    id: "editfy",            // nome no banco (acessos.curso) e na loja dos plugins
+    nome: "Editfy",
+    paginasVenda: ["miai-editfy"],
+    // plugin do Claude Code liberado por este curso: "name" do plugin.json, repositório privado e o texto da loja
+    plugin: "editfy",        // o aluno instala com editfy@miai
+    repo: "miostech/miai-plugin-editfy",
+    descricaoPlugin: "Edita as suas videoaulas: legenda, cards, capítulos, inserções de telas e prints e a versão leve para a sua plataforma.",
+    // US$ 97 (R$ 97 no Brasil): coloque aqui o id do link de pagamento do Stripe (plink_...) quando ele existir;
+    // STRIPE_PAYMENT_LINK_EDITFY, se definida, é aceita junto
+    linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITFY].filter(Boolean),
+    aulas: AULAS_EDITFY,
   },
 ];
 

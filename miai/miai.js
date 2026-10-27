@@ -45,6 +45,22 @@
       cupom: { codigo: 'BLACKSABIDO', preco: 'R$ 53', precoFora: 'US$ 53', ate: '2026-12-01T02:59:59Z', ateTexto: '30/11' },
     },
     {
+      endereco: 'editfy',                  // miaiacademy.com/editfy (vendas) e /conta/editfy (aulas)
+      nome: 'Editfy',
+      oculto: true,                        // fora da vitrine até o link de pagamento existir. Tire esta linha para mostrar.
+      area: 'Inteligência Artificial',
+      chamada: 'Grave a aula e receba ela editada: legenda, cards, capítulos, telas e a versão leve para a sua plataforma, feitos pela IA no seu computador.',
+      detalhes: ['Plugin do Claude Code', 'Mac e Windows', 'Garantia de 7 dias'],
+      cor: '#B04668',
+      capa: '',
+      novo: true,
+      professor: { nome: 'Camila', foto: '/miai/professores/camila.jpg' },
+      preco: 'R$ 97',                      // no Brasil
+      precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
+      parcelas: '',
+      linkPagamento: '',                   // link do Stripe (https://buy.stripe.com/...) de US$ 97, com R$ 97 fixo no Brasil
+    },
+    {
       // A Formação da IA Academy também à venda na MIAI. Depois do pagamento a pessoa segue o fluxo da IA Academy
       // (cadastro na Hub em iaacademy.bio/cadastro) e assiste na área do aluno de lá (aulas, abaixo).
       endereco: 'ia-academy',              // miaiacademy.com/ia-academy (vendas)
