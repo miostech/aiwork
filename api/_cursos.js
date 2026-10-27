@@ -33,9 +33,9 @@ export const CURSOS_MIAI = [
     aulas: AULAS_IAWORK,
   },
   {
-    endereco: "canal-dark",  // miaiacademy.com/canal-dark (vendas) e miaiacademy.com/conta/canal-dark (aulas)
-    id: "canal-dark",
-    nome: "Canal Dark com IA",
+    endereco: "sabido",      // miaiacademy.com/sabido (vendas) e miaiacademy.com/conta/sabido (aulas)
+    id: "canal-dark",        // nome no banco (acessos.curso) e na loja dos plugins: o Sabido nasceu como "canal-dark"
+    nome: "Sabido",
     // plugin do Claude Code liberado por este curso: "name" do plugin.json, repositório privado e o texto da loja
     plugin: "canal-dark",
     repo: "miostech/miai-plugin-canal-dark",

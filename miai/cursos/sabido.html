@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Canal Dark com IA · MIAI Academy</title>
-<meta name="description" content="Peça um tema e receba o vídeo pronto para TikTok, Reels e Shorts: pesquisa, roteiro, narração e edição feitos pela IA, com o plugin Canal Dark para o Claude Code.">
+<title>Sabido · Canal dark com IA · MIAI Academy</title>
+<meta name="description" content="Peça um tema e receba o vídeo pronto para TikTok, Reels e Shorts: pesquisa, roteiro, narração e edição feitos pela IA, com o Sabido, o plugin de canal dark com IA para o Claude Code.">
 <meta name="theme-color" content="#F3F1EC">
 <link rel="icon" type="image/png" href="/miai/favicon.png">
 <link rel="apple-touch-icon" href="/miai/icone-180.png">
@@ -13,8 +13,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
 <link rel="stylesheet" href="/miai/miai.css">
 <!--
-  PÁGINA DE VENDAS DO CANAL DARK COM IA (endereço: miaiacademy.com/canal-dark)
-  1. Preço e link do pagamento: bloco do Canal Dark no CATÁLOGO (miai/miai.js).
+  PÁGINA DE VENDAS DO SABIDO, O CANAL DARK COM IA (endereço: miaiacademy.com/sabido)
+  1. Preço e link do pagamento: bloco do Sabido (endereco 'sabido') no CATÁLOGO (miai/miai.js).
   2. Vídeo de vendas, exemplos de vídeos e depoimentos: bloco CONFIG no final deste arquivo.
   3. Textos: edite direto no HTML abaixo.
 -->
@@ -124,13 +124,27 @@
 .final h2 { font-size: clamp(40px, 7vw, 72px); max-width: 15ch; }
 .final .botao { margin-top: 32px; }
 
+/* Reels do Instagram (@sabido4884): no topo, no lugar do vídeo horizontal, e na seção de exemplos */
+/* no topo o Reel troca a classe "video" (moldura horizontal, iframe esticado) por esta, para ficar em pé */
+.video-reel { display: flex; justify-content: center; align-self: start; }
+.reels { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; align-items: start; }
+.video-reel .instagram-media, .reels .instagram-media { margin: 0 auto !important; min-width: 280px !important; max-width: 400px !important; width: 100% !important; }
+.prova-canal { display: grid; gap: 18px; justify-items: start; margin-bottom: 32px; }
+.prova-canal__numeros { display: flex; flex-wrap: wrap; gap: 12px 32px; }
+.prova-canal__numeros strong { display: block; font-family: var(--fonte-titulo); font-weight: 600; font-size: clamp(30px, 4vw, 40px); line-height: 1; color: var(--roxo); }
+.prova-canal__numeros span { font-size: 13px; color: var(--suave); }
+.monetizar { display: grid; gap: 14px; margin-top: 44px; padding: 26px 22px; background: var(--papel-claro); border: 1px solid var(--linha-forte); }
+.monetizar h3 { font-size: clamp(24px, 3vw, 30px); }
+.monetizar ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--tinta-2); }
+.monetizar .aviso { font-size: 13px; color: var(--suave); }
+
 /* Exemplos de vídeos (celulares) */
 .exemplos { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 18px; }
 .exemplo { aspect-ratio: 9 / 16; background: #15121c; overflow: hidden; display: grid; place-items: center; color: #b9b3c6; font-size: 14px; text-align: center; padding: 12px; }
 .exemplo video, .exemplo img { width: 100%; height: 100%; object-fit: cover; }
 </style>
 
-<script src="/contador.js" data-pagina="miai-canal-dark" defer></script>
+<script src="/contador.js" data-pagina="miai-sabido" defer></script>
 </head>
 <body>
 
@@ -151,7 +165,7 @@
     <div class="container">
       <div class="hero__etiquetas">
         <span class="rotulo rotulo--ponto">Para quem quer um canal sem aparecer</span>
-        <span class="rotulo">Curso + plugin · Canal Dark com IA</span>
+        <span class="rotulo">Sabido · Canal dark com IA</span>
       </div>
       <h1>Peça um tema. Receba o vídeo pronto para postar.</h1>
       <div class="hero__grade">
@@ -163,8 +177,8 @@
           </div>
         </div>
         <div class="hero__lado">
-          <p>O Canal Dark é um plugin para o Claude Code. Você escreve "os 5 maiores navios da história" e a IA pesquisa os dados, escreve o roteiro, narra em português e monta o vídeo vertical com gráficos, mapas, fotos de época e um apresentador 2D que fala. No curso você aprende a instalar, configurar o seu canal e publicar.</p>
-          <a class="botao botao--tinta botao--grande" href="#oferta">Quero o Canal Dark <span class="seta" aria-hidden="true">→</span></a>
+          <p>O Sabido é um plugin para o Claude Code que faz os vídeos do seu canal dark com IA. Você escreve "os 5 maiores navios da história" e a IA pesquisa os dados, escreve o roteiro, narra em português e monta o vídeo vertical com gráficos, mapas, fotos de época e um apresentador 2D que fala. No curso você aprende a instalar, configurar o seu canal e publicar.</p>
+          <a class="botao botao--tinta botao--grande" href="#oferta">Quero o Sabido <span class="seta" aria-hidden="true">→</span></a>
           <span class="nota">Acesso imediato · Garantia de 7 dias</span>
         </div>
       </div>
@@ -211,9 +225,29 @@
     <div class="container">
       <div class="secao__topo">
         <span class="rotulo"><b>02</b> Exemplos</span>
-        <h2 id="titulo-exemplos">Vídeos feitos com o plugin.</h2>
+        <h2 id="titulo-exemplos">Monetize sem mostrar o rosto.</h2>
+        <p>Estes vídeos são do @sabido4884, o nosso canal de curiosidades, feito do começo ao fim com o Sabido. Ninguém aparece, ninguém grava a voz e ninguém passa horas editando: o apresentador é um avatar 2D e a narração é feita pela IA.</p>
       </div>
+      <div class="prova-canal">
+        <div class="prova-canal__numeros">
+          <div><strong>+270 mil</strong><span>visualizações em 12 vídeos</span></div>
+          <div><strong>3 mil</strong><span>seguidores no Instagram</span></div>
+          <div><strong>0</strong><span>vezes que alguém mostrou o rosto</span></div>
+        </div>
+        <a class="botao botao--contorno" id="link-perfil" href="https://www.instagram.com/sabido4884/" target="_blank" rel="noopener">Ver o @sabido4884 no Instagram <span class="seta" aria-hidden="true">→</span></a>
+      </div>
+      <div class="reels" id="lista-reels"></div>
       <div class="exemplos" id="lista-exemplos"></div>
+      <div class="monetizar">
+        <h3>Como um canal assim gera dinheiro</h3>
+        <p>Com o canal crescendo e postando com frequência, você pode ganhar de várias formas, sempre sem aparecer:</p>
+        <ul>
+          <li>pelos programas de monetização das próprias plataformas (TikTok, Instagram e YouTube Shorts);</li>
+          <li>com publicidade e parcerias com marcas que querem falar com o seu público;</li>
+          <li>levando o público para os seus produtos ou para links de afiliado.</li>
+        </ul>
+        <p class="aviso">Números do @sabido4884 em 27/10/2026. A monetização depende das regras e dos requisitos de cada plataforma (como seguidores e visualizações mínimas) e do crescimento do seu canal. Não há garantia de ganhos.</p>
+      </div>
     </div>
   </section>
 
@@ -226,7 +260,7 @@
       </div>
       <div class="publico">
         <div>
-          <h3>O Canal Dark é para você se…</h3>
+          <h3>O Sabido é para você se…</h3>
           <ul class="lista-icone lista-icone--sim">
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Quer um canal de curiosidades, história, futebol ou ciência sem mostrar o rosto</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tem um computador (Mac ou Windows) e uma assinatura do Claude</li>
@@ -282,11 +316,11 @@
       <div class="oferta">
         <div class="oferta__painel">
           <div class="oferta__cabeca">
-            <h2 id="titulo-oferta">Canal Dark com IA</h2>
-            <span class="rotulo">Curso + plugin</span>
+            <h2 id="titulo-oferta">Sabido</h2>
+            <span class="rotulo">Canal dark com IA · curso + plugin</span>
           </div>
           <ul class="lista-icone lista-icone--sim">
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plugin Canal Dark para o Claude Code, com as atualizações</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plugin Sabido para o Claude Code, com as atualizações</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Voz gratuita em português e apresentador 2D com a boca sincronizada</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Aulas de instalação, formatos e publicação</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>O curso fica na sua conta da MIAI Academy</li>
@@ -296,7 +330,7 @@
             <p class="preco__valor" id="preco"></p>
             <p class="preco__parcelas" id="parcelas" hidden></p>
           </div>
-          <a class="botao botao--tinta botao--grande botao--largo" id="btn-comprar" href="#oferta">Quero o Canal Dark <span class="seta" aria-hidden="true">→</span></a>
+          <a class="botao botao--tinta botao--grande botao--largo" id="btn-comprar" href="#oferta">Quero o Sabido <span class="seta" aria-hidden="true">→</span></a>
           <p class="oferta__aviso" id="aviso-checkout" hidden>Link do pagamento ainda não configurado (linkPagamento no catálogo, em miai/miai.js).</p>
           <p class="oferta__seguro">Pagamento seguro · Acesso imediato após a confirmação. Já tem conta na MIAI? Pague com o mesmo e-mail para o curso aparecer nela.</p>
         </div>
@@ -304,7 +338,7 @@
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.6"/></svg>
           <div>
             <h3>Garantia de 7 dias</h3>
-            <p>Se em até 7 dias você achar que o Canal Dark não é para você, devolvemos 100% do valor. O plugin para de funcionar com o reembolso.</p>
+            <p>Se em até 7 dias você achar que o Sabido não é para você, devolvemos 100% do valor. O plugin para de funcionar com o reembolso.</p>
           </div>
         </div>
       </div>
@@ -316,7 +350,7 @@
     <div class="container">
       <div class="secao__topo">
         <span class="rotulo"><b>?</b> Perguntas</span>
-        <h2 id="titulo-faq">Dúvidas sobre o Canal Dark.</h2>
+        <h2 id="titulo-faq">Dúvidas sobre o Sabido.</h2>
       </div>
       <div class="faq">
         <details>
@@ -351,7 +385,7 @@
   <section class="secao secao--escura final" aria-labelledby="titulo-final">
     <div class="container">
       <h2 id="titulo-final">O seu canal postando todo dia. Bora começar?</h2>
-      <a class="botao botao--claro botao--grande" href="#oferta">Quero o Canal Dark <span class="seta" aria-hidden="true">→</span></a>
+      <a class="botao botao--claro botao--grande" href="#oferta">Quero o Sabido <span class="seta" aria-hidden="true">→</span></a>
     </div>
   </section>
 </main>
@@ -391,8 +425,19 @@ window.CONFIG = {
   // Link de incorporação (embed) do vídeo de demonstração, horizontal: Panda, YouTube, Vimeo...
   videoVendas: '',
 
-  // Vídeos de exemplo (verticais), .mp4 ou imagem. Lista vazia = a seção não aparece.
-  // Ex.: { video: 'https://.../exemplo1.mp4', capa: '/miai/cursos/canal-dark/capa1.jpg', titulo: 'Top 5 navios' }
+  // Reels do perfil do Sabido no Instagram (@sabido4884), feitos com o plugin. O primeiro aparece no topo (quando não
+  // há videoVendas) e os outros na seção de exemplos. Para trocar, copie o link do Reel (instagram.com/reel/...).
+  reels: [
+    'https://www.instagram.com/reel/Dez9heyKqDT/',   // 105 mil visualizações (27/10/2026)
+    'https://www.instagram.com/reel/De-WN61KTc9/',   // 71,4 mil
+    'https://www.instagram.com/reel/De2ad32KRAl/',   // 48,4 mil
+    'https://www.instagram.com/reel/DexLC88qlB4/',   // 11,5 mil
+  ],
+  perfilInstagram: 'https://www.instagram.com/sabido4884/',
+
+  // Vídeos de exemplo (verticais), .mp4 ou imagem, mostrados depois dos Reels.
+  // Lista vazia (e sem Reels) = a seção não aparece.
+  // Ex.: { video: 'https://.../exemplo1.mp4', capa: '/miai/cursos/sabido/capa1.jpg', titulo: 'Top 5 navios' }
   exemplos: [],
 
   suporte: '',                     // ex.: 'Comunidade exclusiva de alunos' (vazio = não mostra)
@@ -408,7 +453,7 @@ window.CONFIG = {
 (function () {
   'use strict';
   const C = window.CONFIG;
-  const CURSO = Miai.curso('canal-dark');
+  const CURSO = Miai.curso('sabido');
   const $ = (sel) => document.querySelector(sel);
   Miai.ajustarTopo();
 
@@ -426,10 +471,39 @@ window.CONFIG = {
   if (C.videoVendas) {
     const frame = document.createElement('iframe');
     frame.src = C.videoVendas;
-    frame.title = 'Demonstração do Canal Dark';
+    frame.title = 'Demonstração do Sabido';
     frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
     frame.allowFullscreen = true;
     $('#video-vendas').replaceChildren(frame);
+  }
+
+  // Reels do Instagram: o primeiro no topo (se não houver videoVendas) e os outros nos exemplos.
+  // O embed.js do Instagram troca cada bloco pelo player oficial.
+  const reels = (C.reels || []).filter((r) => /^https:\/\/www\.instagram\.com\/(reel|p)\/[\w-]+\/?$/.test(r));
+  function blocoReel(link) {
+    const bloco = document.createElement('blockquote');
+    bloco.className = 'instagram-media';
+    bloco.dataset.instgrmPermalink = link;
+    bloco.dataset.instgrmVersion = '14';
+    const a = document.createElement('a');
+    a.href = link; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = 'Ver este vídeo no Instagram';
+    bloco.appendChild(a);
+    return bloco;
+  }
+  if (reels.length) {
+    const lista = reels.slice();
+    if (!C.videoVendas) {
+      $('#video-vendas').className = 'video-reel';
+      $('#video-vendas').replaceChildren(blocoReel(lista.shift()));
+    }
+    lista.forEach((link) => $('#lista-reels').appendChild(blocoReel(link)));
+    if (C.perfilInstagram) $('#link-perfil').href = C.perfilInstagram;
+    $('#exemplos').hidden = false;
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.instagram.com/embed.js';
+    document.body.appendChild(script);
   }
 
   const exemplos = (C.exemplos || []).filter((e) => e && (e.video || e.capa));

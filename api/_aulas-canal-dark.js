@@ -1,13 +1,13 @@
 // ═══════════════════════════════════════════════════════════════
-//  AULAS DO CANAL DARK (curso + plugin do Claude Code) — edite aqui títulos, descrições e vídeos
+//  AULAS DO SABIDO (canal dark com IA: curso + plugin do Claude Code) — edite aqui títulos, descrições e vídeos
 // ═══════════════════════════════════════════════════════════════
-// Funciona igual a api/_aulas-iawork.js. A área do aluno abre este curso em miaiacademy.com/conta/canal-dark.
+// Funciona igual a api/_aulas-iawork.js. A área do aluno abre este curso em miaiacademy.com/conta/sabido.
 //
 // instalacao: true → a aula mostra o comando pessoal de instalação do plugin (a licença do aluno, gerada por
 //             api/plugins.js), com botão de copiar. Deixe essa aula em primeiro.
 // video, duracao, materiais, aviso: como em api/_aulas.js.
 export const CURSO = {
-  titulo: "Canal Dark com IA",
+  titulo: "Sabido",
   formatoVideo: "16/9",
   modulos: [
     {

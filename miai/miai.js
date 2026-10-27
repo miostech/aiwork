@@ -25,10 +25,10 @@
       cupom: { codigo: 'ACADEMY', preco: 'R$ 197', precoFora: 'US$ 197' },
     },
     {
-      endereco: 'canal-dark',              // miaiacademy.com/canal-dark (vendas) e /conta/canal-dark (aulas)
-      nome: 'Canal Dark com IA',
+      endereco: 'sabido',                  // miaiacademy.com/sabido (vendas) e /conta/sabido (aulas)
+      nome: 'Sabido',
       area: 'Inteligência Artificial',
-      chamada: 'Peça um tema e receba o vídeo pronto: pesquisa, roteiro, narração e edição feitos pela IA no seu computador.',
+      chamada: 'Canal dark com IA: peça um tema e receba o vídeo pronto, com pesquisa, roteiro, narração e edição feitos pela IA no seu computador.',
       detalhes: ['Plugin do Claude Code', 'Acesso imediato', 'Garantia de 7 dias'],
       cor: '#0F3D47',
       capa: '',

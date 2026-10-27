@@ -83,6 +83,39 @@
       "permanent": true
     },
     {
+      "source": "/canal-dark",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/sabido",
+      "permanent": true
+    },
+    {
+      "source": "/conta/canal-dark",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/conta/sabido",
+      "permanent": true
+    },
+    {
+      "source": "/obrigado/canal-dark",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/obrigado/sabido",
+      "permanent": true
+    },
+    {
       "source": "/aiwork.html",
       "has": [
         {
