@@ -1,5 +1,5 @@
 // Confere o pagamento da Formação IA Academy quando o Stripe devolve a pessoa para a cadastro.html.
-//   GET /api/pagamento?sessao=cs_... → { status: "pago" | "aguardando" | "nao_pago", email }
+//   GET /api/pagamento?sessao=cs_... → { status: "pago" | "aguardando" | "nao_pago", email, nome }
 //     pago       → pagamento confirmado: o cadastro segue para as orientações
 //     aguardando → pedido feito, pagamento ainda não confirmado (ex.: Pix): a página confere de novo
 //     nao_pago   → sessão de outro produto, não encontrada ou não paga
@@ -27,7 +27,9 @@ export default async function handler(req, res) {
     const status = s.payment_status === "paid" || s.payment_status === "no_payment_required"
       ? "pago"
       : s.status === "complete" ? "aguardando" : "nao_pago";
-    return res.status(200).json({ status, email: (s.customer_details && s.customer_details.email) || "" });
+    const cliente = s.customer_details || {};
+    // nome e e-mail do pagamento: o cadastro usa para quem comprou sem passar pelo formulário (ex.: pela MIAI)
+    return res.status(200).json({ status, email: cliente.email || "", nome: cliente.name || "" });
   } catch (erro) {
     if (erro && (erro.statusCode === 404 || erro.code === "resource_missing")) {
       return res.status(200).json({ status: "nao_pago" });

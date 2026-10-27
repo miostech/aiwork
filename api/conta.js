@@ -1,11 +1,13 @@
 // Conta do aluno na MIAI Academy: quais cursos da MIAI ele comprou e quanto já assistiu de cada um.
 // Usado pela miai/conta.html, que manda o token do login no cabeçalho Authorization.
-//   GET /api/conta → { aluno: { nome }, cursos: [{ endereco, nome, concluidas, total }] }
-// Só entram os cursos da MIAI (api/_cursos.js) com acesso liberado; o curso gratuito da IA Academy fica de fora.
+//   GET /api/conta → { aluno: { nome }, cursos: [{ endereco, nome, concluidas, total, link? }] }
+// Entram os cursos da MIAI (api/_cursos.js) com acesso liberado e a Formação IA Academy, que também é vendida na MIAI
+// (com "link" para as aulas, que ficam na área do aluno da IA Academy).
 // Também caem aqui, pelo vercel.json: /api/plugins (licença dos plugins do Claude Code, api/_plugins.js) e a loja dos
 // plugins (/loja, /p e /licenca, api/_loja.js).
 import { banco } from "./_supabase.js";
-import { CURSOS_MIAI, totalDeAulas } from "./_cursos.js";
+import { CURSOS_MIAI, CURSOS_IA_ACADEMY, totalDeAulas } from "./_cursos.js";
+import { CURSO as AULAS_FORMACAO } from "./_aulas.js";
 import { atenderPlugins } from "./_plugins.js";
 import { atenderLoja } from "./_loja.js";
 
@@ -54,6 +56,16 @@ export default async function handler(req, res) {
         return { endereco: curso.endereco, nome: curso.nome, concluidas, total };
       })
       .filter(Boolean);
+
+    // A Formação IA Academy também é vendida na MIAI, mas as aulas ficam na área do aluno da IA Academy: quem tem
+    // acesso vê o curso na conta da MIAI, com o link de lá (link)
+    for (const curso of CURSOS_IA_ACADEMY.filter((c) => c.enderecoMiai)) {
+      const acesso = (acessos || []).find((a) => a.curso === curso.id);
+      if (!acesso) continue;
+      const total = totalDeAulas(AULAS_FORMACAO);
+      const concluidas = (acesso.aulas_concluidas || []).filter((i) => i >= 0 && i < total).length;
+      cursos.push({ endereco: curso.enderecoMiai, nome: curso.nome, concluidas, total, link: curso.linkAulas });
+    }
 
     return res.status(200).json({ aluno: { nome: aluno.nome || "" }, cursos });
   } catch (erro) {

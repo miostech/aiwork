@@ -179,7 +179,7 @@ main { min-height: 60vh; }
       if (meu) {
         meus.appendChild(Miai.cartaoCurso(curso, {
           acao: meu.concluidas ? 'Continuar' : 'Começar',
-          link: '/conta/' + curso.endereco,
+          link: meu.link || '/conta/' + curso.endereco,   // a Formação abre as aulas na IA Academy
           progresso: { concluidas: meu.concluidas, total: meu.total },
         }));
       } else {

@@ -10,6 +10,8 @@
     {
       endereco: 'ia-work',                 // miaiacademy.com/ia-work (vendas) e /conta/ia-work (aulas)
       nome: 'IA Work',
+      oculto: true,                        // fora da vitrine até as aulas ficarem prontas (quem já comprou continua
+                                           // vendo na conta). Tire esta linha para mostrar de novo.
       area: 'Inteligência Artificial',     // vira um filtro na página inicial quando houver cursos de mais de uma área
       chamada: 'Use o que você já sabe para treinar IA e receber acima de US$ 20 por hora.',
       detalhes: ['6 módulos', 'Acesso imediato', 'Garantia de 7 dias'],
@@ -32,12 +34,35 @@
       detalhes: ['Plugin do Claude Code', 'Acesso imediato', 'Garantia de 7 dias'],
       cor: '#0F3D47',
       capa: '',
-      novo: false,
+      novo: true,                          // em destaque na primeira dobra da vitrine
       professor: null,
+      fotoCapa: '/miai/cursos/sabido/perfil.jpg',   // a foto do perfil @sabido4884 no círculo da capa
       preco: 'R$ 97',                      // no Brasil
       precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',
       linkPagamento: 'https://buy.stripe.com/8x24gB56efl7ePl3j467S06',   // US$ 97, com R$ 97 fixo no Brasil
+      // Black Friday: o código BLACKSABIDO (cupom SABIDO-BLACKFRIDAY no Stripe, R$ 44 / US$ 44 de desconto) vence no fim de 30/11
+      cupom: { codigo: 'BLACKSABIDO', preco: 'R$ 53', precoFora: 'US$ 53', ate: '2026-12-01T02:59:59Z', ateTexto: '30/11' },
+    },
+    {
+      // A Formação da IA Academy também à venda na MIAI. Depois do pagamento a pessoa segue o fluxo da IA Academy
+      // (cadastro na Hub em iaacademy.bio/cadastro) e assiste na área do aluno de lá (aulas, abaixo).
+      endereco: 'ia-academy',              // miaiacademy.com/ia-academy (vendas)
+      nome: 'IA Academy',
+      area: 'Inteligência Artificial',
+      chamada: 'Do zero aos primeiros ganhos em dólar gravando a sua rotina para treinar IA, com o celular que você já tem.',
+      detalhes: ['9 aulas', 'Para iniciantes', 'Garantia de 7 dias'],
+      cor: '#B04668',                      // a cor da IA Academy
+      capa: '',
+      novo: false,
+      professor: { nome: 'Camila', foto: '/miai/professores/camila-ia-academy.jpg' },
+      preco: 'R$ 98',
+      precoFora: 'US$ 98',
+      parcelas: '',
+      linkPagamento: 'https://buy.stripe.com/3cI00l9mu3CpcHd2f067S04',   // o mesmo da IA Academy (formacao.js)
+      // Cupom da Black Friday: vai preenchido no pagamento até o fim do dia 30/11 (horário de Brasília), como na IA Academy
+      cupom: { codigo: 'BLACKFRIDAY', preco: 'R$ 28', precoFora: 'US$ 28', ate: '2026-12-01T02:59:59Z', ateTexto: '30/11' },
+      aulas: 'https://www.iaacademy.bio/curso',   // onde quem comprou assiste
     },
   ];
 
@@ -72,10 +97,12 @@
       img.src = c.capa; img.alt = ''; img.loading = 'lazy';
       capa.prepend(img);
     }
-    if (c.professor && c.professor.foto) {
+    // o círculo: a foto do professor ou, sem professor, a do curso (fotoCapa)
+    const fotoCirculo = (c.professor && c.professor.foto) || c.fotoCapa;
+    if (fotoCirculo) {
       const foto = new Image();
       foto.className = 'capa-curso__foto';
-      foto.src = c.professor.foto; foto.alt = ''; foto.loading = 'lazy';
+      foto.src = fotoCirculo; foto.alt = ''; foto.loading = 'lazy';
       capa.appendChild(foto);
     }
     if (c.novo) {

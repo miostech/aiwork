@@ -1025,7 +1025,16 @@ window.CONFIG = {
     let status = 'erro';
     try {
       const resposta = await fetch(C.enderecoPagamento + '?sessao=' + encodeURIComponent(state.sessaoPagamento));
-      status = (await resposta.json().catch(() => ({}))).status || 'erro';
+      const dados = await resposta.json().catch(() => ({}));
+      status = dados.status || 'erro';
+      // Quem comprou sem passar pelo formulário (ex.: pela página da Formação na MIAI) fica com o nome e o e-mail
+      // do pagamento: a confirmação da Hub usa os dois para criar o cadastro e achar a compra, mesmo se o e-mail
+      // da Hub for outro
+      if (status === 'pago') {
+        if (dados.email && !state.lead.email) state.lead.email = dados.email;
+        if (dados.nome && !state.lead.nome) state.lead.nome = dados.nome;
+        save();
+      }
     } catch (e) {}
     if (status === 'pago') { continuarCadastro(); return; }
     if (status === 'nao_pago') { mostrarPagamento('falta'); return; }

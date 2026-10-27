@@ -54,6 +54,8 @@ export const CURSOS_IA_ACADEMY = [
     id: "gratuito",        // nome no banco: era o curso gratuito (continua assim para manter o histórico e o painel)
     nome: "Formação IA Academy",
     site: "iaacademy",     // e-mail de acesso da IA Academy, com o link da área do aluno de lá
+    enderecoMiai: "ia-academy",                 // também à venda em miaiacademy.com/ia-academy
+    linkAulas: "https://www.iaacademy.bio/curso", // na conta da MIAI, o curso leva para as aulas de lá
     // US$ 98 (R$ 98 no Brasil); depois os antigos: US$ 19 e o só em reais
     linksPagamento: ["plink_1UUt0oRY9p8vsUUs3WsVrQbX", "plink_1UUsf2RY9p8vsUUs3jVvTTDK", "plink_1UUresRY9p8vsUUs8Pm4dSUd", process.env.STRIPE_PAYMENT_LINK_FORMACAO],
   },
