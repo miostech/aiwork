@@ -173,8 +173,9 @@ main { min-height: 60vh; }
     outros.replaceChildren();
     const tenho = new Map((dados.cursos || []).map((c) => [c.endereco, c]));
 
-    Miai.catalogo.forEach((curso) => {
+    Miai.todos.forEach((curso) => {
       const meu = tenho.get(curso.endereco);
+      if (!meu && curso.oculto) return;  // curso fora da vitrine: só aparece para quem já tem
       if (meu) {
         meus.appendChild(Miai.cartaoCurso(curso, {
           acao: meu.concluidas ? 'Continuar' : 'Começar',

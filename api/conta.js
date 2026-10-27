@@ -2,10 +2,13 @@
 // Usado pela miai/conta.html, que manda o token do login no cabeçalho Authorization.
 //   GET /api/conta → { aluno: { nome }, cursos: [{ endereco, nome, concluidas, total }] }
 // Só entram os cursos da MIAI (api/_cursos.js) com acesso liberado; o curso gratuito da IA Academy fica de fora.
+// /api/plugins (licença dos plugins do Claude Code) também cai aqui, pelo vercel.json: ver api/_plugins.js.
 import { banco } from "./_supabase.js";
 import { CURSOS_MIAI, totalDeAulas } from "./_cursos.js";
+import { atenderPlugins } from "./_plugins.js";
 
 export default async function handler(req, res) {
+  if (req.query && req.query.plugins) return atenderPlugins(req, res);
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ erro: "Use GET." });

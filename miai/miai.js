@@ -24,6 +24,23 @@
       // Cupom de quem veio da Formação IA Academy (/ia-work?origem=curso)
       cupom: { codigo: 'ACADEMY', preco: 'R$ 197', precoFora: 'US$ 197' },
     },
+    {
+      endereco: 'canal-dark',              // miaiacademy.com/canal-dark (vendas) e /conta/canal-dark (aulas)
+      nome: 'Canal Dark com IA',
+      area: 'Inteligência Artificial',
+      chamada: 'Peça um tema e receba o vídeo pronto: pesquisa, roteiro, narração e edição feitos pela IA no seu computador.',
+      detalhes: ['Plugin do Claude Code', 'Acesso imediato', 'Garantia de 7 dias'],
+      cor: '#0F3D47',
+      capa: '',
+      novo: false,
+      oculto: true,                        // fora da vitrine (página inicial e "outros cursos") até o lançamento;
+                                           // a página /canal-dark e as aulas funcionam. Tire esta linha para lançar.
+      professor: null,
+      preco: '',                           // defina o preço (no Brasil) antes de lançar, ex.: 'R$ 297'
+      precoFora: '',                       // ex.: 'US$ 297'
+      parcelas: '',
+      linkPagamento: '',                   // link do Stripe (buy.stripe.com/...) do curso; o id plink_ vai em api/_cursos.js
+    },
   ];
 
   const $ = (sel, raiz = document) => raiz.querySelector(sel);
@@ -267,7 +284,8 @@
   }
 
   window.Miai = {
-    catalogo: CATALOGO, curso, areas, capaCurso, cartaoCurso, pais, precoDe, precoCupomDe, parcelasDe,
+    // catalogo = vitrine (sem os cursos com oculto: true); todos = o catálogo inteiro
+    catalogo: CATALOGO.filter((c) => !c.oculto), todos: CATALOGO, curso, areas, capaCurso, cartaoCurso, pais, precoDe, precoCupomDe, parcelasDe,
     supabase, chamar, sair, montarLogin, emailGuardado, ajustarTopo,
   };
 })();
