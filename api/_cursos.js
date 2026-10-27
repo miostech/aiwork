@@ -37,8 +37,8 @@ export const CURSOS_MIAI = [
     nome: "Canal Dark com IA",
     // plugin do Claude Code liberado por este curso ("name" do plugin; a loja fica no repositório miostech/miai-plugins)
     plugin: "canal-dark",
-    // crie o link de pagamento no Stripe e coloque o id (plink_...) aqui ou em STRIPE_PAYMENT_LINK_CANAL_DARK
-    linksPagamento: [process.env.STRIPE_PAYMENT_LINK_CANAL_DARK],
+    // US$ 97 (R$ 97 no Brasil); STRIPE_PAYMENT_LINK_CANAL_DARK, se definida, é aceita junto
+    linksPagamento: ["plink_1UV9VIRY9p8vsUUsNov5otoO", process.env.STRIPE_PAYMENT_LINK_CANAL_DARK],
     aulas: AULAS_CANAL_DARK,
   },
 ];

@@ -33,13 +33,11 @@
       cor: '#0F3D47',
       capa: '',
       novo: false,
-      oculto: true,                        // fora da vitrine (página inicial e "outros cursos") até o lançamento;
-                                           // a página /canal-dark e as aulas funcionam. Tire esta linha para lançar.
       professor: null,
-      preco: '',                           // defina o preço (no Brasil) antes de lançar, ex.: 'R$ 297'
-      precoFora: '',                       // ex.: 'US$ 297'
+      preco: 'R$ 97',                      // no Brasil
+      precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
       parcelas: '',
-      linkPagamento: '',                   // link do Stripe (buy.stripe.com/...) do curso; o id plink_ vai em api/_cursos.js
+      linkPagamento: 'https://buy.stripe.com/8x24gB56efl7ePl3j467S06',   // US$ 97, com R$ 97 fixo no Brasil
     },
   ];
 
