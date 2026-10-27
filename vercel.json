@@ -155,6 +155,22 @@
   ],
   "rewrites": [
     {
+      "source": "/loja/:licenca/marketplace.json",
+      "destination": "/api/conta?loja=catalogo&licenca=:licenca"
+    },
+    {
+      "source": "/p/:licenca/:plugin.git/info/refs",
+      "destination": "/api/conta?loja=git&rota=info/refs&licenca=:licenca&plugin=:plugin"
+    },
+    {
+      "source": "/p/:licenca/:plugin.git/git-upload-pack",
+      "destination": "/api/conta?loja=git&rota=git-upload-pack&licenca=:licenca&plugin=:plugin"
+    },
+    {
+      "source": "/licenca/:licenca",
+      "destination": "/api/conta?loja=licenca&licenca=:licenca"
+    },
+    {
       "source": "/api/plugins",
       "destination": "/api/conta?plugins=1"
     },
