@@ -1,6 +1,7 @@
 // Recebe os avisos (webhook) do Stripe sobre as compras dos cursos pagos (Formação IA Academy, IA Work e os próximos
 // da MIAI) e libera ou tira o acesso ao curso comprado. O curso é descoberto pelo link de pagamento (api/_cursos.js).
-//   checkout.session.completed               → guarda a compra; se já está paga (cartão), libera o acesso
+//   checkout.session.completed               → guarda a compra; se já está paga (cartão) ou saiu de graça com um
+//                                              cupom de 100%, libera o acesso
 //   checkout.session.async_payment_succeeded → pagamento confirmado depois (Pix): libera o acesso
 //   checkout.session.async_payment_failed    → Pix não pago a tempo: marca a compra como "falhou"
 //   charge.refunded, refund.created, refund.updated → reembolso total (garantia de 7 dias): tira o acesso
@@ -155,7 +156,8 @@ export default async function handler(req, res) {
     switch (evento.type) {
       case "checkout.session.completed":
         if (!curso) break;
-        if (objeto.payment_status === "paid") await liberarCompra(objeto, curso);
+        // "no_payment_required": cupom de 100% (ex.: TESTDEV), total zero e nada a cobrar; libera como uma compra paga
+        if (objeto.payment_status === "paid" || objeto.payment_status === "no_payment_required") await liberarCompra(objeto, curso);
         else await registrarCompra(objeto, curso, "aguardando"); // Pix: espera a confirmação
         break;
       case "checkout.session.async_payment_succeeded":

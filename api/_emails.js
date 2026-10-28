@@ -1,7 +1,8 @@
 // Modelos e envio dos e-mails da IA Academy e da MIAI Academy (pelo Resend).
 // Para mudar o texto ou o visual de um e-mail, edite o html do modelo abaixo.
 // Modelos da IA Academy: acesso (Formação IA Academy paga), nova_senha ("Esqueci minha senha") e compra (IA Work comprado).
-// Modelos da MIAI: compra_miai (curso comprado) e nova_senha_miai ("Esqueci minha senha" na conta da MIAI).
+// Modelos da MIAI: compra_miai (curso comprado), acesso_miai (acesso liberado sem compra) e nova_senha_miai
+// ("Esqueci minha senha" na conta da MIAI).
 // Campos preenchidos no envio: {{{NOME}}}, {{{EMAIL_ALUNO}}}, {{{SENHA}}}, {{{LINK_CURSO}}} e, na MIAI, {{{CURSO}}}
 //
 // Variáveis de ambiente:
@@ -549,6 +550,23 @@ MODELOS.compra_miai = {
     botao: "Assistir ao {{{CURSO}}}",
     nota: "<strong style=\"color:#14130F;\">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Se você já tinha conta na MIAI Academy ou na IA Academy, esta é a sua senha nova e vale para todos os seus cursos. Se esquecer a senha, use \"Esqueci minha senha\" na tela de entrada.",
     rodape: "Você recebeu este e-mail porque comprou o {{{CURSO}}} na MIAI Academy.",
+  }),
+};
+
+// Acesso dado sem compra (cortesia ou teste): os mesmos dados de login, sem falar em pagamento
+MODELOS.acesso_miai = {
+  marca: "miai",
+  assunto: "Seu acesso ao {{{CURSO}}} na MIAI Academy",
+  html: emailMiai({
+    titulo: "Seu acesso ao {{{CURSO}}} na MIAI Academy",
+    previa: "Seu acesso foi liberado. Aqui estão o seu e-mail e a sua senha para assistir ao {{{CURSO}}}.",
+    selo: "Acesso liberado",
+    chamada: "Bem-vindo(a) ao {{{CURSO}}}, {{{NOME}}}!",
+    texto: "Seu acesso está liberado. Use os dados abaixo para entrar na sua conta da MIAI Academy: o {{{CURSO}}} já aparece lá, junto com os outros cursos que você tiver.",
+    rotuloSenha: "Senha",
+    botao: "Assistir ao {{{CURSO}}}",
+    nota: "<strong style=\"color:#14130F;\">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Se você já tinha conta na MIAI Academy ou na IA Academy, esta é a sua senha nova e vale para todos os seus cursos. Se esquecer a senha, use \"Esqueci minha senha\" na tela de entrada.",
+    rodape: "Você recebeu este e-mail porque o seu acesso ao {{{CURSO}}} foi liberado pela MIAI Academy.",
   }),
 };
 
