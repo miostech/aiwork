@@ -19,7 +19,7 @@ export const CURSO = {
       aulas: [
         {
           titulo: "Instalar o plugin no Claude Code",
-          descricao: "Você só precisa do Claude Code, com uma assinatura do Claude, num computador Mac ou Windows. Cole os dois comandos abaixo e o plugin cuida do resto: no primeiro vídeo ele instala sozinho o que faltar no seu computador (leva alguns minutos e precisa de uns 6 GB livres). Já usa o Editfy de aulas? O Editfy Reels aproveita o mesmo ambiente e o mesmo perfil.",
+          descricao: "Você só precisa do Claude Code, com uma assinatura do Claude, num computador Mac ou Windows. Cole os dois comandos abaixo e o plugin cuida do resto: no primeiro vídeo ele instala sozinho o que faltar no seu computador (leva alguns minutos e precisa de uns 6 GB livres). Já usa o Editfy de aulas? O Editfy Reels aproveita o mesmo ambiente e o mesmo perfil. Para receber as melhorias do Editfy Reels sozinho, ligue a atualização automática da loja: no Claude Code, digite `/plugin`, abra Marketplaces → miai e escolha Enable auto-update.",
           duracao: "",
           video: "",
           instalacao: true,
