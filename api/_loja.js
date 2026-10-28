@@ -38,6 +38,25 @@ async function liberadosPor(codigo) {
   return { existe: true, ...(await cursosAtivos(db, linha.aluno_id)) };
 }
 
+// Versão atual de cada plugin (o plugin.json do repositório), guardada 5 minutos: com ela no catálogo, o Claude Code
+// do aluno vê que há versão nova e mostra "Atualizar" (sem ela, só atualiza se a pessoa atualizar a loja à mão)
+const VERSOES = new Map();
+async function versaoDe(repo) {
+  const guardada = VERSOES.get(repo);
+  if (guardada && Date.now() - guardada.em < 5 * 60 * 1000) return guardada.versao;
+  let versao = guardada ? guardada.versao : null;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${repo}/contents/.claude-plugin/plugin.json`, {
+      headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, Accept: "application/vnd.github.raw+json", "User-Agent": "miai-loja" },
+    });
+    if (r.ok) versao = (await r.json()).version || versao;
+  } catch (erro) {
+    console.error(`Não li a versão de ${repo}:`, erro.message);
+  }
+  VERSOES.set(repo, { versao, em: Date.now() });
+  return versao;
+}
+
 async function catalogo(req, res, codigo) {
   const { existe, cursos } = await liberadosPor(codigo);
   if (!existe) {
@@ -45,14 +64,16 @@ async function catalogo(req, res, codigo) {
     return res.status(404).send("Licença não encontrada. Copie o comando de novo na aula \"Instalar o plugin\" da MIAI.\n");
   }
   const base = enderecoLoja(req);
+  const versoes = process.env.GITHUB_TOKEN ? await Promise.all(cursos.map((c) => versaoDe(c.repo))) : [];
   // Licença sem nenhum curso ativo (reembolso) continua sendo uma loja válida, só que vazia
   return res.status(200).json({
     name: "miai",
     description: "Plugins da MIAI Academy",
     owner: { name: "MIAI Academy", url: "https://www.miaiacademy.com" },
-    plugins: cursos.map((c) => ({
+    plugins: cursos.map((c, i) => ({
       name: c.plugin,
       description: c.descricaoPlugin || c.nome,
+      ...(versoes[i] ? { version: versoes[i] } : {}),
       source: { source: "url", url: `${base}/p/${codigo}/${c.plugin}.git` },
     })),
   });
