@@ -93,6 +93,20 @@ export const CURSO = {
           ],
           materiais: [],
         },
+        {
+          titulo: "Escolher o que entra em cada aula (e salvar padrões)",
+          descricao: "Cada aula pode pedir uma edição diferente: às vezes só cortar, às vezes tudo. A cada aula nova o Claude pergunta o que entra, e você pode salvar as combinações que mais usa.",
+          duracao: "",
+          video: "",
+          aviso: TEXTO,
+          passos: [
+            "Ao mandar uma aula, o Claude pergunta qual padrão usar: Aula completa, Aula simples, Só cortes ou um dos seus.",
+            "Ou escolha item por item: cortes, legenda, plaquinha, capítulos, cards, imagens de apoio, zoom, áudio tratado, efeitos sonoros e música.",
+            "Gostou da combinação? Responda \"Sim, salvar\" e dê um nome. Da próxima vez é uma pergunta só.",
+            "Já sabe o que quer? Diga no pedido: `edita a aula 4 com o padrão Aula simples` ou `só corta essa aula`.",
+          ],
+          materiais: [],
+        },
       ],
     },
     {
