@@ -4,7 +4,7 @@
 // Entram os cursos da MIAI (api/_cursos.js) com acesso liberado e a Formação IA Academy, que também é vendida na MIAI
 // (com "link" para as aulas, que ficam na área do aluno da IA Academy).
 // Também caem aqui, pelo vercel.json: /api/plugins (licença dos plugins do Claude Code, api/_plugins.js) e a loja dos
-// plugins (/loja, /p e /licenca, api/_loja.js).
+// plugins (/loja, /p, /licenca e /imagens, api/_loja.js).
 import { banco } from "./_supabase.js";
 import { CURSOS_MIAI, CURSOS_IA_ACADEMY, totalDeAulas } from "./_cursos.js";
 import { CURSO as AULAS_FORMACAO } from "./_aulas.js";

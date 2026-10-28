@@ -204,6 +204,10 @@
       "destination": "/api/conta?loja=licenca&licenca=:licenca"
     },
     {
+      "source": "/imagens/:licenca",
+      "destination": "/api/conta?loja=imagens&licenca=:licenca"
+    },
+    {
       "source": "/api/plugins",
       "destination": "/api/conta?plugins=1"
     },
