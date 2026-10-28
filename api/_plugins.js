@@ -3,9 +3,10 @@
 // Atendido pela função api/conta.js (o site já usa as 12 funções do plano da Vercel): o vercel.json leva
 // /api/plugins para /api/conta?plugins=1.
 //
-//   GET /api/plugins?acao=minha
+//   GET /api/plugins?acao=minha&curso=editfy-reels
 //       Authorization: Bearer <token do login>  → { licenca, loja, comandos, plugins: [{ nome, curso }] }
 //       Usado pela aula "Instalar o plugin" (miai/aulas.html). Cria a licença na primeira vez.
+//       Com "curso" (o endereço), os comandos instalam só o plugin desse curso; sem ele, todos os do aluno.
 //
 // Variável de ambiente (opcional):
 //   PLUGINS_URL   endereço do site onde fica a loja (padrão: MIAI_URL, ou o próprio endereço do pedido)
@@ -53,7 +54,10 @@ async function minha(req, res, db) {
   if (error || !data || !data.user) return res.status(401).json({ erro: "Sua sessão expirou. Entre de novo." });
 
   const alunoId = data.user.id;
-  const { cursos } = await cursosAtivos(db, alunoId);
+  const ativos = (await cursosAtivos(db, alunoId)).cursos;
+  // Cada aula mostra só o plugin do seu curso
+  const pedido = String((req.query && req.query.curso) || "");
+  const cursos = pedido ? ativos.filter((c) => c.endereco === pedido) : ativos;
   if (!cursos.length) return res.status(403).json({ erro: "Seu acesso a um curso com plugin não está liberado." });
 
   // Uma licença por aluno: a primeira vez cria (a chave única do banco resolve duas abas abrindo juntas)

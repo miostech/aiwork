@@ -438,17 +438,23 @@
     if (instalacaoCarregada) return;
     const caixa = $('#instalacao-passos');
     try {
-      const resposta = await Miai.chamar('/api/plugins?acao=minha');
+      // Só o plugin deste curso (quem tem mais de um curso com plugin vê cada um na aula do seu curso)
+      const resposta = await Miai.chamar('/api/plugins?acao=minha&curso=' + encodeURIComponent(ENDERECO));
       if (!resposta) { pedirLogin(); return; }
       const dados = await resposta.json();
       if (!resposta.ok) throw new Error(dados.erro || 'HTTP ' + resposta.status);
       caixa.replaceChildren();
-      const rotulos = ['1. Adicione a loja da MIAI (só uma vez)', '2. Instale o plugin'];
-      dados.comandos.forEach((comando, i) => {
+      // Quem já adicionou a loja para outro curso tem uma cópia antiga dela, sem o plugin novo: atualiza em vez de adicionar
+      const passos = [
+        ['1. Adicione a loja da MIAI (só uma vez)', dados.comandos[0]],
+        ['Já adicionou a loja para outro curso? Atualize em vez de adicionar', '/plugin marketplace update miai'],
+        ...dados.comandos.slice(1).map((comando) => ['2. Instale o plugin', comando]),
+      ];
+      passos.forEach(([rotulo, comando]) => {
         const passo = document.createElement('div');
         passo.className = 'instalacao__passo';
         passo.innerHTML = '<span></span><div class="instalacao__linha"><code></code><button type="button" class="instalacao__copiar">Copiar</button></div>';
-        $('span', passo).textContent = rotulos[Math.min(i, 1)];
+        $('span', passo).textContent = rotulo;
         $('code', passo).textContent = comando;
         $('button', passo).addEventListener('click', async (e) => {
           try { await navigator.clipboard.writeText(comando); e.target.textContent = 'Copiado!'; }
