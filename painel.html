@@ -572,7 +572,7 @@ window.CONFIG = {
   });
 
   // ── Lista de espera do IA Work (vem junto com os números, a inscrição mais recente primeiro)
-  const ORIGENS_ESPERA = { formacao: 'Botão da última aula da Formação', miai: 'Direto na página' };
+  const ORIGENS_ESPERA = { formacao: 'Botão da última aula da Formação', 'guia-hub': 'Guia da HUB', miai: 'Direto na página' };
   let emailsEspera = [];
   function desenharListaEspera(todas, periodo, nomePeriodo) {
     $('#secao-espera').hidden = !todas;
@@ -636,7 +636,7 @@ window.CONFIG = {
 
   // ── Por curso: uma aba para cada curso (a lista e a ordem vêm da api/painel.js)
   const PAGINAS_VENDA = {
-    inicio: 'iaacademy.bio', 'miai-ia-academy': 'miaiacademy.com/ia-academy',
+    inicio: 'iaacademy.bio/inicio (em stand by)', 'miai-ia-academy': 'miaiacademy.com/ia-academy',
     'miai-sabido': 'miaiacademy.com/sabido', 'miai-canal-dark': 'miaiacademy.com/canal-dark (endereço antigo)',
     aiwork: 'iaacademy.bio/aiwork', 'miai-ia-work': 'miaiacademy.com/ia-work',
   };

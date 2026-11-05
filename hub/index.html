@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guia da HUB · Camila</title>
+<meta name="description" content="Passo a passo gratuito para entrar na HUB e gravar tarefas da sua rotina para treinar inteligência artificial: criar a conta, verificar a identidade, escolher entre o HUB Capture e o Minute e ter as gravações aprovadas.">
+<meta name="theme-color" content="#EFEADD">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+<!--
+  GUIA DA HUB (endereço: www.iaacademy.bio/)
+  O vercel.json abre esta página no "/" da IA Academy. A página antiga da Formação ficou guardada em
+  www.iaacademy.bio/inicio (inicio.html): para voltar com ela, troque o destino do rewrite do "/" no vercel.json.
+  Um passo a passo para a pessoa entrar na HUB pelo convite da Camila: criar a conta, verificar a identidade,
+  escolher o aplicativo (HUB Capture ou Minute) e gravar sem recusa.
+
+  Os links e os vídeos são os mesmos da IA Academy:
+  - convite da HUB (IAACAD) e links dos aplicativos: api/_aulas.js
+  - vídeos: aulas 2, 3 e 4 da IA Academy (Azure), com as capas da pasta capas/
+  - checklist "Antes de apertar gravar": materiais/checklist-antes-de-gravar.pdf
+  - grupo do Telegram e canal do WhatsApp da seção de ajuda: os oficiais da HUB (linktr.ee/hubxyz e a descrição do canal)
+  - chamada do IA Work (seção #ia-work): o botão abre um modal com o formulário da lista de espera, que grava
+    pela /api/avise (curso ia-work, origem guia-hub, que aparece no painel como "Guia da HUB") e depois leva a pessoa
+    para o grupo do WhatsApp (GRUPO, no script do modal, e o botão "Entrar no grupo"). Sem JavaScript, o
+    botão leva para a página da lista de espera. Quando a turma abrir, troque o botão pela página de venda do IA Work.
+    Os prints de ganhos são os mesmos da lista de espera e da Aula 9 da Formação (miai/ganhos/).
+  Mudou o link de convite? Troque todos os "ai.hub.xyz/r/IAACAD" desta página.
+-->
+<style>
+:root {
+  /* As cores do site da HUB (hub.xyz): papel creme, tinta quase preta e o verde da marca */
+  --papel: #EFEADD;
+  --papel-claro: #F6F3EA;
+  --papel-escuro: #E7E1D1;
+  --tinta: #141414;
+  --tinta-2: #2A2A2A;
+  --suave: #6A6557;
+  --apagado: #7D7766;
+  --linha: rgba(20, 20, 20, 0.12);
+  --linha-forte: rgba(20, 20, 20, 0.28);
+  --verde: #0FD96B;          /* o verde da HUB: fundo de botões, sempre com texto preto */
+  --verde-vivo: #00FF7A;     /* botão verde com o mouse em cima */
+  --verde-escuro: #069C50;   /* bordas e foco */
+  --verde-texto: #046032;    /* texto verde em cima do papel (o verde claro não dá leitura) */
+  --verde-fundo: rgba(15, 217, 107, 0.12);
+  --alerta: #9A5B00;
+  --alerta-fundo: rgba(217, 119, 6, 0.1);
+  --erro: #9A3B1E;
+  --erro-fundo: rgba(154, 59, 30, 0.08);
+  --escuro-texto: #EFEADD;
+  --escuro-suave: rgba(239, 234, 221, 0.66);
+  --escuro-linha: rgba(239, 234, 221, 0.16);
+
+  --fonte-titulo: "Bitter", Georgia, "Times New Roman", serif;
+  --fonte: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--papel); color: var(--tinta);
+  font-family: var(--fonte); font-size: 17px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--verde-escuro); outline-offset: 3px; }
+h1, h2, h3 { margin: 0; font-family: var(--fonte-titulo); font-weight: 500; line-height: 1.1; letter-spacing: -0.015em; text-wrap: balance; }
+p { margin: 0; }
+strong { font-weight: 600; }
+.container { width: 100%; max-width: 1120px; margin-inline: auto; padding-inline: 16px; }
+.coluna { width: 100%; max-width: 760px; margin-inline: auto; padding-inline: 16px; }
+@media (min-width: 640px) { .container, .coluna { padding-inline: 32px; } }
+[id] { scroll-margin-top: 84px; }
+
+/* Etiqueta pequena em maiúsculas */
+.etiqueta {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--verde-texto);
+}
+
+/* Botões */
+.botao {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 14px 24px; border: 1px solid var(--tinta); border-radius: 999px;
+  background: var(--tinta); color: var(--escuro-texto);
+  font: 600 16px/1.2 var(--fonte); text-decoration: none; text-align: center; cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+.botao:hover { background: var(--verde); border-color: var(--verde); color: var(--tinta); }
+.botao:active { transform: translateY(1px); }
+.botao--verde { background: var(--verde); border-color: var(--verde); color: var(--tinta); }
+.botao--verde:hover { background: var(--verde-vivo); border-color: var(--verde-vivo); }
+.botao--claro { background: transparent; color: var(--tinta); border-color: var(--linha-forte); }
+.botao--claro:hover { background: var(--papel-claro); border-color: var(--tinta); color: var(--tinta); }
+.botao--pequeno { min-height: 42px; padding: 10px 18px; font-size: 15px; }
+
+/* Faixa do topo */
+.faixa { background: var(--tinta); color: var(--escuro-texto); text-align: center; font-size: 15px; padding: 10px 16px; }
+.faixa strong { color: var(--verde); }
+
+/* Cabeçalho */
+.topo { position: sticky; top: 0; z-index: 20; background: rgba(239, 234, 221, 0.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--linha); }
+.topo .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 68px; }
+.marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--fonte-titulo); font-weight: 600; font-size: 19px; white-space: nowrap; }
+.topo .botao { white-space: nowrap; }
+/* No celular: marca e botão mais curtos, para caber numa linha */
+.so-largo { display: none; }
+@media (min-width: 520px) { .so-largo { display: inline; } }
+.marca__selo { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--verde); color: var(--tinta); font: 700 15px/1 var(--fonte); }
+.topo nav { display: flex; align-items: center; gap: 22px; }
+.topo nav a:not(.botao) { display: none; text-decoration: none; font-size: 15px; color: var(--tinta-2); white-space: nowrap; }
+.topo nav a:not(.botao):hover { color: var(--verde-texto); text-decoration: underline; }
+@media (min-width: 1080px) { .topo nav a:not(.botao) { display: inline; } }
+
+/* Primeira dobra */
+.hero { padding: 44px 0 56px; }
+.hero__grade { display: grid; gap: 40px; align-items: center; }
+.hero__texto { display: grid; gap: 22px; justify-items: start; }
+.hero h1 { font-size: clamp(38px, 6.6vw, 68px); line-height: 1.04; max-width: 16ch; }
+.hero h1 em { font-style: normal; color: var(--verde-texto); }
+.hero__sub { color: var(--suave); font-size: 19px; max-width: 46ch; }
+.hero__cta { display: flex; flex-wrap: wrap; gap: 12px; }
+.hero__nota { font-size: 14px; color: var(--suave); }
+.guia {
+  display: grid; gap: 18px; padding: 24px; border: 1px solid var(--linha); border-radius: 24px; background: var(--papel-claro);
+}
+.guia__quem { display: flex; align-items: center; gap: 16px; }
+.guia__foto { width: 76px; height: 76px; border-radius: 50%; object-fit: cover; flex: none; }
+.guia__quem strong { display: block; font-family: var(--fonte-titulo); font-weight: 500; font-size: 22px; }
+.guia__quem span { color: var(--suave); font-size: 15px; }
+.guia > p { color: var(--tinta-2); }
+.roteiro { list-style: none; margin: 0; padding: 0; display: grid; border-top: 1px solid var(--linha); }
+.roteiro a { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--linha); text-decoration: none; font-weight: 500; }
+.roteiro a:hover { color: var(--verde-texto); }
+.roteiro a span:first-child { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--verde); color: var(--tinta); font-size: 14px; font-weight: 700; }
+.roteiro a span:last-child { color: var(--apagado); }
+/* Fora dos 5 passos: leva para a chamada do IA Work */
+.roteiro__extra a span:first-child { background: var(--tinta); color: var(--verde); }
+@media (min-width: 960px) {
+  .hero { padding: 64px 0 80px; }
+  .hero__grade { grid-template-columns: minmax(0, 1fr) 400px; gap: 64px; }
+}
+
+/* Seções do guia */
+.secao { padding: 56px 0; border-top: 1px solid var(--linha); }
+.secao h2 { font-size: clamp(30px, 4.6vw, 44px); margin-bottom: 18px; }
+.secao h2 small { display: block; margin-bottom: 10px; font: 700 12px/1.2 var(--fonte); letter-spacing: 0.12em; text-transform: uppercase; color: var(--verde-texto); }
+.secao .intro { font-size: 18px; color: var(--tinta-2); }
+.secao .intro + .intro { margin-top: 14px; }
+
+/* Caixas de aviso */
+.aviso { display: grid; gap: 6px; margin-top: 22px; padding: 18px 20px; border-radius: 16px; border-left: 4px solid currentColor; font-size: 16px; }
+.aviso strong { display: block; }
+.aviso p { color: var(--tinta-2); }
+.aviso--golpe { color: var(--erro); background: var(--erro-fundo); }
+.aviso--atencao { color: var(--alerta); background: var(--alerta-fundo); }
+.aviso--ok { color: var(--verde-texto); background: var(--verde-fundo); }
+.aviso--info { color: var(--tinta); background: var(--papel-escuro); }
+
+/* Lista de "como funciona" */
+.pontos { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; }
+.pontos li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; padding: 18px; background: var(--papel-claro); border: 1px solid var(--linha); border-radius: 16px; }
+.pontos li > span { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--verde-fundo); font-size: 20px; }
+.pontos strong { display: block; margin-bottom: 2px; }
+.pontos p { color: var(--tinta-2); font-size: 16px; }
+
+/* Lista de requisitos */
+.requisitos { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 10px; }
+.requisitos li { position: relative; padding-left: 34px; }
+.requisitos li::before { content: "✓"; position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--verde); color: var(--tinta); font-size: 14px; font-weight: 700; }
+
+/* Passos numerados */
+.passos { list-style: none; counter-reset: passo; margin: 6px 0 0; padding: 0; display: grid; gap: 14px; }
+.passos li { counter-increment: passo; position: relative; padding-left: 44px; }
+.passos li::before {
+  content: counter(passo); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--tinta); color: var(--escuro-texto); font-size: 14px; font-weight: 700;
+}
+
+/* Aulas em vídeo (as mesmas da IA Academy) */
+.video { margin: 26px 0 0; display: grid; gap: 10px; }
+.video__quadro { position: relative; aspect-ratio: 16 / 9; border-radius: 20px; overflow: hidden; background: var(--tinta); }
+.video video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--tinta); }
+.video figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; font-size: 15px; color: var(--suave); }
+.video figcaption strong { color: var(--tinta); }
+
+/* Escolha do caminho */
+.caminhos { display: grid; gap: 14px; margin-top: 26px; }
+.caminho { display: grid; gap: 12px; align-content: start; padding: 24px; border-radius: 20px; background: var(--papel-claro); border: 1px solid var(--linha); }
+.caminho h3 { font-size: 24px; }
+.caminho p { color: var(--tinta-2); font-size: 16px; }
+.caminho .botao { justify-self: start; margin-top: 6px; }
+.caminho--indicado { border-color: var(--verde-escuro); box-shadow: inset 0 0 0 1px var(--verde-escuro); }
+.caminho__selo { justify-self: start; padding: 4px 10px; border-radius: 999px; background: var(--verde); color: var(--tinta); font-size: 13px; font-weight: 700; }
+@media (min-width: 700px) { .caminhos { grid-template-columns: 1fr 1fr; } }
+
+/* Grupo de links (lojas de aplicativo) */
+.links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+
+/* Suportes de cabeça */
+.produtos { display: grid; gap: 14px; margin-top: 22px; }
+.produto { display: grid; gap: 8px; align-content: start; padding: 22px; border-radius: 20px; background: var(--papel-claro); border: 1px solid var(--linha); text-decoration: none; transition: border-color 0.15s; }
+.produto:hover { border-color: var(--tinta); }
+.produto strong { font-family: var(--fonte-titulo); font-weight: 500; font-size: 21px; }
+.produto p { color: var(--tinta-2); font-size: 16px; }
+.produto span { margin-top: 6px; font-weight: 600; font-size: 15px; color: var(--verde-texto); }
+@media (min-width: 700px) { .produtos { grid-template-columns: 1fr 1fr; } }
+
+/* Checklist antes de gravar */
+.checklist { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 10px; }
+.checklist li { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; padding: 14px 16px; background: var(--papel-claro); border: 1px solid var(--linha); border-radius: 14px; font-size: 16px; }
+.checklist li::before { content: ""; width: 22px; height: 22px; margin-top: 1px; border: 2px solid var(--verde-escuro); border-radius: 6px; }
+@media (min-width: 700px) { .checklist { grid-template-columns: 1fr 1fr; } }
+.fatos { display: grid; gap: 12px; margin-top: 22px; }
+.fato { padding: 18px 20px; border-radius: 16px; background: var(--tinta); color: var(--escuro-texto); }
+.fato strong { display: block; font-family: var(--fonte-titulo); font-weight: 500; font-size: 22px; color: var(--verde); }
+.fato p { color: var(--escuro-suave); font-size: 15px; }
+@media (min-width: 700px) { .fatos { grid-template-columns: 1fr 1fr; } }
+
+/* Chamada do IA Work (o curso pago, com tarefas no computador) */
+.convite { background: var(--papel-escuro); }
+.convite h2 em { font-style: normal; color: var(--verde-texto); }
+.convite h3 { margin-top: 34px; font-size: 24px; }
+.convite h3 + .intro { margin-top: 8px; }
+.ganhos { display: grid; gap: 18px; margin-top: 20px; }
+.ganho { margin: 0; display: grid; gap: 8px; }
+.ganho a { display: block; border: 1px solid var(--linha-forte); border-radius: 14px; overflow: hidden; background: #FFFFFF; }
+.ganho--total a { max-width: 380px; }
+.ganho img { width: 100%; height: auto; }
+.ganho figcaption { font-size: 14px; color: var(--suave); }
+.ganhos__aviso { margin-top: 16px; font-size: 13px; color: var(--suave); }
+
+/* Modal da lista de espera do IA Work */
+html:has(.modal[open]) { overflow: hidden; }
+.modal {
+  width: min(460px, calc(100% - 32px)); max-height: calc(100% - 32px); padding: 0; border: 0; border-radius: 24px;
+  background: var(--papel-claro); color: var(--tinta); box-shadow: 0 30px 80px rgba(20, 20, 20, 0.35); overflow: auto;
+}
+.modal::backdrop { background: rgba(20, 20, 20, 0.62); }
+.modal__corpo { padding: 28px 24px 24px; }
+.modal__corpo > form, .modal__corpo > div { display: grid; gap: 14px; }
+.modal [hidden] { display: none; }
+.modal h2 { font-size: 28px; padding-right: 36px; }
+.modal p { color: var(--tinta-2); font-size: 16px; }
+.modal .botao { width: 100%; }
+.modal__fechar {
+  position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--tinta-2); font-size: 26px; line-height: 1; cursor: pointer;
+}
+.modal__fechar:hover { background: var(--papel-escuro); }
+.campo { display: grid; gap: 6px; }
+.campo label { font-weight: 600; font-size: 15px; }
+.campo input {
+  width: 100%; min-height: 50px; padding: 12px 14px; border: 1px solid var(--linha-forte); border-radius: 12px;
+  background: #FFFFFF; color: var(--tinta); font: 400 16px/1.3 var(--fonte);
+}
+.campo input:focus { outline: 2px solid var(--verde-escuro); outline-offset: 0; border-color: var(--verde-escuro); }
+.modal__erro { color: var(--erro); font-size: 15px; font-weight: 600; }
+.modal__erro:empty { display: none; }
+.modal .modal__nota { font-size: 13px; color: var(--suave); }
+.escondido { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.convite__cta { display: grid; gap: 12px; justify-items: start; margin-top: 30px; }
+.convite__nota { font-size: 14px; color: var(--suave); }
+
+/* Ajuda */
+.ajuda { background: var(--tinta); color: var(--escuro-texto); border-top: 0; }
+.ajuda h2 small, .ajuda .etiqueta { color: var(--verde); }
+.ajuda .intro { color: var(--escuro-suave); }
+.grupos { display: grid; gap: 14px; margin-top: 26px; }
+.grupo { display: grid; gap: 10px; align-content: start; padding: 24px; border-radius: 20px; border: 1px solid var(--escuro-linha); }
+.grupo h3 { font-size: 24px; }
+.grupo p { color: var(--escuro-suave); font-size: 16px; }
+.grupo .botao { justify-self: start; margin-top: 8px; background: var(--escuro-texto); color: var(--tinta); border-color: var(--escuro-texto); }
+.grupo .botao:hover { background: var(--verde); border-color: var(--verde); }
+@media (min-width: 700px) { .grupos { grid-template-columns: 1fr 1fr; } }
+.ajuda .aviso { color: #F5C9C4; background: rgba(245, 201, 196, 0.08); }
+.ajuda .aviso p { color: var(--escuro-suave); }
+
+/* Rodapé */
+.rodape { background: var(--tinta); color: var(--escuro-suave); padding: 0 0 96px; font-size: 14px; }
+.rodape .container { display: grid; gap: 14px; padding-top: 28px; border-top: 1px solid var(--escuro-linha); }
+.rodape a { color: var(--escuro-texto); }
+@media (min-width: 860px) { .rodape { padding-bottom: 40px; } }
+
+/* Botão fixo no celular (aparece depois da primeira dobra) */
+.fixo {
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 30;
+  transform: translateY(140%); transition: transform 0.25s;
+}
+.fixo .botao { width: 100%; box-shadow: 0 10px 30px rgba(20, 20, 20, 0.25); }
+.fixo.visivel { transform: none; }
+@media (min-width: 860px) { .fixo { display: none; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .fixo { transition: none; } }
+</style>
+</head>
+<body>
+
+<p class="faixa">Renda extra gravando a sua rotina? <strong>Eu te mostro o caminho, de graça.</strong></p>
+
+<header class="topo">
+  <div class="container">
+    <a class="marca" href="#inicio"><span class="marca__selo" aria-hidden="true">C</span><span>Guia da HUB<span class="so-largo"> · Camila</span></span></a>
+    <nav aria-label="Links principais">
+      <a href="#video">Aula em vídeo</a>
+      <a href="#passo-1">Passo a passo</a>
+      <a href="#ia-work">Tarefas sem gravar</a>
+      <a href="#ajuda">Ajuda</a>
+      <a href="https://www.instagram.com/chaxdwick/" target="_blank" rel="noopener">Instagram</a>
+      <a class="botao botao--verde botao--pequeno" href="https://ai.hub.xyz/r/IAACAD" target="_blank" rel="noopener"><span>Cadastre-se<span class="so-largo"> na HUB</span> ↗</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="inicio">
+
+  <!-- Primeira dobra -->
+  <section class="hero">
+    <div class="container hero__grade">
+      <div class="hero__texto">
+        <span class="etiqueta">Guia gratuito · HUB</span>
+        <h1>Quer entrar na HUB? <em>Eu te mostro o caminho.</em></h1>
+        <p class="hero__sub">Juntei aqui tudo o que você precisa para criar a sua conta, verificar a identidade e gravar o primeiro vídeo — com aula em vídeo e sem enrolação, num lugar só.</p>
+        <div class="hero__cta">
+          <a class="botao botao--verde" href="https://ai.hub.xyz/r/IAACAD" target="_blank" rel="noopener">Criar minha conta na HUB ↗</a>
+          <a class="botao botao--claro" href="#antes">Ver o passo a passo ↓</a>
+        </div>
+        <p class="hero__nota">O cadastro é gratuito. Você não paga nada para gravar nem para receber.</p>
+      </div>
+
+      <aside class="guia" aria-label="Quem fez este guia">
+        <div class="guia__quem">
+          <img class="guia__foto" src="/hub/camila.jpg" alt="Foto da Camila" width="76" height="76">
+          <div><strong>Oi, eu sou a Camila</strong><span>Montei este guia para você não se perder</span></div>
+        </div>
+        <p>Siga os passos na ordem. Se travar em algum, no fim da página tem o grupo de suporte da HUB.</p>
+        <ol class="roteiro">
+          <li><a href="#passo-1"><span>1</span>Criar a conta<span>↓</span></a></li>
+          <li><a href="#passo-2"><span>2</span>Verificar a identidade<span>↓</span></a></li>
+          <li><a href="#passo-3"><span>3</span>Escolher o aplicativo<span>↓</span></a></li>
+          <li><a href="#suporte"><span>4</span>Ter o suporte de cabeça<span>↓</span></a></li>
+          <li><a href="#gravar"><span>5</span>Gravar sem recusa<span>↓</span></a></li>
+          <li class="roteiro__extra"><a href="#ia-work"><span>+</span>Outras tarefas, sem gravar<span>↓</span></a></li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Antes de se cadastrar -->
+  <section class="secao" id="antes">
+    <div class="coluna">
+      <h2><small>Leia antes de se cadastrar</small>Como a HUB funciona</h2>
+
+      <div class="aviso aviso--golpe" role="note">
+        <strong>⚠️ O cadastro é 100% gratuito</strong>
+        <p>Você não paga nada para gravar na HUB nem para receber os seus pagamentos. Se alguém pedir dinheiro para te cadastrar ou “liberar” a sua conta, desconfie: pode ser golpe.</p>
+      </div>
+
+      <ul class="pontos">
+        <li><span aria-hidden="true">🍳</span><div><strong>Você grava tarefas do seu dia a dia</strong><p>Cozinhar, arrumar a casa, limpar e outras atividades comuns viram material para treinar inteligência artificial. Conforme a plataforma abre vagas, também aparecem tarefas de profissões, como limpeza profissional, manicure, mecânica, hotelaria, construção e encanamento.</p></div></li>
+        <li><span aria-hidden="true">🔒</span><div><strong>Nada vai para as suas redes sociais</strong><p>As gravações são enviadas pelo próprio aplicativo, seguindo as regras da HUB. Você não precisa postar nada.</p></div></li>
+        <li><span aria-hidden="true">💸</span><div><strong>Você recebe pelas tarefas aprovadas</strong><p>O valor depende da modalidade, dos requisitos de cada tarefa e da análise das gravações.</p></div></li>
+        <li><span aria-hidden="true">🎧</span><div><strong>Não precisa comprar nada para começar</strong><p>Em algumas modalidades, a HUB envia um suporte de cabeça de graça, conforme a disponibilidade e a fila de espera. Se tiver pressa, dá para comprar o seu — eu mostro os que eu uso.</p></div></li>
+        <li><span aria-hidden="true">📱</span><div><strong>São dois aplicativos de gravação</strong><p>O <strong>HUB Capture</strong>, que funciona em muito mais celulares, e o <strong>Minute</strong>, que só funciona em alguns modelos. Você escolhe o seu no passo 3.</p></div></li>
+        <li><span aria-hidden="true">💚</span><div><strong>Você tem ajuda de gente de verdade</strong><p>No fim do guia estão o grupo oficial da HUB, para tirar dúvidas com pessoas, e o canal da HUB no WhatsApp, com as atualizações do app — a gente treina robôs, mas aqui o atendimento é humano.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Quem pode participar -->
+  <section class="secao" id="quem-pode">
+    <div class="coluna">
+      <h2>Quem pode participar?</h2>
+      <ul class="requisitos">
+        <li>Ter <strong>18 anos ou mais</strong>.</li>
+        <li>Morar na <strong>América Latina</strong>, onde a HUB estiver disponível.</li>
+        <li><strong>Não usar VPN</strong> para entrar na plataforma nem para fazer as tarefas.</li>
+        <li>Gravar com o <strong>suporte de cabeça</strong>, do jeito certo.</li>
+        <li>Ter <strong>conta bancária no seu próprio nome</strong> para receber, como pedem as regras da plataforma.</li>
+      </ul>
+
+      <div class="aviso aviso--info" role="note">
+        <strong>Seu celular não está na lista do Minute?</strong>
+        <p>Pode se cadastrar mesmo assim. O HUB Capture funciona em muito mais aparelhos — veja os detalhes no passo 3.</p>
+      </div>
+
+      <div class="aviso aviso--atencao" role="note">
+        <strong>Transparência</strong>
+        <p>Este é um guia independente, feito por mim. Quem decide a aprovação das tarefas, quem pode participar, o envio do suporte de cabeça e os pagamentos é a HUB, pelas regras dela.</p>
+      </div>
+
+      <div class="links">
+        <a class="botao botao--verde" href="https://ai.hub.xyz/r/IAACAD" target="_blank" rel="noopener">Cadastre-se na HUB ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Aula 3 da IA Academy -->
+  <section class="secao" id="video">
+    <div class="coluna">
+      <h2><small>Prefere ver em vídeo?</small>Eu te mostro na prática</h2>
+      <p class="intro">Nesta aula eu mostro como liberar a sua conta na HUB, passar pela verificação de identidade, baixar o aplicativo e gravar o primeiro vídeo. Depois, é só seguir os passos abaixo.</p>
+      <figure class="video">
+        <div class="video__quadro">
+          <video controls playsinline preload="none" controlslist="nodownload" poster="/capas/aula-3.jpg" aria-label="Aula: libere a sua conta na HUB e grave o primeiro vídeo">
+            <source src="https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%203%20-%20iaacademy%20sem%20creditos.mp4" type="video/mp4">
+          </video>
+        </div>
+        <figcaption><strong>Libere a sua conta e grave o primeiro vídeo</strong><span>8 min</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Passo 1 -->
+  <section class="secao" id="passo-1">
+    <div class="coluna">
+      <h2><small>Passo 1</small>Crie a sua conta na HUB</h2>
+      <ol class="passos">
+        <li>Abra o <a href="https://ai.hub.xyz/r/IAACAD" target="_blank" rel="noopener">meu link de convite</a>.</li>
+        <li>Na tela inicial, toque em <strong>Explorar o Hub</strong> e depois em <strong>Entrar</strong>.</li>
+        <li>Escolha como quer entrar — com o Google, por exemplo, escolhendo a sua conta.</li>
+        <li>Na tela de criar a conta, confira se aparece <strong>Convidado por Camila Mota</strong>. Leia a autorização para o treinamento de IA e, se concordar, marque a caixa e toque em <strong>Criar conta</strong>.</li>
+        <li>Se você se cadastrou com e-mail, confirme pelo link que a HUB enviar. Não chegou? Olhe no spam e em promoções.</li>
+      </ol>
+      <div class="links">
+        <a class="botao botao--verde" href="https://ai.hub.xyz/r/IAACAD" target="_blank" rel="noopener">Abrir o link de convite ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Passo 2 -->
+  <section class="secao" id="passo-2">
+    <div class="coluna">
+      <h2><small>Passo 2</small>Verifique a sua identidade</h2>
+      <ol class="passos">
+        <li>Na página inicial da HUB, toque no seu perfil e entre em <strong>Configurações</strong>.</li>
+        <li>Abra a aba <strong>Verificação</strong> e toque em <strong>Iniciar verificação</strong>.</li>
+        <li>Leia os termos da empresa parceira que faz a verificação. Se concordar, aceite para continuar.</li>
+        <li>Faça a <strong>verificação facial</strong> como a tela pedir: rosto à mostra e lugar bem iluminado.</li>
+        <li>Espere a análise da plataforma. Se pedirem um documento ou uma nova foto, siga as instruções da tela.</li>
+      </ol>
+      <div class="aviso aviso--ok" role="note">
+        <strong>Quanto tempo demora?</strong>
+        <p>A análise pode sair em alguns minutos ou levar até 48 horas. Passou disso? Fale com o suporte da HUB e peça uma <strong>verificação manual</strong>.</p>
+      </div>
+      <div class="aviso aviso--info" role="note">
+        <strong>Sua privacidade</strong>
+        <p>A verificação acontece dentro da HUB e do serviço de identidade dela. Nunca mande os seus documentos ou fotos pessoais em grupos de mensagens.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Passo 3 -->
+  <section class="secao" id="passo-3">
+    <div class="coluna">
+      <h2><small>Passo 3</small>Qual aplicativo você vai usar?</h2>
+      <p class="intro">A HUB tem dois aplicativos de gravação. Eu indico começar pelo <strong>HUB Capture</strong>: ele não tem limitação de celular e você entra com a mesma conta do passo 1.</p>
+      <p class="intro">O <strong>Minute</strong> só funciona em alguns modelos — a própria HUB confere o seu aparelho quando você pede o Starter Kit.</p>
+
+      <div class="caminhos">
+        <div class="caminho caminho--indicado">
+          <span class="caminho__selo">Minha indicação</span>
+          <span class="etiqueta">Caminho A</span>
+          <h3>HUB Capture</h3>
+          <p>Funciona em muito mais celulares. Você entra com a mesma conta da HUB que criou no passo 1 — não precisa criar outra.</p>
+          <a class="botao botao--verde botao--pequeno" href="#hub-capture">Seguir pelo HUB Capture ↓</a>
+        </div>
+        <div class="caminho">
+          <span class="etiqueta">Caminho B</span>
+          <h3>Minute</h3>
+          <p>Para quem tem um dos celulares compatíveis. Inclui o pedido do Starter Kit, com o suporte de cabeça.</p>
+          <a class="botao botao--claro botao--pequeno" href="#minute">Seguir pelo Minute ↓</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Caminho A: HUB Capture -->
+  <section class="secao" id="hub-capture">
+    <div class="coluna">
+      <h2><small>Caminho A</small>HUB Capture</h2>
+      <ol class="passos">
+        <li>Baixe o <strong>HUB Capture</strong> na loja do seu celular, pelos botões abaixo.</li>
+        <li>Abra o aplicativo e entre com a <strong>mesma conta da HUB</strong> que você criou no passo 1.</li>
+        <li>Siga as instruções que aparecem no aplicativo e escolha a sua primeira tarefa.</li>
+      </ol>
+      <div class="links">
+        <a class="botao" href="https://play.google.com/store/apps/details?id=xyz.hub.mobile" target="_blank" rel="noopener">HUB Capture para Android · Google Play ↗</a>
+        <a class="botao" href="https://apps.apple.com/br/app/hub-capture/id6772285040" target="_blank" rel="noopener">HUB Capture para iPhone · App Store ↗</a>
+      </div>
+      <div class="aviso aviso--atencao" role="note">
+        <strong>Use a conta da HUB do passo 1</strong>
+        <p>No HUB Capture, você entra com o mesmo e-mail e senha da HUB. O login exclusivo do Minute não serve aqui.</p>
+      </div>
+      <p class="intro" style="margin-top: 22px">Agora falta o suporte de cabeça — <a href="#suporte">veja como ter o seu ↓</a></p>
+    </div>
+  </section>
+
+  <!-- Caminho B: Minute -->
+  <section class="secao" id="minute">
+    <div class="coluna">
+      <h2><small>Caminho B · Minute</small>Peça o seu Starter Kit</h2>
+      <ol class="passos">
+        <li>Na página inicial da HUB, toque em <strong>Receba seu kit gratuitamente</strong>.</li>
+        <li>Na tela <strong>Comece em 3 passos</strong>, toque em <strong>Vamos lá!</strong>.</li>
+        <li>Escolha onde você vai gravar — <strong>Em casa</strong>, <strong>No trabalho</strong> ou <strong>Ambos</strong> — e toque em <strong>Continuar</strong>.</li>
+        <li>Quando pedir, toque em <strong>Tirar foto</strong> com o celular que você vai usar nas gravações. Tire a foto e, se concordar, permita o acesso à localização.</li>
+        <li>Confira o modelo de celular que a plataforma reconheceu. Se estiver certo, toque em <strong>Continuar</strong>; se não, toque em <strong>Usar outra foto</strong>.</li>
+        <li>Preencha e confirme o endereço para receber o suporte de cabeça.</li>
+        <li>Pronto: veja a sua posição na fila de espera e acompanhe as novidades no e-mail que você cadastrou.</li>
+      </ol>
+      <div class="aviso aviso--info" role="note">
+        <strong>Não quer esperar a fila?</strong>
+        <p>Dá para começar com um suporte comprado por você. <a href="#suporte">Veja os que eu uso ↓</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Passo 4 -->
+  <section class="secao" id="passo-4">
+    <div class="coluna">
+      <h2><small>Caminho B · Minute</small>Configure o seu acesso ao Minute</h2>
+      <ol class="passos">
+        <li>Na página inicial da HUB, toque no menu e depois em <strong>Como funciona</strong>.</li>
+        <li>Desça até a parte de configuração e toque em <strong>Configurar o Minute</strong>.</li>
+        <li>Se aparecer, toque em <strong>Ver se posso participar</strong> e responda às perguntas de elegibilidade.</li>
+        <li>Toque em <strong>Criar meu ID único</strong> e espere a HUB preparar o seu acesso.</li>
+        <li>Quando aparecer <strong>Seu login do Minute está pronto</strong>, copie o e-mail e a senha que foram criados só para o aplicativo.</li>
+      </ol>
+      <div class="aviso aviso--atencao" role="note">
+        <strong>Atenção: são dois logins diferentes</strong>
+        <p>O login do Minute não é o mesmo que você usa no site da HUB. Guarde esse e-mail e essa senha num lugar seguro e não passe para ninguém.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Passo 5 -->
+  <section class="secao" id="passo-5">
+    <div class="coluna">
+      <h2><small>Caminho B · Minute</small>Instale o Minute e entre</h2>
+      <ol class="passos">
+        <li>Baixe o <strong>Minute</strong> pelos botões abaixo (na loja, ele aparece como <strong>Minute Data</strong>). Também dá para achar o link na página <strong>Como funciona</strong> da HUB, em <strong>Baixe o app</strong>.</li>
+        <li>Abra o aplicativo e, na tela de login, digite o e-mail e a senha que a HUB criou no passo anterior.</li>
+        <li>Toque em <strong>Entrar</strong> e siga as orientações do aplicativo antes de começar a gravar.</li>
+      </ol>
+      <div class="links">
+        <a class="botao" href="https://play.google.com/store/apps/details?id=com.bakerdata.minute" target="_blank" rel="noopener">Minute para Android · Google Play ↗</a>
+        <a class="botao" href="https://apps.apple.com/br/app/minute-data/id6760918280" target="_blank" rel="noopener">Minute para iPhone · App Store ↗</a>
+      </div>
+      <div class="aviso aviso--ok" role="note">
+        <strong>Pronto! A configuração está feita.</strong>
+        <p>Agora é com o aplicativo: as tarefas que aparecem para você e os pagamentos seguem as regras e a aprovação da plataforma.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Suporte de cabeça (aula 2 da IA Academy) -->
+  <section class="secao" id="suporte">
+    <div class="coluna">
+      <h2><small>O equipamento</small>O seu suporte de cabeça</h2>
+      <p class="intro">As gravações são feitas com o celular preso na cabeça, para filmar o que as suas mãos fazem. Você pode usar o celular que já tem. Pelo Minute, dá para pedir um suporte de graça à HUB (o Starter Kit), mas tem fila de espera. Se não quiser esperar, estes são os que eu uso:</p>
+      <div class="produtos">
+        <a class="produto" href="https://s.click.aliexpress.com/e/_c31OQYRd" target="_blank" rel="noopener">
+          <strong>Suporte de cabeça simples</strong>
+          <p>O baratinho que eu uso, para começar enquanto o da HUB não chega.</p>
+          <span>Ver no AliExpress ↗</span>
+        </a>
+        <a class="produto" href="https://s.click.aliexpress.com/e/_c42BTHqJ" target="_blank" rel="noopener">
+          <strong>Suporte profissional Ulanzi</strong>
+          <p>Mais confortável para gravar muitas horas por dia.</p>
+          <span>Ver no AliExpress ↗</span>
+        </a>
+      </div>
+      <p style="margin-top: 14px; font-size: 14px; color: var(--suave)">São links de indicação: confira o preço, o prazo e o frete antes de comprar.</p>
+      <figure class="video">
+        <div class="video__quadro">
+          <video controls playsinline preload="none" controlslist="nodownload" poster="/capas/aula-2.jpg" aria-label="Aula: o kit para começar com o celular que você já tem">
+            <source src="https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%202%20-%20iaacademy%20sem%20creditos.mp4" type="video/mp4">
+          </video>
+        </div>
+        <figcaption><strong>O kit para começar com o celular que você já tem</strong><span>9 min</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Antes de gravar (aula 4 e checklist da IA Academy) -->
+  <section class="secao" id="gravar">
+    <div class="coluna">
+      <h2><small>Para ter as gravações aprovadas</small>Antes de apertar gravar</h2>
+      <div class="fatos">
+        <div class="fato"><strong>De 2 a 30 minutos</strong><p>Cada gravação é um clipe só, contínuo, do começo ao fim da tarefa.</p></div>
+        <div class="fato"><strong>Não precisa falar</strong><p>O som não conta na avaliação: o que importa é o que as suas mãos fazem.</p></div>
+      </div>
+      <p class="intro" style="margin-top: 26px">Confira cada item antes de começar. É isso que separa um vídeo aprovado de uma recusa:</p>
+      <ul class="checklist">
+        <li>Celular no suporte de cabeça, na horizontal e inclinado a 45°</li>
+        <li>Câmera no 1x e sem câmera lenta (0,5x só se a plataforma pedir: confira sempre antes)</li>
+        <li>Lente limpa: faça um teste rápido na câmera do celular</li>
+        <li>Ambiente iluminado: acenda a luz</li>
+        <li>Mãos sempre aparecendo</li>
+        <li>Em pé (só sente se a tarefa pedir)</li>
+        <li>Comece pelo que a tarefa pede</li>
+        <li>Tarefa real, no tempo normal e com foco do começo ao fim</li>
+        <li>Espaço do jeito que ele é, sem arrumar antes</li>
+        <li>Ninguém mais no vídeo: nem crianças, nem mãos ajudando</li>
+        <li>Nada de espelho (cubra com uma toalha)</li>
+        <li>Não repita a mesma tarefa do mesmo jeito</li>
+      </ul>
+      <div class="links">
+        <a class="botao botao--claro" href="/materiais/checklist-antes-de-gravar.pdf" target="_blank" rel="noopener">Baixar o checklist em PDF ↓</a>
+      </div>
+      <figure class="video">
+        <div class="video__quadro">
+          <video controls playsinline preload="none" controlslist="nodownload" poster="/capas/aula-4.jpg" aria-label="Aula: o segredo dos vídeos aprovados e os 3 erros que bloqueiam a sua conta">
+            <source src="https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%204%20-%20iaacademy%20sem%20creditos.mp4" type="video/mp4">
+          </video>
+        </div>
+        <figcaption><strong>O segredo dos vídeos aprovados (e os 3 erros que bloqueiam a sua conta)</strong><span>11 min</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Próximo nível: chamada para o IA Work. Enquanto a turma não abre, o botão leva para a lista de espera -->
+  <section class="secao convite" id="ia-work">
+    <div class="coluna">
+      <h2><small>Depois da HUB · IA Work</small>Quer treinar IA <em>sem gravar com o celular?</em></h2>
+      <p class="intro">Gravar a rotina é o jeito mais fácil de começar. Mas existe outro tipo de tarefa, feita no computador, que paga mais: empresas de inteligência artificial pagam pessoas para avaliar e corrigir as respostas dos seus modelos.</p>
+      <p class="intro">É isso que eu ensino no <strong>IA Work</strong>, o meu curso completo: as plataformas certas para o seu perfil, o currículo em inglês, os testes de entrada e o primeiro projeto.</p>
+      <ul class="pontos">
+        <li><span aria-hidden="true">⚖️</span><div><strong>Avaliar respostas</strong><p>Você compara respostas da IA e diz qual está mais correta, segura e útil.</p></div></li>
+        <li><span aria-hidden="true">✍️</span><div><strong>Criar perguntas difíceis</strong><p>Você escreve perguntas sobre o que você conhece e a resposta ideal, para a IA aprender com ela.</p></div></li>
+        <li><span aria-hidden="true">🔎</span><div><strong>Analisar imagens e dados</strong><p>Você confere se a IA entendeu certo documentos, imagens e informações técnicas.</p></div></li>
+      </ul>
+      <div class="fatos">
+        <div class="fato"><strong>Acima de US$ 20 por hora</strong><p>É quanto as tarefas profissionais costumam pagar. O valor muda conforme a plataforma, a tarefa e o seu perfil.</p></div>
+        <div class="fato"><strong>Só 20 vagas por turma</strong><p>A próxima turma ainda não tem data. Quem está na lista recebe o aviso por e-mail e WhatsApp assim que abrir.</p></div>
+      </div>
+      <h3>Os meus ganhos treinando IA</h3>
+      <p class="intro">Prints das minhas contas nas plataformas, para você ter uma ideia do que dá para receber.</p>
+      <div class="ganhos">
+        <figure class="ganho ganho--total">
+          <a href="/miai/ganhos/ganhos-total.png" target="_blank" rel="noopener"><img src="/miai/ganhos/ganhos-total.png" width="610" height="254" loading="lazy" alt="Print de uma plataforma com US$ 4.037,34 de ganhos totais"></a>
+          <figcaption>US$ 4.037,34 de ganhos totais em uma plataforma</figcaption>
+        </figure>
+        <figure class="ganho">
+          <a href="/miai/ganhos/ganhos-recebimentos.jpg" target="_blank" rel="noopener"><img src="/miai/ganhos/ganhos-recebimentos.jpg" width="1600" height="915" loading="lazy" alt="Painel de recebimentos com € 3.329,29 em ganhos recentes e os pagamentos de setembro e outubro de 2026"></a>
+          <figcaption>€ 3.329,29 em ganhos recentes, com os pagamentos de setembro e outubro. Toque ou clique no print para ver maior.</figcaption>
+        </figure>
+      </div>
+      <p class="ganhos__aviso">Resultados pessoais da Camila. Os ganhos variam conforme a área, os idiomas falados, os projetos disponíveis e o tempo dedicado, e não há garantia de ganhos nem de aprovação nas plataformas.</p>
+      <h3>É para você se…</h3>
+      <ul class="requisitos">
+        <li>Quer usar o que você sabe, <strong>com ou sem formação</strong>: tem tarefa para profissionais de várias áreas e também para quem não tem diploma.</li>
+        <li>Tem <strong>conhecimentos básicos de inglês</strong>.</li>
+        <li>Quer uma renda em dólar <strong>no computador, no seu horário</strong>.</li>
+      </ul>
+      <div class="convite__cta">
+        <a class="botao botao--verde" id="abrir-lista" href="https://www.miaiacademy.com/ia-work/lista-de-espera?origem=guia-hub" target="_blank" rel="noopener">Quero entrar na lista de espera →</a>
+        <p class="convite__nota">Entrar na lista é grátis e não obriga você a comprar.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ajuda -->
+  <section class="secao ajuda" id="ajuda">
+    <div class="coluna">
+      <h2><small>Precisa de ajuda?</small>Fale com a HUB</h2>
+      <p class="intro">Ficou com dúvida no cadastro ou na hora de configurar o aplicativo? O grupo oficial da HUB no Telegram responde. E no canal do WhatsApp a HUB publica as atualizações do app.</p>
+      <div class="grupos">
+        <div class="grupo">
+          <span class="etiqueta">Oficial · Telegram</span>
+          <h3>Suporte da HUB</h3>
+          <p>O grupo oficial da HUB no Telegram, com orientações e comunicados da plataforma. É o lugar para tirar dúvidas.</p>
+          <a class="botao botao--pequeno" href="https://t.me/+vRh6XYI95vY5MDdk" target="_blank" rel="noopener">Entrar no Telegram da HUB ↗</a>
+        </div>
+        <div class="grupo">
+          <span class="etiqueta">Oficial · WhatsApp</span>
+          <h3>Canal Hub Brasil</h3>
+          <p>O canal oficial da HUB no WhatsApp, com as atualizações do app e da comunidade direto no seu celular.</p>
+          <a class="botao botao--pequeno" href="https://whatsapp.com/channel/0029Vb84Tx5KbYMFil8cck3l" target="_blank" rel="noopener">Seguir o canal no WhatsApp ↗</a>
+        </div>
+      </div>
+      <div class="aviso" role="note">
+        <strong>Cuide da sua segurança</strong>
+        <p>Nunca mande senhas, códigos de acesso, documentos ou dados do banco no grupo — nem para mim.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <p><a href="https://www.instagram.com/chaxdwick/" target="_blank" rel="noopener">@chaxdwick no Instagram ↗</a></p>
+    <p>Guia independente, sem vínculo oficial com a HUB. A aprovação das tarefas, quem pode participar, o envio de equipamentos e os pagamentos seguem as regras da HUB.</p>
+  </div>
+</footer>
+
+<!-- Modal da lista de espera do IA Work (abre pelo botão da seção #ia-work) -->
+<dialog class="modal" id="modal-lista" aria-label="Lista de espera do IA Work">
+  <button class="modal__fechar" type="button" data-fechar aria-label="Fechar">×</button>
+  <div class="modal__corpo">
+    <form id="form-lista" novalidate>
+      <span class="etiqueta">IA Work · Lista de espera</span>
+      <h2>Receba o aviso da próxima turma</h2>
+      <p>A próxima turma terá só 20 vagas. Deixe o seu contato e você recebe o aviso por e-mail e WhatsApp assim que as inscrições abrirem.</p>
+      <div class="campo">
+        <label for="f-nome">Nome</label>
+        <input id="f-nome" name="nome" type="text" autocomplete="name" placeholder="Seu nome" required>
+      </div>
+      <div class="campo">
+        <label for="f-email">E-mail</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="seu@email.com" required>
+      </div>
+      <div class="campo">
+        <label for="f-whatsapp">WhatsApp com DDD</label>
+        <input id="f-whatsapp" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="(11) 91234-5678" required>
+      </div>
+      <input class="escondido" type="text" name="site" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="botao botao--verde" id="btn-lista" type="submit">Quero entrar na lista de espera</button>
+      <p class="modal__erro" id="erro-lista" role="alert"></p>
+      <p class="modal__nota">Entrar na lista é grátis e não obriga você a comprar. Fora do Brasil? Coloque o código do país, como +351. Seus dados ficam só com a MIAI Academy (<a href="/privacidade" target="_blank" rel="noopener">política de privacidade</a>).</p>
+    </form>
+    <div id="lista-pronto" role="status" hidden>
+      <span class="etiqueta">✓ Tudo certo</span>
+      <h2>Pronto, você está na lista!</h2>
+      <p>Agora entre no grupo do WhatsApp. Assim que a próxima turma do IA Work abrir, você recebe o aviso. Como são só 20 vagas, fique de olho e responda rápido.</p>
+      <p class="modal__nota" id="abrindo-grupo" hidden>Abrindo o grupo do WhatsApp…</p>
+      <a class="botao botao--verde" href="https://chat.whatsapp.com/DUf3senCG906Vu4hEXc7ST" target="_blank" rel="noopener">Entrar no grupo do WhatsApp</a>
+      <button class="botao botao--claro" type="button" data-fechar>Voltar para o guia</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Botão fixo no celular -->
+<div class="fixo" id="fixo">
+  <a class="botao botao--verde" href="https://ai.hub.xyz/r/IAACAD" target="_blank" rel="noopener">Criar minha conta na HUB ↗</a>
+</div>
+
+<script src="/contador.js" data-pagina="hub" defer></script>
+<script>
+// Mostra o botão fixo do celular depois que a primeira dobra sai da tela, e esconde perto do fim
+// (a partir da chamada do IA Work, para não competir com o botão dela)
+(function () {
+  'use strict';
+  var fixo = document.getElementById('fixo');
+  var hero = document.querySelector('.hero');
+  var fim = document.getElementById('ia-work');
+  if (!fixo || !hero || !fim || !('IntersectionObserver' in window)) return;
+  var passouHero = false, noFim = false;
+  function atualizar() { fixo.classList.toggle('visivel', passouHero && !noFim); }
+  new IntersectionObserver(function (e) { passouHero = !e[0].isIntersecting && e[0].boundingClientRect.top < 0; atualizar(); }).observe(hero);
+  new IntersectionObserver(function (e) { noFim = e[0].isIntersecting || e[0].boundingClientRect.top < 0; atualizar(); }).observe(fim);
+})();
+
+// Lista de espera do IA Work num modal, sem sair do guia. Grava pela /api/avise, como a página da lista de espera.
+// Sem suporte a <dialog>, o botão continua levando para a página da lista de espera.
+(function () {
+  'use strict';
+  var modal = document.getElementById('modal-lista');
+  var abrir = document.getElementById('abrir-lista');
+  if (!modal || !abrir || typeof modal.showModal !== 'function') return;
+  var form = document.getElementById('form-lista');
+  var campos = form.elements;
+  var pronto = document.getElementById('lista-pronto');
+  var erro = document.getElementById('erro-lista');
+  var botao = document.getElementById('btn-lista');
+  var textoBotao = botao.textContent;
+  var FALHA = 'Não conseguimos guardar agora. Tente de novo em instantes.';
+  var CHAVE = 'lista-espera-ia-work';   // quem já entrou neste aparelho vê direto a confirmação
+  var GRUPO = 'https://chat.whatsapp.com/DUf3senCG906Vu4hEXc7ST';   // para onde vai quem acabou de entrar na lista
+  var enviando = false;
+
+  function mostrarPronto() { form.hidden = true; pronto.hidden = false; }
+  try { if (localStorage.getItem(CHAVE) === '1') mostrarPronto(); } catch (e) { /* sem localStorage */ }
+
+  abrir.addEventListener('click', function (e) {
+    e.preventDefault();
+    modal.showModal();
+  });
+  // Fecha no X, no "Voltar para o guia" e clicando fora do cartão (o Esc o navegador já fecha)
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal || e.target.closest('[data-fechar]')) modal.close();
+  });
+
+  function avisar(texto, campo) {
+    erro.textContent = texto;
+    if (campo) campo.focus();
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (enviando) return;
+    var dados = {
+      curso: 'ia-work',
+      nome: campos.nome.value.trim(),
+      email: campos.email.value.trim(),
+      whatsapp: campos.whatsapp.value.trim(),
+      origem: 'guia-hub',
+      site: campos.site.value,
+    };
+    erro.textContent = '';
+    if (dados.nome.length < 2) return avisar('Digite o seu nome.', campos.nome);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email)) return avisar('Digite um e-mail válido.', campos.email);
+    if (dados.whatsapp.replace(/\D/g, '').length < 10) return avisar('Digite o seu WhatsApp com DDD.', campos.whatsapp);
+
+    enviando = true;
+    botao.disabled = true;
+    botao.textContent = 'Enviando…';
+    fetch('/api/avise', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (corpo) {
+          if (!r.ok) throw new Error(corpo.erro || FALHA);
+        });
+      })
+      .then(function () {
+        try { localStorage.setItem(CHAVE, '1'); } catch (e) { /* sem localStorage */ }
+        mostrarPronto();
+        // Já inscrita: leva para o grupo do WhatsApp (o botão "Entrar no grupo" fica de reserva)
+        document.getElementById('abrindo-grupo').hidden = false;
+        setTimeout(function () { location.href = GRUPO; }, 1500);
+      })
+      .catch(function (e) { avisar(e instanceof TypeError ? FALHA : e.message); })
+      .then(function () {
+        enviando = false;
+        botao.disabled = false;
+        botao.textContent = textoBotao;
+      });
+  });
+})();
+
+// Só um vídeo tocando por vez
+document.addEventListener('play', function (e) {
+  document.querySelectorAll('video').forEach(function (v) { if (v !== e.target) v.pause(); });
+}, true);
+</script>
+</body>
+</html>

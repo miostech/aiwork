@@ -6,6 +6,7 @@ import { banco } from "./_supabase.js";
 
 const PAGINAS = [
   "inicio", "cadastro", "aiwork", "aiwork-obrigado", "curso",                    // IA Academy
+  "hub",                                                                          // Guia da HUB (o "/" da IA Academy)
   "miai-inicio", "miai-ia-work", "miai-sabido", "miai-editfy", "miai-editfy-reels", "miai-obrigado", "miai-conta", "miai-aulas",     // MIAI Academy
   "miai-lista-espera", "miai-ia-academy",
 ];
