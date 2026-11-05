@@ -188,7 +188,7 @@ export const CURSO = {
           // cupom ACADEMY de quem fez a Formação).
           oferta: {
             titulo: "IA Work: lista de espera aberta",
-            texto: "O curso completo para usar a sua área de conhecimento em tarefas profissionais de IA, que pagam acima de US$ 20 por hora. Cada turma tem só 20 vagas: entre na lista para receber o aviso assim que a próxima abrir.",
+            texto: "O curso completo para usar o que você sabe, com ou sem formação, em tarefas de IA feitas no computador, que podem pagar acima de US$ 20 por hora. Cada turma tem só 20 vagas: entre na lista para receber o aviso assim que a próxima abrir.",
             botao: "Quero entrar na lista de espera",
             link: "https://www.miaiacademy.com/ia-work/lista-de-espera?origem=formacao",
           },

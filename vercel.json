@@ -134,7 +134,7 @@
           "value": "(.*\\.)?miaiacademy\\.com"
         }
       ],
-      "destination": "https://www.iaacademy.bio/",
+      "destination": "https://www.iaacademy.bio/inicio",
       "permanent": false
     },
     {
@@ -177,8 +177,23 @@
     },
     {
       "source": "/inicio.html",
-      "destination": "/",
-      "permanent": true
+      "destination": "/inicio",
+      "permanent": false
+    },
+    {
+      "source": "/hub",
+      "destination": "https://www.iaacademy.bio/",
+      "permanent": false
+    },
+    {
+      "source": "/hub/",
+      "destination": "https://www.iaacademy.bio/",
+      "permanent": false
+    },
+    {
+      "source": "/hub/index.html",
+      "destination": "https://www.iaacademy.bio/",
+      "permanent": false
     },
     {
       "source": "/:pagina(cadastro|curso|painel|aiwork|termos|privacidade)\\.html",
@@ -281,6 +296,10 @@
     },
     {
       "source": "/",
+      "destination": "/hub/index.html"
+    },
+    {
+      "source": "/inicio",
       "destination": "/inicio.html"
     },
     {
