@@ -233,6 +233,12 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       <p class="aviso" id="aviso-conferencia" hidden><span id="aviso-texto"></span> <button class="copiar" id="btn-conferir" type="button">Conferir agora</button></p>
     </div>
 
+    <section class="card" id="secao-guia" aria-labelledby="t-guia" style="grid-column:1/-1" hidden>
+      <h2 id="t-guia">Guia da HUB</h2>
+      <p class="sub" id="sub-guia"></p>
+      <div class="numeros" id="guia-numeros"></div>
+    </section>
+
     <section class="card" id="secao-cursos" aria-labelledby="t-cursos" style="grid-column:1/-1" hidden>
       <h2 id="t-cursos">Por curso</h2>
       <p class="sub">Escolha o curso para ver quem visitou a página de vendas, quem comprou e os alunos. O número ao lado do nome é de compras pagas no período.</p>
@@ -246,7 +252,7 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
 
     <section class="card" id="secao-espera" aria-labelledby="t-espera" style="grid-column:1/-1" hidden>
       <h2 id="t-espera">Lista de espera do IA Work</h2>
-      <p class="sub">Quem pediu para receber o aviso quando abrir a próxima turma, em miaiacademy.com/ia-work/lista-de-espera. O botão da última aula da Formação leva para lá.</p>
+      <p class="sub">Quem pediu para receber o aviso quando abrir a próxima turma, em miaiacademy.com/ia-work/lista-de-espera (o botão da última aula da Formação leva para lá) e no botão do Guia da HUB.</p>
       <div class="numeros" id="espera-numeros"></div>
       <div class="leads-topo"><button class="pilula" id="btn-copiar-emails" type="button">Copiar todos os e-mails</button></div>
       <ol class="lista-leads" id="lista-espera"></ol>
@@ -276,7 +282,7 @@ body { margin: 0; min-height: 100dvh; background: var(--bg); color: var(--ink); 
       <div class="grafico" id="grafico" role="img"></div>
       <div class="eixo"><span id="eixo-ini"></span><span id="eixo-fim"></span></div>
       <div class="legenda">
-        <span><i style="background:#EFE3DE"></i>Visitantes da página inicial</span>
+        <span><i style="background:#EFE3DE"></i>Visitantes da página da Formação</span>
         <span><i style="background:#E7A9BC"></i>Leads (formulário)</span>
         <span><i style="background:var(--primary)"></i>Aulas liberadas</span>
         <span><i style="background:var(--verde);border-radius:50%"></i>Dia com venda do IA Work</span>
@@ -571,6 +577,30 @@ window.CONFIG = {
     $('#secao-leads').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
+  // ── Guia da HUB (o "/" de iaacademy.bio): quem visitou e quem entrou na lista de espera do IA Work pelo botão dele
+  function desenharGuia(guia, espera, periodo, nomePeriodo) {
+    $('#secao-guia').hidden = !guia;
+    if (!guia) return;
+    const desde = periodo.desde ? Date.parse(periodo.desde) : 0;
+    const naLista = (espera || []).filter((p) => p.curso === 'ia-work' && p.origem === 'guia-hub' && Date.parse(p.criado_em) >= desde).length;
+    $('#sub-guia').textContent = 'Quem visitou o guia em iaacademy.bio ' + nomePeriodo + ' (as visitas são contadas desde 05/11/2026) e quem entrou na lista de espera do IA Work pelo botão dele.';
+    const cartoes = [
+      [inteiro.format(guia.visitantes), guia.visitantes === 1 ? 'pessoa visitou o guia' : 'pessoas visitaram o guia', true],
+      [inteiro.format(naLista), naLista === 1 ? 'entrou na lista de espera pelo guia' : 'entraram na lista de espera pelo guia'],
+      [pct(naLista, guia.visitantes), 'dos visitantes entraram na lista'],
+    ];
+    const numeros = $('#guia-numeros');
+    numeros.replaceChildren();
+    cartoes.forEach(([valor, rotulo, destaque]) => {
+      const div = document.createElement('div');
+      div.className = 'numero' + (destaque ? ' numero--destaque' : '');
+      div.innerHTML = '<strong></strong><span></span>';
+      $('strong', div).textContent = valor;
+      $('span', div).textContent = rotulo;
+      numeros.appendChild(div);
+    });
+  }
+
   // ── Lista de espera do IA Work (vem junto com os números, a inscrição mais recente primeiro)
   const ORIGENS_ESPERA = { formacao: 'Botão da última aula da Formação', 'guia-hub': 'Guia da HUB', miai: 'Direto na página' };
   let emailsEspera = [];
@@ -584,6 +614,7 @@ window.CONFIG = {
       [pessoas.length, pessoas.length === 1 ? 'pessoa na lista' : 'pessoas na lista', true],
       [pessoas.filter((p) => Date.parse(p.criado_em) >= desde).length, 'entraram ' + nomePeriodo],
       [pessoas.filter((p) => p.origem === 'formacao').length, 'vieram da Formação'],
+      [pessoas.filter((p) => p.origem === 'guia-hub').length, 'vieram do Guia da HUB'],
     ];
     const numeros = $('#espera-numeros');
     numeros.replaceChildren();
@@ -743,12 +774,13 @@ window.CONFIG = {
     const nomePeriodo = d.periodo.dias ? 'nos últimos ' + d.periodo.dias + ' dias' : 'desde o começo';
     const f = d.funil;
     desenharListaEspera(d.lista_espera, d.periodo, nomePeriodo);
+    desenharGuia(d.guia_hub, d.lista_espera, d.periodo, nomePeriodo);
     desenharCursos(d.cursos, nomePeriodo);
 
     // Funil
-    $('#sub-funil').textContent = 'Visitantes da página inicial e pessoas que preencheram o formulário ' + nomePeriodo + ', e até onde cada uma chegou.';
+    $('#sub-funil').textContent = 'Visitantes da página da Formação (iaacademy.bio/inicio) e pessoas que preencheram o formulário ' + nomePeriodo + ', e até onde cada uma chegou.';
     const etapas = [
-      ['Visitaram a página inicial', f.visitaram],
+      ['Visitaram a página da Formação', f.visitaram],
       ['Preencheram o formulário', f.leads],
       ['Pagaram a Formação', f.pagaram, true],
       ['Abriram a Hub', f.abriram_hub],
@@ -848,7 +880,7 @@ window.CONFIG = {
     const paises = d.paises || [];
     const temVisitas = paises.some((x) => x.visitantes > 0);
     const chave = temVisitas ? 'visitantes' : 'leads';
-    $('#sub-paises').textContent = (temVisitas ? 'Visitantes da página inicial' : 'Leads') + ' ' + nomePeriodo + ', pelo país do acesso à internet (o IP não é guardado).';
+    $('#sub-paises').textContent = (temVisitas ? 'Visitantes da página da Formação' : 'Leads') + ' ' + nomePeriodo + ', pelo país do acesso à internet (o IP não é guardado).';
     const maiorPais = Math.max(1, ...paises.map((x) => x[chave]));
     const listaPaises = $('#paises-grafico');
     listaPaises.replaceChildren();
