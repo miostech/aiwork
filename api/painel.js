@@ -3,7 +3,7 @@
 //   GET  /api/painel?dias=7|30|90                       → números (sem "dias" = desde o começo), a lista de espera
 //                                                          dos cursos (lista_espera, inteira, a mais recente primeiro)
 //                                                          e os números de cada curso ("cursos": visitantes, vendas,
-//                                                          alunos e as últimas compras)
+//                                                          alunos e as últimas compras) e do Guia da HUB ("guia_hub")
 //   GET  /api/painel?leads=1&filtro=pendente&busca=&pagina=0 → lista de leads (50 por página)
 //   POST /api/painel { lead, conferencia }              → muda a conferência da Hub do lead:
 //        "confirmado", "nao_encontrado" (tira o acesso só de quem entrou quando o curso era gratuito) ou "pendente"
@@ -170,9 +170,15 @@ export default async function handler(req, res) {
       console.error("Não foi possível somar os números por curso:", erro.message || erro);
       return null;
     });
+    // Guia da HUB (o "/" de iaacademy.bio): visitantes no período; idem, se der erro o resto aparece
+    const visitantesGuia = await visitantesDe(db, ["hub"], desde).catch((erro) => {
+      console.error("Não foi possível contar as visitas do Guia da HUB:", erro.message || erro);
+      return null;
+    });
     return res.status(200).json({
       periodo: { dias: desde ? dias : null, desde }, atualizado_em: new Date().toISOString(), ...numeros,
       lista_espera: erroEspera ? null : espera, cursos,
+      guia_hub: visitantesGuia === null ? null : { visitantes: visitantesGuia },
     });
   } catch (erro) {
     console.error("Erro no painel:", erro);
