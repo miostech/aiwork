@@ -235,6 +235,10 @@
       "destination": "/privacidade.html"
     },
     {
+      "source": "/autorizar",
+      "destination": "/miai/autorizar.html"
+    },
+    {
       "source": "/",
       "has": [
         {
