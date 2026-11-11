@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Editfy Reels · Vídeos verticais editados com IA · MIAI Academy</title>
-<meta name="description" content="Grave na vertical e receba o vídeo pronto para postar: legenda com a palavra falada em destaque, título do gancho, cards, prints e 45 efeitos que seguem o seu rosto, com o Editfy Reels, o plugin de edição de Reels, TikTok e Shorts para o Claude Code.">
+<meta name="description" content="Grave na vertical e receba o vídeo pronto para postar: legenda com a palavra falada em destaque, título do gancho, cards, prints e 45 efeitos que seguem o seu rosto, com o Editfy Reels, a edição de Reels, TikTok e Shorts com o Claude, no computador ou pelo celular. Assinatura mensal.">
 <meta name="theme-color" content="#F3F1EC">
 <link rel="icon" type="image/png" href="/miai/favicon.png">
 <link rel="apple-touch-icon" href="/miai/icone-180.png">
@@ -14,7 +14,8 @@
 <link rel="stylesheet" href="/miai/miai.css">
 <!--
   PÁGINA DE VENDAS DO EDITFY REELS, EDIÇÃO DE VÍDEOS VERTICAIS COM IA (endereço: miaiacademy.com/editfy-reels)
-  1. Preço e link do pagamento: bloco do Editfy Reels (endereco 'editfy-reels') no CATÁLOGO (miai/miai.js).
+  1. Planos, preços e links do pagamento (assinatura mensal): bloco do Editfy Reels (endereco 'editfy-reels') no
+     CATÁLOGO (miai/miai.js). Os textos de cada plano ficam na parte "Oferta", abaixo (data-plano = id do plano).
   2. Vídeo de demonstração e depoimentos: bloco CONFIG no final deste arquivo.
   3. Textos: edite direto no HTML abaixo.
 -->
@@ -97,13 +98,17 @@
 .oferta__cabeca { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; padding-bottom: 20px; border-bottom: 1px solid var(--linha); }
 .oferta__cabeca h2 { font-size: clamp(44px, 7vw, 64px); }
 .oferta .lista-icone { margin: 0; }
-.preco__valor { font-family: var(--fonte-titulo); font-size: clamp(56px, 11vw, 88px); font-weight: 600; line-height: 0.95; letter-spacing: -0.02em; }
-.preco__parcelas { margin-top: 8px; font-size: 15px; color: var(--suave); }
-.preco__de { margin-bottom: 6px; font-size: 17px; color: var(--suave); }
-.preco__de s { text-decoration-thickness: 1.5px; }
-.cupom { padding: 14px 16px; background: var(--roxo-fundo); border-left: 3px solid var(--roxo); font-size: 15px; line-height: 1.5; color: var(--tinta-2); }
-.cupom strong { color: var(--roxo); font-weight: 600; white-space: nowrap; }
-.cupom__titulo { display: block; font-weight: 600; color: var(--tinta); }
+/* Os dois planos da assinatura */
+.planos { display: grid; gap: 18px; }
+.plano { position: relative; display: grid; gap: 10px; align-content: start; padding: 24px 18px 18px; background: var(--papel); border: 1px solid var(--linha-forte); }
+.plano--destaque { border-color: var(--tinta); box-shadow: inset 0 0 0 1px var(--tinta); }
+.plano__selo { position: absolute; top: -10px; left: 16px; padding: 3px 10px; background: var(--roxo); color: #fff; font-family: var(--fonte-etiqueta); font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.plano h3 { font-size: 30px; }
+.plano__detalhe { font-size: 14.5px; line-height: 1.45; color: var(--suave); }
+.plano__preco { margin-top: 4px; font-family: var(--fonte-titulo); font-size: 46px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+.plano__preco small { margin-left: 4px; font-family: var(--fonte); font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--suave); }
+.plano .botao { margin-top: 6px; }
+@media (min-width: 560px) { .planos { grid-template-columns: 1fr 1fr; } }
 .oferta__aviso { margin-top: -10px; font-size: 13.5px; color: var(--erro); }
 .oferta__seguro { margin-top: -8px; font-size: 13.5px; color: var(--suave); }
 .garantia { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px; align-items: start; }
@@ -148,18 +153,18 @@
       <div class="hero__grade">
         <div class="video" id="video-vendas"></div>
         <div class="hero__lado">
-          <p>O Editfy Reels é um plugin para o Claude Code que edita os seus vídeos verticais. Você manda o vídeo e a IA transcreve, coloca a legenda com a palavra falada em destaque, o título dos primeiros segundos, os cards, a plaquinha com o seu nome e o seu @, os prints que você mostra e efeitos que seguem o seu rosto, acerta o volume, confere tudo e entrega o vídeo pronto para postar. No curso você aprende a instalar, configurar o seu visual e editar os seus vídeos.</p>
+          <p>O Editfy Reels edita os seus vídeos verticais com o Claude: no computador, com o plugin do Claude Code, ou pelo celular, no app do Claude, sem instalar nada. Você manda o vídeo e a IA transcreve, coloca a legenda com a palavra falada em destaque, o título dos primeiros segundos, os cards, a plaquinha com o seu nome e o seu @, os prints que você mostra e efeitos que seguem o seu rosto, acerta o volume, confere tudo e entrega o vídeo pronto para postar. No curso você aprende a instalar, configurar o seu visual e editar os seus vídeos.</p>
           <a class="botao botao--tinta botao--grande" href="#oferta">Quero o Editfy Reels <span class="seta" aria-hidden="true">→</span></a>
-          <span class="nota">Acesso imediato · Garantia de 7 dias</span>
+          <span class="nota">Assinatura mensal · Computador ou celular · Garantia de 7 dias</span>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="faixa" aria-label="O que entra na edição: legenda em destaque, título do gancho, 45 efeitos, cards, prints e telas, volume certinho, para Reels, TikTok e Shorts">
+  <div class="faixa" aria-label="O que entra na edição: legenda em destaque, título do gancho, 45 efeitos, cards, prints e telas, volume certinho, para Reels, TikTok e Shorts, no celular, no Mac e no Windows">
     <div class="faixa__trilho" aria-hidden="true">
-      <span>Legenda em destaque</span><span>Título do gancho</span><span>45 efeitos</span><span>Cards</span><span>Prints e telas</span><span>Volume certinho</span><span>Reels, TikTok e Shorts</span><span>Mac e Windows</span>
-      <span>Legenda em destaque</span><span>Título do gancho</span><span>45 efeitos</span><span>Cards</span><span>Prints e telas</span><span>Volume certinho</span><span>Reels, TikTok e Shorts</span><span>Mac e Windows</span>
+      <span>Legenda em destaque</span><span>Título do gancho</span><span>45 efeitos</span><span>Cards</span><span>Prints e telas</span><span>Volume certinho</span><span>Reels, TikTok e Shorts</span><span>Celular, Mac e Windows</span>
+      <span>Legenda em destaque</span><span>Título do gancho</span><span>45 efeitos</span><span>Cards</span><span>Prints e telas</span><span>Volume certinho</span><span>Reels, TikTok e Shorts</span><span>Celular, Mac e Windows</span>
     </div>
   </div>
 
@@ -169,7 +174,7 @@
       <div class="secao__topo">
         <span class="rotulo"><b>01</b> Como funciona</span>
         <h2 id="titulo-como">Você grava. A IA edita.</h2>
-        <p>Tudo roda no seu computador, dentro do Claude Code. A transcrição e os efeitos são feitos no próprio computador: sem pagar por vídeo.</p>
+        <p>No computador, tudo roda dentro do Claude Code, sem limite de vídeos. Sem computador, você conversa com o Claude no celular e a edição roda nas máquinas da MIAI, dentro dos minutos do seu plano.</p>
       </div>
       <ol class="linhas">
         <li>
@@ -221,7 +226,7 @@
           <h3>O Editfy Reels é para você se…</h3>
           <ul class="lista-icone lista-icone--sim">
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Grava vídeos falando para a câmera, na vertical, com o celular</li>
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tem um computador (Mac ou Windows) e uma assinatura do Claude</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Usa o Claude: no computador (Mac ou Windows), com o Claude Code, ou só no celular, pelo app</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Quer vídeos com cara profissional sem contratar editor nem passar horas no CapCut</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Posta no Reels, TikTok ou Shorts e mostra telas, apps e prints</li>
           </ul>
@@ -229,7 +234,7 @@
         <div>
           <h3>Não é para você se…</h3>
           <ul class="lista-icone lista-icone--nao">
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Quer editar pelo celular (o plugin roda no computador)</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Precisa editar mais de 2 horas de vídeo por mês só pelo celular (no computador não tem limite)</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Quer música e efeitos sonoros (o Editfy Reels cuida da imagem e da voz)</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Faz vídeos sem aparecer falando, só com imagens e narração</li>
           </ul>
@@ -274,33 +279,39 @@
         <div class="oferta__painel">
           <div class="oferta__cabeca">
             <h2 id="titulo-oferta">Editfy Reels</h2>
-            <span class="rotulo">Vídeos verticais com IA · curso + plugin</span>
+            <span class="rotulo">Assinatura mensal · curso, plugin e celular</span>
           </div>
           <ul class="lista-icone lista-icone--sim">
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plugin Editfy Reels para o Claude Code, com as atualizações (licença para 1 computador)</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Plugin Editfy Reels para o Claude Code, com as atualizações: no computador, edite quantos vídeos quiser (licença para 1 computador)</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Editfy pelo celular, no app do Claude, sem instalar nada: os minutos do seu plano todo mês</li>
             <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>45 efeitos que seguem o seu rosto, com o seu nome, o seu @ e as suas cores</li>
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Funciona no Mac e no Windows · aulas de instalação, edição e como postar</li>
-            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>O curso fica na sua conta da MIAI Academy</li>
+            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Aulas de instalação, edição e como postar, na sua conta da MIAI Academy</li>
             <li id="item-suporte" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span></span></li>
           </ul>
-          <div>
-            <p class="preco__de" id="preco-de" hidden>De <s></s> por</p>
-            <p class="preco__valor" id="preco"></p>
-            <p class="preco__parcelas" id="parcelas" hidden></p>
+          <!-- Um bloco por plano: data-plano = id do plano no catálogo (preço e link vêm de lá) -->
+          <div class="planos">
+            <div class="plano" data-plano="editfy-reels-60">
+              <h3>60 minutos</h3>
+              <p class="plano__detalhe">de vídeo por mês pelo celular, uns 20 Reels de 3 minutos</p>
+              <p class="plano__preco"><span class="plano__valor"></span><small>/mês</small></p>
+              <a class="botao botao--tinta botao--largo" href="#oferta">Assinar 60 minutos <span class="seta" aria-hidden="true">→</span></a>
+            </div>
+            <div class="plano plano--destaque" data-plano="editfy-reels-120">
+              <span class="plano__selo">Para quem posta todo dia</span>
+              <h3>120 minutos</h3>
+              <p class="plano__detalhe">de vídeo por mês pelo celular, uns 40 Reels de 3 minutos</p>
+              <p class="plano__preco"><span class="plano__valor"></span><small>/mês</small></p>
+              <a class="botao botao--tinta botao--largo" href="#oferta">Assinar 120 minutos <span class="seta" aria-hidden="true">→</span></a>
+            </div>
           </div>
-          <p class="cupom" id="cupom" hidden>
-            <span class="cupom__titulo">Oferta até <span id="cupom-ate"></span></span>
-            O cupom <strong id="cupom-codigo"></strong> já vai aplicado no pagamento.
-          </p>
-          <a class="botao botao--tinta botao--grande botao--largo" id="btn-comprar" href="#oferta">Quero o Editfy Reels <span class="seta" aria-hidden="true">→</span></a>
-          <p class="oferta__aviso" id="aviso-checkout" hidden>Link do pagamento ainda não configurado (linkPagamento no catálogo, em miai/miai.js).</p>
-          <p class="oferta__seguro">Pagamento seguro · Acesso imediato após a confirmação. Já tem conta na MIAI? Pague com o mesmo e-mail para o curso aparecer nela.</p>
+          <p class="oferta__aviso" id="aviso-checkout" hidden>Link do pagamento de um plano ainda não configurado (planos no catálogo, em miai/miai.js).</p>
+          <p class="oferta__seguro">Pagamento seguro · Cobrança mensal no cartão · Troque de plano ou cancele quando quiser. Já tem conta na MIAI? Assine com o mesmo e-mail para o curso aparecer nela.</p>
         </div>
         <div class="garantia">
           <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.3-2.9 8-7 9.5-4.1-1.5-7-5.2-7-9.5V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.6"/></svg>
           <div>
             <h3>Garantia de 7 dias</h3>
-            <p>Se em até 7 dias você achar que o Editfy Reels não é para você, devolvemos 100% do valor. O plugin para de funcionar com o reembolso.</p>
+            <p>Se em até 7 dias da assinatura você achar que o Editfy Reels não é para você, devolvemos 100% do primeiro pagamento e cancelamos a assinatura. O plugin e o Editfy pelo celular param de funcionar com o reembolso.</p>
           </div>
         </div>
       </div>
@@ -317,7 +328,8 @@
       <div class="faq">
         <details>
           <summary>O que eu preciso ter?</summary>
-          <p>Um computador Mac ou Windows, com uns 6 GB livres, e uma assinatura do Claude, para usar o Claude Code. O resto o plugin prepara sozinho no primeiro vídeo: se faltar alguma coisa no seu computador, o próprio Claude avisa e ajuda a instalar.</p>
+          <p>No computador: um Mac ou Windows, com uns 6 GB livres, e uma assinatura do Claude, para usar o Claude Code. O resto o plugin prepara sozinho no primeiro vídeo: se faltar alguma coisa no seu computador, o próprio Claude avisa e ajuda a instalar.</p>
+          <p>Só no celular: o app do Claude (ou o claude.ai no navegador) com a sua conta do Claude. Você adiciona o conector do Editfy uma vez, entra com a sua conta da MIAI e pronto, sem instalar nada.</p>
         </details>
         <details>
           <summary>Preciso saber programar ou editar vídeo?</summary>
@@ -329,11 +341,23 @@
         </details>
         <details>
           <summary>Quanto tempo leva para editar um vídeo?</summary>
-          <p>Depende do computador. Num Mac com chip Apple, um vídeo de 1 minuto fica pronto em uns 5 minutos, contando a transcrição, os efeitos e a conferência. No Windows sem placa de vídeo NVIDIA, leva mais tempo.</p>
+          <p>No computador, depende da máquina. Num Mac com chip Apple, um vídeo de 1 minuto fica pronto em uns 5 minutos, contando a transcrição, os efeitos e a conferência. No Windows sem placa de vídeo NVIDIA, leva mais tempo. Pelo celular, a edição roda nas máquinas da MIAI: você pode fechar o app e recebe um e-mail quando o vídeo fica pronto.</p>
         </details>
         <details>
           <summary>Tem custo por vídeo?</summary>
-          <p>Não. A transcrição, os efeitos e a edição rodam no seu computador, sem pagar por vídeo. Você só precisa da sua assinatura do Claude.</p>
+          <p>Não. No computador, a transcrição, os efeitos e a edição rodam na sua máquina, sem limite de vídeos. Pelo celular, cada plano tem os seus minutos do mês, sem cobrança a mais por vídeo.</p>
+        </details>
+        <details>
+          <summary>Como funcionam os minutos?</summary>
+          <p>Os minutos são do vídeo que você grava e manda pelo celular: um vídeo de 3 minutos usa 3 minutos, mesmo que fique mais curto depois dos cortes. Eles renovam no dia 1º de cada mês e não acumulam. No computador, com o plugin, não conta minuto. Se faltar, troque para o plano de 120 minutos.</p>
+        </details>
+        <details>
+          <summary>Posso trocar de plano ou cancelar?</summary>
+          <p>Sim, quando quiser, na sua conta da MIAI Academy, em "Gerenciar assinatura": lá você troca de plano, troca o cartão ou cancela. Se cancelar, você continua usando até o fim do mês que já pagou; depois o plugin e o Editfy pelo celular param de funcionar.</p>
+        </details>
+        <details>
+          <summary>Já comprei o Editfy Reels antes. Preciso assinar?</summary>
+          <p>Não. Quem comprou o Editfy Reels antes da assinatura continua com as aulas e o plugin no computador, com as atualizações, sem pagar mais nada. A assinatura é para quem quer editar também pelo celular: assine com o mesmo e-mail da sua conta.</p>
         </details>
         <details>
           <summary>Os vídeos são meus?</summary>
@@ -341,7 +365,7 @@
         </details>
         <details>
           <summary>Como recebo o acesso?</summary>
-          <p>Assim que o pagamento é confirmado, você recebe por e-mail os dados da sua conta na MIAI Academy. Na primeira aula estão os seus comandos pessoais de instalação.</p>
+          <p>Assim que o primeiro pagamento é confirmado, você recebe por e-mail os dados da sua conta na MIAI Academy. Na primeira aula estão os seus comandos pessoais de instalação.</p>
         </details>
         <details>
           <summary>Ele coloca música?</summary>
@@ -361,7 +385,7 @@
         </details>
         <details>
           <summary>O plugin recebe atualizações?</summary>
-          <p>Sim. As melhorias chegam pela mesma loja que você adiciona na instalação, sem comprar de novo.</p>
+          <p>Sim. As melhorias chegam pela mesma loja que você adiciona na instalação, sem pagar nada a mais.</p>
         </details>
         <details>
           <summary>Posso instalar em mais de um computador?</summary>
@@ -409,7 +433,7 @@
 <script src="/miai/miai.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  CONFIGURAÇÃO — preço e link do pagamento ficam no CATÁLOGO (miai/miai.js)
+//  CONFIGURAÇÃO — planos, preços e links do pagamento ficam no CATÁLOGO (miai/miai.js)
 // ═══════════════════════════════════════════════════════════════
 window.CONFIG = {
   // Link de incorporação (embed) de um vídeo de vendas vertical (Panda, YouTube, Vimeo...). Com ele, o vídeo de
@@ -438,16 +462,13 @@ window.CONFIG = {
   const $ = (sel) => document.querySelector(sel);
   Miai.ajustarTopo();
 
-  const cupomAtivo = !!(CURSO.cupom && CURSO.cupom.codigo && (!CURSO.cupom.ate || Date.now() <= Date.parse(CURSO.cupom.ate)));
-
-  // Link do Stripe com o e-mail de quem já entrou na MIAI neste aparelho e o cupom (enquanto valer) já preenchidos
-  function linkPagamento() {
+  // Link do Stripe com o e-mail de quem já entrou na MIAI neste aparelho já preenchido
+  function linkPagamento(link) {
     let url;
-    try { url = new URL(CURSO.linkPagamento); } catch (e) { return CURSO.linkPagamento; }
-    if (!/(^|\.)stripe\.com$/.test(url.hostname)) return CURSO.linkPagamento;
+    try { url = new URL(link); } catch (e) { return link; }
+    if (!/(^|\.)stripe\.com$/.test(url.hostname)) return link;
     const email = Miai.emailGuardado();
     if (email) url.searchParams.set('prefilled_email', email);
-    if (cupomAtivo) url.searchParams.set('prefilled_promo_code', CURSO.cupom.codigo);
     url.searchParams.set('locale', 'pt-BR');
     return url.toString();
   }
@@ -497,33 +518,27 @@ window.CONFIG = {
     $('.hero__grade').classList.add('hero__grade--texto');
   }
 
-  function mostrarPreco() {
-    if (cupomAtivo) {
-      $('#preco-de s').textContent = Miai.precoDe(CURSO);
-      $('#preco').textContent = Miai.precoCupomDe(CURSO);
+  // Planos: preço de cada um (reais no Brasil, dólar fora) e o seu link de pagamento, do catálogo
+  const planos = (CURSO.planos || []).map((p) => ({ p: p, el: document.querySelector('[data-plano="' + p.id + '"]') }))
+    .filter((x) => x.el);
+  function mostrarPrecos() {
+    planos.forEach((x) => { x.el.querySelector('.plano__valor').textContent = Miai.precoDe(x.p); });
+  }
+  mostrarPrecos();
+  Miai.pais.then(mostrarPrecos);
+  let faltaLink = false;
+  planos.forEach((x) => {
+    const botao = x.el.querySelector('.botao');
+    if (x.p.linkPagamento) {
+      botao.href = linkPagamento(x.p.linkPagamento);
     } else {
-      $('#preco').textContent = Miai.precoDe(CURSO);
+      faltaLink = true;
+      botao.setAttribute('aria-disabled', 'true');
+      botao.addEventListener('click', (e) => e.preventDefault());
     }
-    $('#parcelas').textContent = Miai.parcelasDe(CURSO);
-    $('#parcelas').hidden = !Miai.parcelasDe(CURSO);
-  }
-  $('#preco-de').hidden = !cupomAtivo;
-  mostrarPreco();
-  Miai.pais.then(mostrarPreco);
-  if (cupomAtivo) {
-    $('#cupom-codigo').textContent = CURSO.cupom.codigo;
-    $('#cupom-ate').textContent = CURSO.cupom.ateTexto || '';
-    $('#cupom').hidden = false;
-  }
+  });
+  $('#aviso-checkout').hidden = !faltaLink;
   if (C.suporte) { $('#item-suporte span').textContent = C.suporte; $('#item-suporte').hidden = false; }
-  const comprar = $('#btn-comprar');
-  if (CURSO.linkPagamento) {
-    comprar.href = linkPagamento();
-  } else {
-    comprar.setAttribute('aria-disabled', 'true');
-    comprar.addEventListener('click', (e) => e.preventDefault());
-    $('#aviso-checkout').hidden = false;
-  }
 
   const lista = (C.depoimentos || []).filter((d) => d && d.texto && d.nome);
   if (lista.length) {

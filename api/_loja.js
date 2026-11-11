@@ -9,7 +9,8 @@
 //        → fotos e vídeos sobre o tema (Pixabay; Pexels se só houver a chave dele), para os plugins de edição (Editfy
 //          e Editfy Reels) usarem no vídeo. Só com a licença de um deles ativa; a chave nunca sai daqui. As duas
 //          licenças: uso comercial livre, sem crédito obrigatório (não vale revender a imagem sozinha).
-// Reembolso tira o acesso ao curso (api/stripe-webhook.js): o plugin some da loja, para de atualizar e de funcionar.
+// Reembolso, fim da assinatura ou pagamento que falhou de vez tiram o acesso ao curso (api/stripe-webhook.js): o plugin
+// some da loja, para de atualizar e de funcionar. Nos cursos com planos, qualquer plano libera o mesmo plugin.
 //
 // Variáveis de ambiente:
 //   GITHUB_TOKEN      token fine-grained da miostech com "Contents: Read-only" nos repositórios miostech/miai-plugin-*

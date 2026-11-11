@@ -30,6 +30,7 @@ main { min-height: 60vh; }
 .vazio h3 { font-size: clamp(26px, 3.6vw, 34px); }
 .vazio p { color: var(--suave); max-width: 52ch; }
 .estado .rodape-estado { font-size: 14px; color: var(--suave); padding-top: 16px; border-top: 1px solid var(--linha); }
+.cartao-curso__assinatura { font-size: 14px; line-height: 1.5; color: var(--suave); }
 </style>
 <script src="/contador.js" data-pagina="miai-conta" defer></script>
 </head>
@@ -163,6 +164,23 @@ main { min-height: 60vh; }
     }
   }
 
+  // Quem assina (cursos com planos): o plano e o link do portal do Stripe para trocar de plano, de cartão ou cancelar
+  function linhaAssinatura(curso, plano) {
+    const linha = document.createElement('p');
+    linha.className = 'cartao-curso__assinatura';
+    linha.textContent = 'Assinatura: ' + plano.nome + ' por mês pelo celular';
+    if (curso.portalAssinatura) {
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = curso.portalAssinatura;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = 'Gerenciar assinatura';
+      linha.append(' · ', link);
+    }
+    return linha;
+  }
+
   function montarConta(dados) {
     const primeiroNome = String((dados.aluno && dados.aluno.nome) || '').trim().split(/\s+/)[0];
     $('#aluno').textContent = primeiroNome || 'aluno(a)';
@@ -177,11 +195,13 @@ main { min-height: 60vh; }
       const meu = tenho.get(curso.endereco);
       if (!meu && curso.oculto) return;  // curso fora da vitrine: só aparece para quem já tem
       if (meu) {
-        meus.appendChild(Miai.cartaoCurso(curso, {
+        const cartao = Miai.cartaoCurso(curso, {
           acao: meu.concluidas ? 'Continuar' : 'Começar',
           link: meu.link || '/conta/' + curso.endereco,   // a Formação abre as aulas na IA Academy
           progresso: { concluidas: meu.concluidas, total: meu.total },
-        }));
+        });
+        if (meu.plano) cartao.querySelector('.cartao-curso__rodape').before(linhaAssinatura(curso, meu.plano));
+        meus.appendChild(cartao);
       } else {
         outros.appendChild(Miai.cartaoCurso(curso));
       }

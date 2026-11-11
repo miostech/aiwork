@@ -1,6 +1,8 @@
 // Conta do aluno na MIAI Academy: quais cursos da MIAI ele comprou e quanto já assistiu de cada um.
 // Usado pela miai/conta.html, que manda o token do login no cabeçalho Authorization.
-//   GET /api/conta → { aluno: { nome }, cursos: [{ endereco, nome, concluidas, total, link? }] }
+//   GET /api/conta → { aluno: { nome }, cursos: [{ endereco, nome, concluidas, total, link?, plano? }] }
+// "plano" ({ nome, minutos }) só vem nos cursos com assinatura (planos em api/_cursos.js), para quem assina: o maior
+// plano ativo. Quem comprou o curso uma vez (compra única) vem sem "plano".
 // Entram os cursos da MIAI (api/_cursos.js) com acesso liberado e a Formação IA Academy, que também é vendida na MIAI
 // (com "link" para as aulas, que ficam na área do aluno da IA Academy).
 // Também caem aqui, pelo vercel.json: /api/plugins (licença dos plugins do Claude Code, api/_plugins.js) e a loja dos
@@ -53,7 +55,10 @@ export default async function handler(req, res) {
         if (!acesso) return null;
         const total = totalDeAulas(curso.aulas);
         const concluidas = (acesso.aulas_concluidas || []).filter((i) => i >= 0 && i < total).length;
-        return { endereco: curso.endereco, nome: curso.nome, concluidas, total };
+        const plano = (curso.planos || []).filter((p) => (acessos || []).some((a) => a.curso === p.id))
+          .sort((a, b) => b.minutos - a.minutos)[0];
+        return { endereco: curso.endereco, nome: curso.nome, concluidas, total,
+                 ...(plano ? { plano: { nome: plano.nome, minutos: plano.minutos } } : {}) };
       })
       .filter(Boolean);
 
