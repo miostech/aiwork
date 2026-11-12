@@ -1,6 +1,17 @@
 {
   "redirects": [
     {
+      "source": "/oauth/authorize",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://khepshfqyeqncjhlctza.supabase.co/auth/v1/oauth/authorize",
+      "permanent": false
+    },
+    {
       "source": "/",
       "has": [
         {
@@ -203,6 +214,26 @@
   ],
   "rewrites": [
     {
+      "source": "/.well-known/oauth-authorization-server/oauth",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/oauth-authorization-server.json"
+    },
+    {
+      "source": "/oauth/.well-known/oauth-authorization-server",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "/miai/oauth-authorization-server.json"
+    },
+    {
       "source": "/loja/:licenca/marketplace.json",
       "destination": "/api/conta?loja=catalogo&licenca=:licenca"
     },
@@ -321,6 +352,34 @@
     {
       "source": "/painel",
       "destination": "/painel.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/.well-known/oauth-authorization-server/oauth",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
+    },
+    {
+      "source": "/oauth/.well-known/oauth-authorization-server",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
+        }
+      ]
     }
   ]
 }
