@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Conectar o Editfy · MIAI Academy</title>
+<title>Conectar o Editefy · MIAI Academy</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#F3F1EC">
 <link rel="icon" type="image/png" href="/miai/favicon.png">
@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="/miai/miai.css">
 <!--
   AUTORIZAR UM APP NA CONTA DA MIAI (endereço: /autorizar?authorization_id=...)
-  É a tela de consentimento do servidor OAuth 2.1 do Supabase: o Claude (conector do Editfy no servidor) manda o
+  É a tela de consentimento do servidor OAuth 2.1 do Supabase: o Claude (conector do Editefy no servidor) manda o
   aluno para cá. Ele entra com o e-mail e a senha da MIAI (se ainda não entrou neste aparelho) e toca em Permitir;
   o Supabase devolve o endereço para voltar ao Claude.
   No Supabase: Authentication > OAuth Server > Authorization Path = /autorizar (somado ao Site URL).
@@ -51,7 +51,7 @@ input { font: inherit; padding: 14px 16px; border-radius: 12px; border: 1px soli
   <section class="cartao" id="login" hidden>
     <span class="rotulo rotulo--ponto">Conectar</span>
     <h1>Entrar.</h1>
-    <p>Para usar o Editfy no Claude, entre com o e-mail e a senha da sua conta da MIAI.</p>
+    <p>Para usar o Editefy no Claude, entre com o e-mail e a senha da sua conta da MIAI.</p>
     <form id="form-login">
       <input type="email" id="email" autocomplete="email" placeholder="Seu e-mail" required>
       <input type="password" id="senha" autocomplete="current-password" placeholder="Senha" required>
@@ -65,9 +65,9 @@ input { font: inherit; padding: 14px 16px; border-radius: 12px; border: 1px soli
     <h1>Permitir acesso?</h1>
     <div class="app">
       <b id="nome-app">Claude</b>
-      <small>quer usar o Editfy com a sua conta da MIAI (<span id="email-conta"></span>)</small>
+      <small>quer usar o Editefy com a sua conta da MIAI (<span id="email-conta"></span>)</small>
     </div>
-    <p>Ele vai poder editar os seus vídeos no Editfy dentro do limite do seu plano. Você pode desconectar quando quiser
+    <p>Ele vai poder editar os seus vídeos no Editefy dentro do limite do seu plano. Você pode desconectar quando quiser
       nos conectores do Claude.</p>
     <div class="erro" id="erro-consentir"></div>
     <div class="acoes">
@@ -78,7 +78,7 @@ input { font: inherit; padding: 14px 16px; border-radius: 12px; border: 1px soli
 
   <section class="cartao" id="problema" hidden>
     <h1>Não deu certo.</h1>
-    <p id="texto-problema">Este pedido de conexão expirou. Volte para o Claude e conecte o Editfy de novo.</p>
+    <p id="texto-problema">Este pedido de conexão expirou. Volte para o Claude e conecte o Editefy de novo.</p>
   </section>
 </main>
 
