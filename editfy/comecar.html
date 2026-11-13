@@ -16,7 +16,8 @@
   COMO CONECTAR O EDITEFY (editefy.com/comecar) e OBRIGADO (editefy.com/obrigado, a mesma página com o aviso do
   pagamento; ponha https://www.editefy.com/obrigado como página de confirmação nos links de pagamento do Stripe).
   O endereço do conector é o do servidor do Editefy (o mesmo do e-mail compra_editefy, em api/_emails.js).
-  Depois do teste no ChatGPT, entra aqui o passo a passo dele.
+  A aba do ChatGPT foi escrita pela ajuda da OpenAI (os nomes dos menus mudam entre versões) e ainda não foi testada
+  com o Editefy: conferir depois do primeiro teste no ChatGPT.
 -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
 <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
@@ -40,8 +41,8 @@ main { padding:40px 0 72px; }
 h1 { margin:0; font-size:clamp(32px, 6vw, 46px); line-height:1.08; letter-spacing:-0.03em; font-weight:800; }
 .sub { margin:14px 0 0; color:var(--suave); font-size:18px; max-width:52ch; }
 .abas { display:inline-flex; gap:4px; margin-top:30px; padding:4px; border:1px solid var(--borda); border-radius:12px; background:var(--fundo-2); }
-.abas b { padding:8px 16px; border-radius:9px; font-size:15px; background:var(--cartao-2); }
-.abas span { padding:8px 16px; font-size:15px; color:var(--suave); }
+.abas button { padding:8px 18px; border:0; border-radius:9px; background:transparent; color:var(--suave); font:inherit; font-size:15px; font-weight:600; cursor:pointer; }
+.abas button[aria-selected="true"] { background:var(--cartao-2); color:var(--texto); font-weight:700; }
 .passos { list-style:none; margin:24px 0 0; padding:0; display:grid; gap:14px; }
 .passo { display:grid; grid-template-columns:36px minmax(0, 1fr); gap:16px; padding:22px 20px; border:1px solid var(--borda); border-radius:18px; background:var(--cartao); }
 .passo__numero { display:grid; place-items:center; width:36px; height:36px; border-radius:11px; background:var(--roxo); color:#fff; font-weight:800; }
@@ -85,9 +86,12 @@ h1 { margin:0; font-size:clamp(32px, 6vw, 46px); line-height:1.08; letter-spacin
   <h1>Conecte o Editefy em um minuto.</h1>
   <p class="sub">Você faz isso uma vez só. Depois, é só pedir na conversa sempre que quiser editar um vídeo.</p>
 
-  <div class="abas" aria-hidden="true"><b>Claude</b><span>ChatGPT em breve</span></div>
+  <div class="abas" role="tablist" aria-label="Onde você usa o Editefy">
+    <button type="button" role="tab" id="aba-claude" aria-controls="passos-claude" aria-selected="true">Claude</button>
+    <button type="button" role="tab" id="aba-chatgpt" aria-controls="passos-chatgpt" aria-selected="false">ChatGPT</button>
+  </div>
 
-  <ol class="passos">
+  <ol class="passos" id="passos-claude" role="tabpanel" aria-labelledby="aba-claude">
     <li class="passo">
       <span class="passo__numero">1</span>
       <div>
@@ -101,8 +105,8 @@ h1 { margin:0; font-size:clamp(32px, 6vw, 46px); line-height:1.08; letter-spacin
         <h2>Cole o endereço do Editefy</h2>
         <p>Em nome, escreva <strong>Editefy</strong>. Em endereço, cole este:</p>
         <div class="copiar">
-          <code id="endereco">https://chaxdwick--editfy-mcp.modal.run/mcp</code>
-          <button type="button" id="botao-copiar">Copiar</button>
+          <code class="endereco">https://chaxdwick--editfy-mcp.modal.run/mcp</code>
+          <button type="button" class="botao-copiar">Copiar</button>
         </div>
       </div>
     </li>
@@ -118,6 +122,50 @@ h1 { margin:0; font-size:clamp(32px, 6vw, 46px); line-height:1.08; letter-spacin
       <div>
         <h2>Peça o primeiro vídeo</h2>
         <p>Numa conversa nova, escreva:</p>
+        <span class="frase">Quero editar um Reels com o Editefy</span>
+        <p>A IA te manda um link para escolher o vídeo da galeria e te guia pelo resto.</p>
+      </div>
+    </li>
+  </ol>
+
+  <ol class="passos" id="passos-chatgpt" role="tabpanel" aria-labelledby="aba-chatgpt" hidden>
+    <li class="passo">
+      <span class="passo__numero">1</span>
+      <div>
+        <h2>Abra o ChatGPT no navegador</h2>
+        <p>Entre em <strong>chatgpt.com</strong>, de preferência no computador. No ChatGPT, adicionar um conector pede um plano pago.</p>
+      </div>
+    </li>
+    <li class="passo">
+      <span class="passo__numero">2</span>
+      <div>
+        <h2>Adicione um conector personalizado</h2>
+        <p>Em <strong>Configurações</strong>, abra <strong>Apps</strong> (ou <strong>Plugins</strong>, ou <strong>Conectores</strong>, dependendo da sua versão) e toque em <strong>+</strong> ou <strong>Criar</strong> para adicionar um servidor MCP personalizado. Se essa opção não aparecer, ligue o <strong>Modo de desenvolvedor</strong> nas configurações avançadas.</p>
+      </div>
+    </li>
+    <li class="passo">
+      <span class="passo__numero">3</span>
+      <div>
+        <h2>Cole o endereço do Editefy</h2>
+        <p>Em nome, escreva <strong>Editefy</strong>. Em endereço (URL), cole este e escolha <strong>OAuth</strong> como autenticação:</p>
+        <div class="copiar">
+          <code class="endereco">https://chaxdwick--editfy-mcp.modal.run/mcp</code>
+          <button type="button" class="botao-copiar">Copiar</button>
+        </div>
+      </div>
+    </li>
+    <li class="passo">
+      <span class="passo__numero">4</span>
+      <div>
+        <h2>Entre com a sua conta</h2>
+        <p>Toque em <strong>Conectar</strong>, entre com o e-mail e a senha que você recebeu por e-mail e toque em <strong>Permitir</strong>.</p>
+      </div>
+    </li>
+    <li class="passo">
+      <span class="passo__numero">5</span>
+      <div>
+        <h2>Peça o primeiro vídeo</h2>
+        <p>Numa conversa nova, ative o Editefy no botão <strong>+</strong> da caixa de mensagem e escreva:</p>
         <span class="frase">Quero editar um Reels com o Editefy</span>
         <p>A IA te manda um link para escolher o vídeo da galeria e te guia pelo resto.</p>
       </div>
@@ -161,18 +209,33 @@ h1 { margin:0; font-size:clamp(32px, 6vw, 46px); line-height:1.08; letter-spacin
     document.getElementById('pago').hidden = false;
     document.title = 'Pagamento confirmado · Editefy';
   }
-  const botao = document.getElementById('botao-copiar');
-  const endereco = document.getElementById('endereco').textContent.trim();
-  botao.addEventListener('click', async () => {
-    let ok = false;
-    try { await navigator.clipboard.writeText(endereco); ok = true; } catch (e) {
-      const sel = getSelection(), r = document.createRange();
-      r.selectNodeContents(document.getElementById('endereco')); sel.removeAllRanges(); sel.addRange(r);
-      try { ok = document.execCommand('copy'); } catch (e2) {}
-    }
-    botao.textContent = ok ? 'Copiado ✓' : 'Selecionado';
-    botao.classList.toggle('ok', ok);
-    setTimeout(() => { botao.textContent = 'Copiar'; botao.classList.remove('ok'); }, 2500);
+  // Abas Claude / ChatGPT (editefy.com/comecar#chatgpt já abre a do ChatGPT)
+  const abas = [['claude', 'passos-claude'], ['chatgpt', 'passos-chatgpt']];
+  function mostrarAba(nome) {
+    abas.forEach(([aba, lista]) => {
+      document.getElementById('aba-' + aba).setAttribute('aria-selected', String(aba === nome));
+      document.getElementById(lista).hidden = aba !== nome;
+    });
+  }
+  abas.forEach(([aba]) => document.getElementById('aba-' + aba).addEventListener('click', () => {
+    mostrarAba(aba);
+    history.replaceState(null, '', aba === 'chatgpt' ? '#chatgpt' : location.pathname + location.search);
+  }));
+  if (location.hash === '#chatgpt') mostrarAba('chatgpt');
+
+  document.querySelectorAll('.botao-copiar').forEach((botao) => {
+    const codigo = botao.parentElement.querySelector('.endereco');
+    botao.addEventListener('click', async () => {
+      let ok = false;
+      try { await navigator.clipboard.writeText(codigo.textContent.trim()); ok = true; } catch (e) {
+        const sel = getSelection(), r = document.createRange();
+        r.selectNodeContents(codigo); sel.removeAllRanges(); sel.addRange(r);
+        try { ok = document.execCommand('copy'); } catch (e2) {}
+      }
+      botao.textContent = ok ? 'Copiado ✓' : 'Selecionado';
+      botao.classList.toggle('ok', ok);
+      setTimeout(() => { botao.textContent = 'Copiar'; botao.classList.remove('ok'); }, 2500);
+    });
   });
 })();
 </script>

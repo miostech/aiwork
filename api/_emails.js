@@ -700,9 +700,9 @@ MODELOS.compra_editefy = {
   assunto: "Seu acesso ao Editefy",
   html: emailEditefy({
     titulo: "Seu acesso ao Editefy",
-    previa: "Assinatura ativa. Veja como conectar o Editefy ao seu Claude em um minuto.",
+    previa: "Assinatura ativa. Veja como conectar o Editefy ao seu Claude ou ChatGPT em um minuto.",
     chamada: "Bem-vindo(a) ao Editefy, {{{NOME}}}!",
-    texto: "Sua assinatura está ativa. Para começar, conecte o Editefy no Claude e entre com os dados abaixo.",
+    texto: "Sua assinatura está ativa. Para começar, conecte o Editefy e entre com os dados abaixo. Os passos são do Claude; se você usa o ChatGPT, o botão no fim mostra o passo a passo dele.",
     rotuloSenha: "Senha",
     passos: [
       "No app do Claude (ou em claude.ai), abra <strong>Configurações &rarr; Conectores</strong> e toque em <strong>Adicionar conector personalizado</strong>.",
