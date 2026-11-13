@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Editfy · Seus Reels editados pela IA, dentro do Claude e do ChatGPT</title>
+<meta name="description" content="O Editfy conecta ao seu Claude ou ChatGPT e edita Reels, TikTok, Shorts e Stories conversando: legenda em destaque, título do gancho, cortes de pausas e 45 efeitos que seguem o seu rosto. Sem instalar nada, pelo celular.">
+<link rel="canonical" href="https://www.editefy.com/">
+<meta name="theme-color" content="#0f0d16">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.editefy.com/">
+<meta property="og:title" content="Editfy · Seus Reels editados pela IA">
+<meta property="og:description" content="Conecte ao Claude ou ao ChatGPT, mande o vídeo pelo celular e peça o que quer. Volta pronto para postar.">
+<meta property="og:image" content="https://www.editefy.com/miai/cursos/editfy-reels/demonstracao-capa.jpg">
+<link rel="icon" type="image/svg+xml" href="/editfy/icone.svg">
+<link rel="apple-touch-icon" href="/editfy/icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<!--
+  SITE DO EDITFY (endereço: editefy.com; a rota fica no vercel.json, pelo domínio)
+  1. Planos, preços e links do pagamento: os mesmos da assinatura do Editfy Reels, no CATÁLOGO (miai/miai.js,
+     bloco 'editfy-reels'). Esta página só lê de lá: o pagamento e a conta continuam na MIAI Academy.
+  2. Vídeo de demonstração: CONFIG no final deste arquivo.
+  3. Textos: edite direto no HTML abaixo.
+-->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MF0VME7XDQ"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-MF0VME7XDQ'); gtag('config', 'AW-16634203262');</script>
+<style>
+:root {
+  --fundo: #0f0d16; --fundo-2: #151221; --cartao: #1a1724; --cartao-2: #211d2e; --borda: #2c2838; --borda-forte: #3d3750;
+  --texto: #f4f2fa; --suave: #a7a1b8; --apagado: #6f6884; --roxo: #8b5cf6; --roxo-claro: #a78bfa; --roxo-escuro: #6d28d9;
+  --verde: #22c55e; --raio: 18px; --largura: 1120px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 17px/1.55 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif; overflow-x: hidden; }
+img, video { display: block; max-width: 100%; }
+a { color: inherit; }
+h1, h2, h3 { margin: 0; letter-spacing: -0.025em; line-height: 1.08; font-weight: 800; }
+p { margin: 0; }
+.container { width: min(100% - 32px, var(--largura)); margin: 0 auto; }
+.secao { padding: 72px 0; }
+@media (min-width: 900px) { .secao { padding: 104px 0; } }
+.etiqueta { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--roxo-claro); }
+.titulo-secao { font-size: clamp(32px, 5vw, 52px); max-width: 18ch; margin-top: 14px; }
+.sub-secao { color: var(--suave); max-width: 56ch; margin-top: 16px; font-size: 18px; }
+
+/* Botões */
+.botao { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 24px; border-radius: 14px; border: 0;
+  background: var(--roxo); color: #fff; font: inherit; font-weight: 700; font-size: 16px; text-decoration: none; cursor: pointer;
+  transition: background .15s, transform .15s; }
+.botao:hover { background: #7c4df0; }
+.botao:active { transform: translateY(1px); }
+.botao:focus-visible { outline: 3px solid var(--roxo-claro); outline-offset: 3px; }
+.botao--grande { padding: 18px 28px; font-size: 17px; }
+.botao--fantasma { background: transparent; border: 1px solid var(--borda-forte); color: var(--texto); }
+.botao--fantasma:hover { background: var(--cartao); }
+.botao--largo { width: 100%; }
+.botao[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+/* Topo */
+.topo { position: sticky; top: 0; z-index: 10; background: rgba(15, 13, 22, .82); backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px); border-bottom: 1px solid transparent; transition: border-color .2s; }
+.topo.rolou { border-bottom-color: var(--borda); }
+.topo__linha { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+.marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 21px; letter-spacing: -0.03em; }
+.marca svg { flex: none; }
+.topo nav { display: none; gap: 28px; font-size: 15px; font-weight: 600; color: var(--suave); }
+.topo nav a { text-decoration: none; }
+.topo nav a:hover { color: var(--texto); }
+.topo .botao { padding: 10px 18px; font-size: 15px; border-radius: 12px; }
+@media (min-width: 860px) { .topo nav { display: flex; } }
+
+/* Primeira dobra */
+.hero { position: relative; padding: 48px 0 72px; overflow: hidden; }
+.hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 760px; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(139, 92, 246, .28), transparent 70%) 70% 30% / 900px 700px no-repeat,
+              radial-gradient(closest-side, rgba(56, 189, 248, .10), transparent 70%) 10% 10% / 700px 600px no-repeat; }
+.hero__grade { position: relative; display: grid; gap: 48px; align-items: center; }
+.selos-ia { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; border: 1px solid var(--borda-forte);
+  border-radius: 999px; background: rgba(26, 23, 36, .7); font-size: 14px; color: var(--suave); }
+.selos-ia b { padding: 4px 10px; border-radius: 999px; background: var(--cartao-2); color: var(--texto); font-weight: 700; font-size: 13px; }
+.hero h1 { margin-top: 22px; font-size: clamp(40px, 7.4vw, 76px); max-width: 13ch; }
+.hero h1 em { font-style: normal; background: linear-gradient(90deg, #c4b5fd, #8b5cf6 60%, #f0abfc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero__texto { margin-top: 22px; color: var(--suave); font-size: 19px; max-width: 46ch; }
+.hero__botoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.hero__confianca { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 26px; font-size: 14px; color: var(--suave); }
+.hero__confianca span { display: inline-flex; align-items: center; gap: 7px; }
+.hero__confianca svg { color: var(--verde); }
+@media (min-width: 960px) {
+  .hero { padding: 72px 0 104px; }
+  .hero__grade { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 56px; }
+}
+
+/* Celular com o vídeo e a conversa por cima */
+.palco { position: relative; justify-self: center; width: min(100%, 420px); padding: 0 8px; }
+.celular { position: relative; width: min(78vw, 300px); margin: 0 auto; aspect-ratio: 9 / 19.2; border-radius: 44px; padding: 10px;
+  background: linear-gradient(160deg, #2a2540, #121018); box-shadow: 0 40px 80px -30px rgba(139, 92, 246, .55), 0 0 0 1px #3a3450 inset; }
+.celular__tela { position: relative; width: 100%; height: 100%; border-radius: 35px; overflow: hidden; background: #000; }
+.celular__tela video { width: 100%; height: 100%; object-fit: cover; }
+.celular__ilha { position: absolute; top: 10px; left: 50%; width: 86px; height: 24px; transform: translateX(-50%); border-radius: 99px; background: #000; z-index: 2; }
+.som { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border: 0;
+  border-radius: 999px; background: rgba(15, 13, 22, .78); color: #fff; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.som:focus-visible { outline: 3px solid var(--roxo-claro); outline-offset: 2px; }
+.balao { position: absolute; z-index: 3; max-width: 230px; padding: 11px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4;
+  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, .7); }
+.balao--voce { right: -4px; top: 14%; background: var(--roxo); color: #fff; border-bottom-right-radius: 6px; }
+.balao--ia { left: -6px; bottom: 16%; background: var(--cartao-2); border: 1px solid var(--borda-forte); border-bottom-left-radius: 6px; }
+.balao--ia b { display: block; font-size: 12px; color: var(--roxo-claro); margin-bottom: 3px; }
+@media (max-width: 420px) { .balao { max-width: 190px; font-size: 13px; } .balao--voce { right: 0; } .balao--ia { left: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .balao { animation: flutuar 6s ease-in-out infinite; }
+  .balao--ia { animation-delay: -3s; }
+  @keyframes flutuar { 50% { transform: translateY(-8px); } }
+}
+
+/* Faixa de formatos */
+.faixa { border-top: 1px solid var(--borda); border-bottom: 1px solid var(--borda); background: var(--fundo-2); }
+.faixa .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 36px; padding: 22px 0; color: var(--suave); font-weight: 600; font-size: 15px; }
+.faixa span { display: inline-flex; align-items: center; gap: 8px; }
+.faixa i { width: 6px; height: 6px; border-radius: 50%; background: var(--roxo); }
+
+/* Conversa de exemplo */
+.conversa-grade { display: grid; gap: 40px; align-items: center; margin-top: 8px; }
+@media (min-width: 960px) { .conversa-grade { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 64px; } }
+.chat { display: grid; gap: 12px; padding: 22px; border: 1px solid var(--borda); border-radius: 24px; background: var(--cartao); }
+.chat__topo { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; margin-bottom: 4px; border-bottom: 1px solid var(--borda); font-size: 14px; color: var(--suave); }
+.chat__topo b { color: var(--texto); }
+.chat__ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); }
+.msg { max-width: 86%; padding: 12px 15px; border-radius: 18px; font-size: 15.5px; line-height: 1.45; }
+.msg--voce { justify-self: end; background: var(--roxo); color: #fff; border-bottom-right-radius: 6px; }
+.msg--ia { justify-self: start; background: var(--cartao-2); border: 1px solid var(--borda); border-bottom-left-radius: 6px; }
+.msg--ia small { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--roxo-claro); }
+.msg__link { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 8px 12px; border-radius: 10px; background: var(--roxo); color: #fff; font-weight: 700; font-size: 14px; }
+.revelar { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+.revelar.visivel { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .revelar { opacity: 1; transform: none; transition: none; } }
+.pontos { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 18px; }
+.pontos li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; align-items: start; }
+.pontos__icone { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(139, 92, 246, .14); color: var(--roxo-claro); }
+.pontos h3 { font-size: 18px; letter-spacing: -0.01em; }
+.pontos p { margin-top: 4px; color: var(--suave); font-size: 15.5px; }
+
+/* Como funciona */
+.passos { list-style: none; margin: 48px 0 0; padding: 0; display: grid; gap: 16px; counter-reset: passo; }
+.passo { position: relative; padding: 26px 22px 24px; border: 1px solid var(--borda); border-radius: var(--raio); background: var(--cartao); }
+.passo__numero { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--roxo); color: #fff; font-weight: 800; font-size: 16px; }
+.passo h3 { margin-top: 18px; font-size: 21px; letter-spacing: -0.015em; }
+.passo p { margin-top: 8px; color: var(--suave); font-size: 15.5px; }
+@media (min-width: 700px) { .passos { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1040px) { .passos { grid-template-columns: repeat(4, 1fr); } }
+
+/* O que ele faz */
+.recursos { display: grid; gap: 1px; margin-top: 48px; border: 1px solid var(--borda); border-radius: 22px; overflow: hidden; background: var(--borda); }
+.recurso { padding: 26px 22px; background: var(--fundo-2); }
+.recurso svg { color: var(--roxo-claro); }
+.recurso h3 { margin-top: 14px; font-size: 19px; letter-spacing: -0.01em; }
+.recurso p { margin-top: 7px; color: var(--suave); font-size: 15px; }
+@media (min-width: 640px) { .recursos { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1040px) { .recursos { grid-template-columns: repeat(4, 1fr); } }
+
+/* Diferença */
+.diferenca { display: grid; gap: 16px; margin-top: 44px; }
+.diferenca > div { padding: 26px 22px; border-radius: var(--raio); border: 1px solid var(--borda); background: linear-gradient(180deg, var(--cartao), var(--fundo-2)); }
+.diferenca h3 { font-size: 21px; letter-spacing: -0.015em; }
+.diferenca p { margin-top: 8px; color: var(--suave); font-size: 15.5px; }
+@media (min-width: 900px) { .diferenca { grid-template-columns: repeat(3, 1fr); } }
+
+/* Planos */
+.planos-secao { position: relative; }
+.planos-secao::before { content: ""; position: absolute; inset: 10% 0 auto; height: 600px; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(139, 92, 246, .18), transparent 70%) center / 1000px 600px no-repeat; }
+.planos { position: relative; display: grid; gap: 18px; margin-top: 48px; max-width: 860px; }
+.plano { position: relative; display: grid; gap: 14px; align-content: start; padding: 30px 24px 24px; border: 1px solid var(--borda-forte); border-radius: 22px; background: var(--cartao); }
+.plano--destaque { border-color: var(--roxo); box-shadow: 0 0 0 1px var(--roxo) inset, 0 30px 60px -30px rgba(139, 92, 246, .6); }
+.plano__selo { position: absolute; top: -12px; left: 22px; padding: 5px 12px; border-radius: 999px; background: var(--roxo); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .04em; }
+.plano h3 { font-size: 26px; }
+.plano__detalhe { color: var(--suave); font-size: 15px; }
+.plano__preco { font-size: 50px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.plano__preco small { margin-left: 4px; font-size: 16px; font-weight: 600; letter-spacing: 0; color: var(--suave); }
+.plano ul { list-style: none; margin: 4px 0 6px; padding: 0; display: grid; gap: 10px; font-size: 15px; }
+.plano li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; }
+.plano li svg { margin-top: 3px; color: var(--roxo-claro); }
+@media (min-width: 680px) { .planos { grid-template-columns: 1fr 1fr; } }
+.planos__nota { position: relative; max-width: 860px; margin-top: 22px; color: var(--suave); font-size: 14px; }
+.aviso-checkout { margin-top: 12px; color: #f87171; font-size: 14px; }
+.garantia { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; max-width: 860px; margin-top: 30px;
+  padding: 22px; border: 1px solid var(--borda); border-radius: var(--raio); background: var(--fundo-2); }
+.garantia svg { color: var(--verde); }
+.garantia h3 { font-size: 19px; letter-spacing: -0.01em; }
+.garantia p { margin-top: 6px; color: var(--suave); font-size: 15px; }
+
+/* Dúvidas */
+.duvidas { max-width: 820px; margin-top: 40px; border-top: 1px solid var(--borda); }
+.duvidas details { border-bottom: 1px solid var(--borda); }
+.duvidas summary { position: relative; padding: 22px 44px 22px 0; font-weight: 700; font-size: 18px; letter-spacing: -0.01em; cursor: pointer; list-style: none; }
+.duvidas summary::-webkit-details-marker { display: none; }
+.duvidas summary::after { content: ""; position: absolute; right: 6px; top: 50%; width: 12px; height: 12px; margin-top: -8px;
+  border-right: 2px solid var(--suave); border-bottom: 2px solid var(--suave); transform: rotate(45deg); transition: transform .2s; }
+.duvidas details[open] summary::after { transform: rotate(-135deg); margin-top: -2px; }
+.duvidas summary:focus-visible { outline: 2px solid var(--roxo-claro); outline-offset: 4px; border-radius: 6px; }
+.duvidas details p { padding: 0 0 22px; color: var(--suave); max-width: 66ch; }
+.duvidas details p + p { margin-top: -10px; }
+
+/* Chamada final */
+.final { text-align: center; }
+.final__caixa { padding: 56px 22px; border-radius: 28px; border: 1px solid var(--borda-forte);
+  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, .35), transparent 60%), var(--cartao); }
+.final h2 { font-size: clamp(32px, 5.4vw, 56px); max-width: 16ch; margin: 0 auto; }
+.final p { margin: 16px auto 0; color: var(--suave); max-width: 46ch; font-size: 18px; }
+.final .botao { margin-top: 30px; }
+
+/* Rodapé */
+.rodape { padding: 48px 0 calc(40px + env(safe-area-inset-bottom)); border-top: 1px solid var(--borda); color: var(--suave); font-size: 14px; }
+.rodape__grade { display: grid; gap: 28px; }
+.rodape__links { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+.rodape__links a { text-decoration: none; }
+.rodape__links a:hover { color: var(--texto); }
+.rodape__aviso { max-width: 70ch; color: var(--apagado); font-size: 13px; }
+@media (min-width: 860px) { .rodape__grade { grid-template-columns: 1fr auto; align-items: start; } }
+</style>
+<script src="/contador.js" data-pagina="editfy-site" defer></script>
+</head>
+<body>
+
+<header class="topo" id="topo">
+  <div class="container topo__linha">
+    <a class="marca" href="/" aria-label="Editfy, início">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#6d28d9"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#g1)"/><path d="M12.5 10.2v11.6c0 .8.9 1.3 1.6.8l8.6-5.8c.6-.4.6-1.2 0-1.6l-8.6-5.8c-.7-.5-1.6 0-1.6.8z" fill="#fff"/><path d="M24.2 5.6l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7z" fill="#fff"/></svg>
+      Editfy
+    </a>
+    <nav aria-label="Seções">
+      <a href="#como">Como funciona</a>
+      <a href="#recursos">O que ele faz</a>
+      <a href="#planos">Planos</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+    <a class="botao" href="#planos">Assinar</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="titulo-hero">
+    <div class="container hero__grade">
+      <div>
+        <span class="selos-ia">Funciona dentro do <b>Claude</b><b>ChatGPT</b></span>
+        <h1 id="titulo-hero">Seus Reels editados <em>conversando com a IA.</em></h1>
+        <p class="hero__texto">O Editfy se conecta ao Claude ou ao ChatGPT que você já usa. Você manda o vídeo pelo celular, pede o que quer em português e recebe pronto para postar: legenda, título, cortes e efeitos.</p>
+        <div class="hero__botoes">
+          <a class="botao botao--grande" href="#planos">Começar agora <span aria-hidden="true">→</span></a>
+          <a class="botao botao--grande botao--fantasma" href="#como">Ver como funciona</a>
+        </div>
+        <div class="hero__confianca">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Sem instalar nada</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Direto do celular</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Garantia de 7 dias</span>
+        </div>
+      </div>
+      <div class="palco">
+        <div class="celular">
+          <div class="celular__tela" id="video-demo">
+            <span class="celular__ilha" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="balao balao--voce" aria-hidden="true">Edita pro Reels com legenda e um título no começo 🙏</div>
+        <div class="balao balao--ia" aria-hidden="true"><b>Editfy</b>Pronto! Tirei 12 pausas e coloquei a legenda nas suas cores.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="faixa" aria-label="Formatos">
+    <div class="container">
+      <span><i></i>Reels</span><span><i></i>TikTok</span><span><i></i>YouTube Shorts</span><span><i></i>Stories em partes</span><span><i></i>B-roll para narrar</span>
+    </div>
+  </div>
+
+  <section class="secao" aria-labelledby="titulo-conversa">
+    <div class="container conversa-grade">
+      <div>
+        <span class="etiqueta">É só pedir</span>
+        <h2 class="titulo-secao" id="titulo-conversa">Sem linha do tempo. Sem aprender programa.</h2>
+        <p class="sub-secao">Você conversa como conversaria com um editor. A IA pergunta o que precisa, mostra os cortes antes de aplicar e entrega o vídeo pronto.</p>
+        <ul class="pontos">
+          <li>
+            <span class="pontos__icone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <div><h3>Em português, do seu jeito</h3><p>"Corta as pausas", "põe um título chamando atenção", "tira aquela parte que eu errei". Ela entende.</p></div>
+          </li>
+          <li>
+            <span class="pontos__icone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+            <div><h3>Você aprova antes</h3><p>Nenhum corte é aplicado sem você dizer "pode". Você vê a prévia e decide.</p></div>
+          </li>
+          <li>
+            <span class="pontos__icone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
+            <div><h3>Ela lembra do seu visual</h3><p>Seu nome, seu @ e suas cores ficam guardados. Todo vídeo sai com a sua cara.</p></div>
+          </li>
+        </ul>
+      </div>
+      <div class="chat" id="chat" aria-label="Exemplo de conversa com o Editfy">
+        <div class="chat__topo"><span class="chat__ponto" aria-hidden="true"></span><b>Editfy</b> conectado ao seu Claude ou ChatGPT</div>
+        <div class="msg msg--voce revelar">Quero editar um Reels com o Editfy</div>
+        <div class="msg msg--ia revelar"><small>Editfy</small>Bora! Toque no link para mandar o vídeo da sua galeria. Me avisa quando terminar de enviar.</div>
+        <div class="msg msg--voce revelar">Enviei</div>
+        <div class="msg msg--ia revelar"><small>Editfy</small>Recebi (1 min 12 s). Achei 12 pausas e uma frase repetida no começo. Quer que eu tire? Coloco também a legenda e um título no gancho?</div>
+        <div class="msg msg--voce revelar">Pode tudo! E coloca o efeito de holofote quando eu falar o preço</div>
+        <div class="msg msg--ia revelar"><small>Editfy</small>Feito. Ficou com 58 s. Seu vídeo está pronto:<br><span class="msg__link">▶ Ver e salvar no celular</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="como" aria-labelledby="titulo-como" style="padding-top: 0">
+    <div class="container">
+      <span class="etiqueta">Como funciona</span>
+      <h2 class="titulo-secao" id="titulo-como">Do vídeo cru ao vídeo postado em 4 passos.</h2>
+      <ol class="passos">
+        <li class="passo"><span class="passo__numero">1</span><h3>Assine e conecte</h3><p>Você adiciona o Editfy no Claude ou no ChatGPT, uma vez só, e entra com a sua conta. Leva um minuto e não instala nada.</p></li>
+        <li class="passo"><span class="passo__numero">2</span><h3>Mande o vídeo</h3><p>Grave falando para a câmera, como sempre. A IA te dá um link e você escolhe o vídeo direto da galeria.</p></li>
+        <li class="passo"><span class="passo__numero">3</span><h3>Peça o que quer</h3><p>Legenda, título, cortes, efeitos, prints. A IA mostra o que vai fazer e só aplica com a sua aprovação.</p></li>
+        <li class="passo"><span class="passo__numero">4</span><h3>Assista e poste</h3><p>Você recebe um link: o vídeo abre tocando e um toque salva na galeria. É só postar.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao" id="recursos" aria-labelledby="titulo-recursos" style="padding-top: 0">
+    <div class="container">
+      <span class="etiqueta">O que ele faz</span>
+      <h2 class="titulo-secao" id="titulo-recursos">Tudo o que um editor faria no seu vídeo.</h2>
+      <div class="recursos">
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 15h4M13 15h4M7 11h10"/></svg><h3>Legenda em destaque</h3><p>Poucas palavras por vez, a palavra falada na cor da sua marca, com nomes e números corrigidos.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><h3>Título do gancho</h3><p>A ideia do vídeo em destaque nos primeiros segundos, para quem está rolando o feed parar.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.1 15.9M14.5 14.5L20 20M8.1 8.1L12 12"/></svg><h3>Corta pausas e erros</h3><p>Tira as pausas, as respirações e as frases que você repetiu, sempre com a sua aprovação.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6l-4.9 3.6 1.9-5.8L4 8.8h6.1z"/></svg><h3>45 efeitos</h3><p>Holofote, palavra gigante atrás de você, checklist, mensagens: os efeitos seguem o seu rosto.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg><h3>Cards e prints</h3><p>Os pontos principais em cards e as telas do celular na hora certa, com dados pessoais escondidos.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg><h3>Som no padrão das redes</h3><p>Volume certo para Reels e TikTok e ruído de fundo reduzido. Sua voz fica clara.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="6" height="12" rx="1.5"/><rect x="9" y="6" width="6" height="12" rx="1.5"/><rect x="16" y="6" width="6" height="12" rx="1.5"/></svg><h3>Stories em partes</h3><p>Grava tudo de uma vez e recebe dividido em partes de até 60 segundos, na ordem para postar.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M10 9l5 3-5 3z"/></svg><h3>B-roll para narrar</h3><p>Junta seus vídeos de viagem, comida ou bastidores nos melhores momentos, pronto para você narrar.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-diferenca" style="padding-top: 0">
+    <div class="container">
+      <span class="etiqueta">Por que o Editfy</span>
+      <h2 class="titulo-secao" id="titulo-diferenca">Não é mais um app de edição.</h2>
+      <div class="diferenca">
+        <div><h3>Usa a IA que você já tem</h3><p>Nada de baixar outro app ou criar outra rotina. O Editfy vira uma habilidade nova do seu Claude ou ChatGPT.</p></div>
+        <div><h3>O pesado fica com a gente</h3><p>A edição roda nos nossos servidores, não no seu celular. Não esquenta, não gasta bateria e não ocupa espaço.</p></div>
+        <div><h3>Feito para quem cria</h3><p>Pensado para quem grava falando para a câmera e quer postar todo dia, sem virar editor de vídeo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao planos-secao" id="planos" aria-labelledby="titulo-planos" style="padding-top: 0">
+    <div class="container">
+      <span class="etiqueta">Planos</span>
+      <h2 class="titulo-secao" id="titulo-planos">Escolha quantos minutos de vídeo por mês.</h2>
+      <p class="sub-secao">Cancele quando quiser. Os minutos contam o vídeo que você grava e manda, e renovam todo mês.</p>
+      <div class="planos">
+        <div class="plano" data-plano="editfy-reels-60">
+          <h3>60 minutos</h3>
+          <p class="plano__detalhe">Uns 20 Reels de 3 minutos por mês</p>
+          <p class="plano__preco"><span class="plano__valor">R$ 97</span><small>/mês</small></p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Reels, TikTok, Shorts, Stories e b-roll</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Todos os efeitos e estilos</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Aulas curtas de como usar</li>
+          </ul>
+          <a class="botao botao--largo botao--fantasma" href="#planos">Assinar 60 minutos</a>
+        </div>
+        <div class="plano plano--destaque" data-plano="editfy-reels-120">
+          <span class="plano__selo">Para quem posta todo dia</span>
+          <h3>120 minutos</h3>
+          <p class="plano__detalhe">Uns 40 Reels de 3 minutos por mês</p>
+          <p class="plano__preco"><span class="plano__valor">R$ 167</span><small>/mês</small></p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Tudo do plano de 60 minutos</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>O dobro de minutos</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Melhor valor por vídeo</li>
+          </ul>
+          <a class="botao botao--largo" href="#planos">Assinar 120 minutos <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <p class="aviso-checkout" id="aviso-checkout" hidden>O link do pagamento de um plano ainda não foi configurado (planos no catálogo, em miai/miai.js).</p>
+      <p class="planos__nota">Pagamento seguro pelo Stripe, cobrado todo mês no cartão. Troque de plano ou cancele quando quiser. O Editfy é da MIAI Academy: depois do pagamento, você recebe por e-mail o acesso à sua conta.</p>
+      <div class="garantia">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <div><h3>Garantia de 7 dias</h3><p>Assine e teste nos seus vídeos. Se em até 7 dias você achar que não é para você, devolvemos 100% do primeiro pagamento e cancelamos a assinatura, sem precisar explicar o motivo.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" id="duvidas" aria-labelledby="titulo-duvidas" style="padding-top: 0">
+    <div class="container">
+      <span class="etiqueta">Dúvidas</span>
+      <h2 class="titulo-secao" id="titulo-duvidas">Perguntas frequentes.</h2>
+      <div class="duvidas">
+        <details>
+          <summary>O que eu preciso ter?</summary>
+          <p>O app do Claude ou do ChatGPT no celular (ou o site deles no navegador), com a sua conta. Você adiciona o Editfy como conector uma vez, entra com a conta que recebeu por e-mail e pronto. Não precisa instalar nada.</p>
+        </details>
+        <details>
+          <summary>Preciso pagar o Claude ou o ChatGPT?</summary>
+          <p>No Claude, o plano gratuito já aceita um conector, então dá para usar o Editfy sem pagar o Claude. No ChatGPT, os conectores pedem um plano pago.</p>
+        </details>
+        <details>
+          <summary>Preciso saber editar vídeo?</summary>
+          <p>Não. Você conversa em português e a IA faz o resto. Ela pergunta o que precisa e mostra os cortes antes de aplicar.</p>
+        </details>
+        <details>
+          <summary>Que tipo de vídeo ele edita?</summary>
+          <p>Vídeos com você falando para a câmera, gravados no celular, para Reels, TikTok, Shorts e Stories. Também junta vídeos sem fala (b-roll) para você narrar depois. Vídeo horizontal também serve: ele recorta na vertical.</p>
+        </details>
+        <details>
+          <summary>Quanto tempo leva?</summary>
+          <p>Poucos minutos para um vídeo curto. A edição roda nos nossos servidores, então não pesa no seu celular. Nas edições mais longas, a IA também te avisa por e-mail quando o vídeo fica pronto.</p>
+        </details>
+        <details>
+          <summary>Como funcionam os minutos?</summary>
+          <p>Os minutos são do vídeo que você grava e manda: um vídeo de 3 minutos usa 3 minutos, mesmo que fique mais curto depois dos cortes. Eles renovam no dia 1º de cada mês e não acumulam. Se faltar, é só trocar para o plano de 120 minutos.</p>
+        </details>
+        <details>
+          <summary>Como recebo o vídeo pronto?</summary>
+          <p>A IA te manda um link. O vídeo abre tocando e o botão "Salvar no celular" coloca ele na sua galeria. Os vídeos ficam disponíveis por 7 dias.</p>
+        </details>
+        <details>
+          <summary>Ele coloca música?</summary>
+          <p>Não. O Editfy cuida da imagem e da voz. A música você escolhe no próprio Instagram ou TikTok na hora de postar, onde ela não dá problema de direitos autorais.</p>
+        </details>
+        <details>
+          <summary>Os vídeos são meus?</summary>
+          <p>Sim. Os vídeos que você edita são seus e são apagados dos nossos servidores depois de 7 dias.</p>
+        </details>
+        <details>
+          <summary>Uso o Claude Code no computador. Funciona?</summary>
+          <p>Sim. A assinatura também inclui o plugin do Editfy para o Claude Code, que edita no seu computador sem gastar minutos.</p>
+        </details>
+        <details>
+          <summary>Posso cancelar?</summary>
+          <p>Sim, quando quiser, na sua conta da MIAI Academy, em "Gerenciar assinatura". Você continua usando até o fim do mês que já pagou.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao final" aria-labelledby="titulo-final" style="padding-top: 0">
+    <div class="container">
+      <div class="final__caixa">
+        <h2 id="titulo-final">Grave hoje. Poste editado hoje.</h2>
+        <p>Conecte o Editfy ao seu Claude ou ChatGPT e mande o primeiro vídeo em minutos.</p>
+        <a class="botao botao--grande" href="#planos">Começar agora <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="rodape">
+  <div class="container rodape__grade">
+    <div>
+      <a class="marca" href="/" aria-label="Editfy, início">
+        <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#6d28d9"/></linearGradient></defs><rect width="32" height="32" rx="9" fill="url(#g2)"/><path d="M12.5 10.2v11.6c0 .8.9 1.3 1.6.8l8.6-5.8c.6-.4.6-1.2 0-1.6l-8.6-5.8c-.7-.5-1.6 0-1.6.8z" fill="#fff"/></svg>
+        Editfy
+      </a>
+      <p style="margin-top: 12px">© <span data-ano>2026</span> Editfy, um produto da MIAI Academy.</p>
+      <p class="rodape__aviso" style="margin-top: 12px">Claude é marca da Anthropic e ChatGPT é marca da OpenAI. O Editfy não tem vínculo com essas empresas.</p>
+    </div>
+    <div class="rodape__links">
+      <a href="https://www.miaiacademy.com/conta">Minha conta</a>
+      <a href="/termos">Termos</a>
+      <a href="/privacidade">Privacidade</a>
+      <a href="mailto:contato@miaiacademy.com">contato@miaiacademy.com</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/pais.js"></script>
+<script src="/miai/miai.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÃO — planos, preços e links do pagamento ficam no CATÁLOGO (miai/miai.js, bloco 'editfy-reels')
+// ═══════════════════════════════════════════════════════════════
+window.CONFIG = {
+  // Vídeo do celular no topo (9:16, leve): começa mudo e em loop; o botão liga o som do começo.
+  videoTopo: '/miai/cursos/editfy-reels/demonstracao.mp4',
+  capaTopo: '/miai/cursos/editfy-reels/demonstracao-capa.jpg',
+};
+</script>
+<script>
+(function () {
+  'use strict';
+  const C = window.CONFIG;
+  const $ = (sel) => document.querySelector(sel);
+  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll('[data-ano]').forEach((el) => { el.textContent = new Date().getFullYear(); });
+
+  // Borda no topo depois de rolar
+  const topo = $('#topo');
+  const marcarTopo = () => topo.classList.toggle('rolou', scrollY > 8);
+  addEventListener('scroll', marcarTopo, { passive: true });
+  marcarTopo();
+
+  // Vídeo do celular: mudo e em loop, só toca quando aparece na tela; o botão liga o som do começo
+  const ICONE_SOM = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  const ICONE_MUDO = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>';
+  const tela = $('#video-demo');
+  if (C.videoTopo) {
+    const v = document.createElement('video');
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata';
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
+    v.src = C.videoTopo;
+    if (C.capaTopo) v.poster = C.capaTopo;
+    v.setAttribute('aria-label', 'Antes e depois de um Reels editado pelo Editfy');
+    const som = document.createElement('button');
+    som.type = 'button';
+    som.className = 'som';
+    const mostrar = () => { som.innerHTML = v.muted ? ICONE_SOM + '<span>Ativar o som</span>' : ICONE_MUDO + '<span>Tirar o som</span>'; };
+    const alternar = () => {
+      if (v.muted) { v.muted = false; v.currentTime = 0; v.play().catch(() => {}); } else v.muted = true;
+      mostrar();
+    };
+    som.addEventListener('click', alternar);
+    v.addEventListener('click', alternar);
+    v.addEventListener('volumechange', mostrar);
+    mostrar();
+    tela.append(v, som);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((es) => es.forEach((e) => {
+        if (e.isIntersecting && !semMovimento) v.play().catch(() => {});
+        else if (!e.isIntersecting) v.pause();
+      }), { threshold: 0.4 }).observe(tela);
+    } else if (!semMovimento) {
+      v.autoplay = true;
+    }
+  }
+
+  // Conversa de exemplo: as mensagens aparecem uma a uma quando a conversa entra na tela
+  const msgs = Array.from(document.querySelectorAll('#chat .revelar'));
+  if (semMovimento || !('IntersectionObserver' in window)) {
+    msgs.forEach((m) => m.classList.add('visivel'));
+  } else {
+    const obs = new IntersectionObserver((es) => {
+      if (!es.some((e) => e.isIntersecting)) return;
+      msgs.forEach((m, i) => setTimeout(() => m.classList.add('visivel'), i * 550));
+      obs.disconnect();
+    }, { threshold: 0.3 });
+    obs.observe($('#chat'));
+  }
+
+  // Planos: preço (reais no Brasil, dólar fora) e link de pagamento de cada um, do catálogo da MIAI
+  if (!window.Miai) return;
+  const CURSO = Miai.curso('editfy-reels') || {};
+  const planos = (CURSO.planos || []).map((p) => ({ p: p, el: document.querySelector('[data-plano="' + p.id + '"]') }))
+    .filter((x) => x.el);
+  const mostrarPrecos = () => planos.forEach((x) => { x.el.querySelector('.plano__valor').textContent = Miai.precoDe(x.p); });
+  mostrarPrecos();
+  Miai.pais.then(mostrarPrecos);
+  function linkPagamento(link) {
+    let url;
+    try { url = new URL(link); } catch (e) { return link; }
+    if (!/(^|\.)stripe\.com$/.test(url.hostname)) return link;
+    url.searchParams.set('locale', 'pt-BR');
+    return url.toString();
+  }
+  let faltaLink = false;
+  planos.forEach((x) => {
+    const botao = x.el.querySelector('.botao');
+    if (x.p.linkPagamento) {
+      botao.href = linkPagamento(x.p.linkPagamento);
+      botao.addEventListener('click', () => { try { gtag('event', 'begin_checkout', { item_id: x.p.id }); } catch (e) {} });
+    } else {
+      faltaLink = true;
+      botao.setAttribute('aria-disabled', 'true');
+      botao.addEventListener('click', (e) => e.preventDefault());
+    }
+  });
+  $('#aviso-checkout').hidden = !faltaLink;
+})();
+</script>
+</body>
+</html>

@@ -12,6 +12,17 @@
       "permanent": false
     },
     {
+      "source": "/:pagina(conta|entrar)",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "https://www.miaiacademy.com/conta",
+      "permanent": false
+    },
+    {
       "source": "/oauth/authorize",
       "has": [
         {
@@ -243,6 +254,16 @@
         }
       ],
       "destination": "/miai/oauth-authorization-server.json"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/index.html"
     },
     {
       "source": "/.well-known/oauth-authorization-server/oauth",
