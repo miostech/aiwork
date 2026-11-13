@@ -85,10 +85,15 @@ export const CURSOS_MIAI = [
     // Compra única antiga (US$ 97, R$ 97 no Brasil): não é mais vendida (desative o link no Stripe), mas continua
     // liberando quem pagou por ela. Quem comprou assim fica com as aulas e o plugin para sempre, sem o servidor.
     linksPagamento: ["plink_1UVEa9RY9p8vsUUsdFHAlweg", process.env.STRIPE_PAYMENT_LINK_EDITFY_REELS].filter(Boolean),
-    // Assinatura mensal: os dois planos liberam as aulas e o plugin (sem limite no computador) e mudam só os minutos de
-    // vídeo gravado por mês no Editfy no servidor (pelo celular). O id do plano é o nome no banco e no PLANOS_MINUTOS.
+    // Assinatura mensal do Editefy (vendida em editefy.com, com a marca Editefy): os planos liberam só o conector (o
+    // Editefy no servidor, pelo Claude), com os minutos de vídeo gravado por mês. As aulas e o plugin NÃO entram
+    // (assinaturaLiberaCurso: false): continuam só com quem comprou o curso uma vez. O id do plano é o nome no banco e
+    // no PLANOS_MINUTOS do servidor. Quem assina recebe o e-mail compra_editefy com o link de linkAssinatura.
     // As variáveis STRIPE_PAYMENT_LINK_EDITFY_REELS_60/_120 e STRIPE_PRODUTO_EDITFY_REELS_60/_120, se definidas,
     // são aceitas junto (úteis para os ids do modo de teste do Stripe).
+    assinaturaLiberaCurso: false,
+    emailAssinatura: "compra_editefy",
+    linkAssinatura: "https://www.editefy.com/comecar",
     planos: [
       {
         id: "editfy-reels-60",

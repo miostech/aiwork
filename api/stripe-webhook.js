@@ -18,7 +18,8 @@
 //                                            → acerta os acessos pelo estado da assinatura no Stripe (sempre lido na
 //                                              hora, então a ordem dos avisos não importa):
 //                                              ativa, ou com pagamento atrasado enquanto o Stripe tenta cobrar de novo
-//                                                → o acesso do curso (aulas e plugin) e o do plano dela
+//                                                → o acesso do plano dela (e o do curso, com as aulas e o plugin,
+//                                                  menos nos cursos com assinaturaLiberaCurso: false, como o Editefy)
 //                                              troca de plano (upgrade ou downgrade) → troca o acesso do plano
 //                                              cancelada, não paga de vez, pausada ou expirada → tira os dois
 //   invoice.paid                             → também guarda a mensalidade em "compras" (uma linha por fatura in_...)
@@ -171,11 +172,13 @@ async function sincronizarAssinatura(id, alunoConhecido = null) {
     }
   }
 
-  // Curso (aulas e plugin): a assinatura libera, mas só tira o que ela mesma liberou
+  // Curso (aulas e plugin): a assinatura libera (menos onde assinaturaLiberaCurso é false, como no Editefy, que é só
+  // o conector), mas só tira o que ela mesma liberou
+  const liberaCurso = curso.assinaturaLiberaCurso !== false;
   const { data: acesso, error: erroBusca } = await db.from("acessos")
     .select("id, origem, referencia, revogado_em").eq("aluno_id", alunoId).eq("curso", curso.id).maybeSingle();
   if (erroBusca) throw erroBusca;
-  if (resultado.ativa) {
+  if (resultado.ativa && liberaCurso) {
     if (!acesso) {
       const { error } = await db.from("acessos")
         .insert({ aluno_id: alunoId, curso: curso.id, origem: "assinatura", referencia: id });
@@ -315,10 +318,13 @@ async function liberarCompra(sessao, curso) {
     }
 
     const primeiroNome = String(reservada.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
+    // Assinatura com e-mail próprio (o Editefy, com a sua marca e o passo a passo para conectar) ou o da escola
+    const proprio = assinatura && curso.emailAssinatura;
     const envio = await enviarEmail(
-      curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra",
+      proprio ? curso.emailAssinatura : curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra",
       reservada.email,
-      { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha, LINK_CURSO: linkCurso(curso.id), CURSO: curso.nome },
+      { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha, CURSO: curso.nome,
+        LINK_CURSO: proprio ? curso.linkAssinatura : linkCurso(curso.id) },
       `compra-${sessao.id}`
     );
     if (!envio.ok) {

@@ -234,15 +234,14 @@ test("assinar o plano de 60 minutos (avisos fora de ordem e repetidos)", async (
   ana = alunoPorEmail(ANA).id;
 
   assert.equal(emails.length, 1, "um e-mail com a senha");
-  assert.equal(emails[0].tipo, "compra_miai");
-  assert.equal(emails[0].dados.LINK_CURSO, "https://www.miaiacademy.com/conta/editfy-reels");
-  assert.ok(ativo(ana, "editfy-reels"), "aulas e plugin");
-  assert.equal(acesso(ana, "editfy-reels").origem, "assinatura");
+  assert.equal(emails[0].tipo, "compra_editefy", "e-mail com a marca do Editefy");
+  assert.equal(emails[0].dados.LINK_CURSO, "https://www.editefy.com/comecar");
+  assert.ok(!acesso(ana, "editfy-reels"), "a assinatura do Editefy é só o conector: sem aulas e sem plugin");
   assert.ok(ativo(ana, "editfy-reels-60"));
   assert.ok(!acesso(ana, "editfy-reels-120"));
   assert.equal(minutosNoServidor(ana), 60);
-  assert.ok(await pluginInstala(ana));
-  assert.deepEqual((await contaDe(ana)).plano, { nome: "60 minutos", minutos: 60 });
+  assert.equal(await pluginInstala(ana), false);
+  assert.equal(await contaDe(ana), undefined, "não aparece na conta da MIAI");
 
   const compras = tabelas.compras.filter((c) => c.email === ANA);
   assert.equal(compras.length, 1, "a primeira mensalidade conta uma vez só");
@@ -262,16 +261,14 @@ test("renovação do mês: guarda a mensalidade, sem e-mail nem senha nova", asy
 });
 
 test("upgrade para 120 minutos e downgrade de volta para 60", async () => {
-  acesso(ana, "editfy-reels").aulas_concluidas = [0, 1, 2];
   assinaturaAna.produto = "prod_120";
   await aviso("customer.subscription.updated", objetoAssinatura(assinaturaAna));
   await aviso("invoice.paid", novaFatura(assinaturaAna, 7000, "subscription_update")); // diferença do upgrade
   assert.ok(ativo(ana, "editfy-reels-120"));
   assert.ok(!ativo(ana, "editfy-reels-60"));
-  assert.ok(ativo(ana, "editfy-reels"));
+  assert.ok(!acesso(ana, "editfy-reels"));
   assert.equal(minutosNoServidor(ana), 120);
-  assert.ok(await pluginInstala(ana));
-  assert.deepEqual((await contaDe(ana)).plano, { nome: "120 minutos", minutos: 120 });
+  assert.equal(await pluginInstala(ana), false);
 
   assinaturaAna.produto = "prod_60";
   // aviso com o plano antigo chegando depois: vale o estado atual da assinatura no Stripe
@@ -287,26 +284,23 @@ test("pagamento falha: o acesso continua nas novas tentativas e sai quando o Str
   assinaturaAna.status = "past_due";
   await aviso("invoice.payment_failed", { ...novaFatura(assinaturaAna, 0, "subscription_cycle"), attempt_count: 1 });
   await aviso("customer.subscription.updated", objetoAssinatura(assinaturaAna));
-  assert.ok(ativo(ana, "editfy-reels"));
+  assert.ok(ativo(ana, "editfy-reels-60"));
   assert.equal(minutosNoServidor(ana), 60);
 
   assinaturaAna.status = "unpaid"; // as tentativas acabaram
   await aviso("customer.subscription.updated", objetoAssinatura(assinaturaAna));
-  assert.ok(!ativo(ana, "editfy-reels"));
   assert.ok(!ativo(ana, "editfy-reels-60"));
   assert.equal(minutosNoServidor(ana), 0);
-  assert.equal(await pluginInstala(ana), false);
-  assert.equal(await contaDe(ana), undefined);
 
-  // pagou depois: volta tudo, com o progresso nas aulas
+  // pagou depois: o plano volta
   assinaturaAna.status = "active";
   await aviso("invoice.paid", novaFatura(assinaturaAna, 9700, "subscription_cycle"));
-  assert.ok(ativo(ana, "editfy-reels"));
-  assert.deepEqual(acesso(ana, "editfy-reels").aulas_concluidas, [0, 1, 2]);
+  assert.ok(ativo(ana, "editfy-reels-60"));
+  assert.ok(!acesso(ana, "editfy-reels"));
   assert.equal(minutosNoServidor(ana), 60);
 });
 
-test("cancelar a assinatura tira o curso e o plano", async () => {
+test("cancelar a assinatura tira o plano", async () => {
   assinaturaAna.status = "canceled";
   await aviso("customer.subscription.deleted", objetoAssinatura(assinaturaAna));
   assert.ok(!ativo(ana, "editfy-reels"));

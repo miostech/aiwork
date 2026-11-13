@@ -60,8 +60,12 @@
       linkPagamento: 'https://buy.stripe.com/5kQ00leGO1uh22zaLw67S07',   // US$ 97, com R$ 97 fixo no Brasil
     },
     {
-      endereco: 'editfy-reels',            // miaiacademy.com/editfy-reels (vendas) e /conta/editfy-reels (aulas)
+      endereco: 'editfy-reels',            // /conta/editfy-reels (aulas de quem comprou uma vez); a venda agora é no Editefy
       nome: 'Editfy Reels',
+      // Fora da vitrine da MIAI: a assinatura é vendida só em editefy.com (o vercel.json manda miaiacademy.com/editfy-reels
+      // para lá). Quem comprou o curso uma vez continua vendo as aulas na conta. Os planos e links abaixo são lidos pelo
+      // site do Editefy (editfy/index.html e editfy/conta.html).
+      oculto: true,
       area: 'Inteligência Artificial',
       chamada: 'Grave na vertical e receba o vídeo pronto para postar: legenda em destaque, título, cards e 45 efeitos que seguem o seu rosto, editados pela IA no computador ou pelo celular.',
       detalhes: ['Assinatura mensal', 'Computador ou celular', 'Garantia de 7 dias'],

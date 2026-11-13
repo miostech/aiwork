@@ -12,14 +12,25 @@
       "permanent": false
     },
     {
-      "source": "/:pagina(conta|entrar)",
+      "source": "/entrar",
       "has": [
         {
           "type": "host",
           "value": "(www\\.)?editefy\\.com"
         }
       ],
-      "destination": "https://www.miaiacademy.com/conta",
+      "destination": "/conta",
+      "permanent": false
+    },
+    {
+      "source": "/editfy-reels",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.editefy.com/",
       "permanent": false
     },
     {
@@ -264,6 +275,36 @@
         }
       ],
       "destination": "/editfy/index.html"
+    },
+    {
+      "source": "/comecar",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/comecar.html"
+    },
+    {
+      "source": "/obrigado",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/comecar.html"
+    },
+    {
+      "source": "/conta",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/conta.html"
     },
     {
       "source": "/.well-known/oauth-authorization-server/oauth",
