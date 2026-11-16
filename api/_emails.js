@@ -587,8 +587,8 @@ MODELOS.nova_senha_miai = {
 };
 
 // ── Editefy: e-mail de quem assina, com a marca do Editefy (sem a MIAI) e o passo a passo para conectar ──
-// O endereço do conector (o servidor do Editefy no Modal). EDITEFY_CONECTOR, se definida, troca o padrão.
-const CONECTOR_EDITEFY = process.env.EDITEFY_CONECTOR || "https://chaxdwick--editfy-mcp.modal.run/mcp";
+// O endereço do conector (o servidor do Editefy na Hetzner). EDITEFY_CONECTOR, se definida, troca o padrão.
+const CONECTOR_EDITEFY = process.env.EDITEFY_CONECTOR || "https://mcp.editefy.com/mcp";
 
 function emailEditefy({ titulo, previa, chamada, texto, rotuloSenha, passos = [], botao, nota, rodape }) {
   const fonte = "-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,Helvetica,sans-serif";

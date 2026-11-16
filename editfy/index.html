@@ -185,7 +185,7 @@ p { margin: 0; }
 .plano li svg { margin-top: 3px; color: var(--roxo-claro); }
 @media (min-width: 680px) { .planos { grid-template-columns: 1fr 1fr; } }
 .planos__nota { position: relative; max-width: 860px; margin-top: 22px; color: var(--suave); font-size: 14px; }
-.aviso-checkout { margin-top: 12px; color: #f87171; font-size: 14px; }
+.aviso-checkout { margin-top: 14px; color: var(--texto); font-size: 15px; font-weight: 600; }
 .garantia { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; max-width: 860px; margin-top: 30px;
   padding: 22px; border: 1px solid var(--borda); border-radius: var(--raio); background: var(--fundo-2); }
 .garantia svg { color: var(--verde); }
@@ -381,7 +381,7 @@ p { margin: 0; }
           <a class="botao botao--largo" href="#planos">Assinar 120 minutos <span aria-hidden="true">→</span></a>
         </div>
       </div>
-      <p class="aviso-checkout" id="aviso-checkout" hidden>O link do pagamento de um plano ainda não foi configurado (planos no catálogo, em miai/miai.js).</p>
+      <p class="aviso-checkout" id="aviso-checkout" hidden>As assinaturas abrem em breve.</p>
       <p class="planos__nota">Pagamento seguro pelo Stripe, cobrado todo mês no cartão. Troque de plano ou cancele quando quiser. Depois do pagamento, você recebe por e-mail o acesso à sua conta.</p>
       <div class="garantia">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
@@ -565,6 +565,7 @@ window.CONFIG = {
       botao.addEventListener('click', () => { try { gtag('event', 'begin_checkout', { item_id: x.p.id }); } catch (e) {} });
     } else {
       faltaLink = true;
+      botao.textContent = 'Em breve';
       botao.setAttribute('aria-disabled', 'true');
       botao.addEventListener('click', (e) => e.preventDefault());
     }
