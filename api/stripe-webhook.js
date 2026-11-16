@@ -12,7 +12,13 @@
 // Formação IA Academy; para os cursos da MIAI, "compra_miai" (com MIAI_URL definida) ou "compra".
 // O id do cadastro (client_reference_id, preenchido pela página) liga a compra ao lead do formulário.
 //
-// Assinaturas (cursos com "planos" em api/_cursos.js):
+// Pacotes de minutos (cursos com "pacotes" em api/_cursos.js, como o Editefy): pagamento único, como uma compra
+//   checkout.session.completed / async_payment_succeeded → cria o login (quem já tem conta continua com a senha),
+//                                              grava o pacote em editfy_creditos (o servidor do Editefy lê o saldo de lá)
+//                                              e manda emailPacote (conta nova, com a senha) ou emailMaisMinutos
+//   reembolso total                          → tira o pacote (revogado_em em editfy_creditos)
+//
+// Assinaturas (cursos com "planos" em api/_cursos.js; nenhum curso vende assim hoje):
 //   checkout.session.completed               → primeira mensalidade: cria o login e manda a senha, como numa compra
 //   customer.subscription.created/updated/deleted, invoice.paid, invoice.payment_failed
 //                                            → acerta os acessos pelo estado da assinatura no Stripe (sempre lido na
@@ -39,7 +45,7 @@ import Stripe from "stripe";
 import { banco, normalizarEmail } from "./_supabase.js";
 import { liberarAcesso, linkCurso } from "./_alunos.js";
 import { enviarEmail } from "./_emails.js";
-import { PLANOS, cursoPorLinkPagamento, linkMiai, planoPorProduto } from "./_cursos.js";
+import { PLANOS, cursoPorLinkPagamento, ehPacote, linkMiai, pacotePorLinkPagamento, planoPorProduto } from "./_cursos.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_nao_configurada");
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -58,9 +64,13 @@ function idDe(valor) {
   return typeof valor === "string" ? valor : (valor && valor.id) || null;
 }
 
-// Curso comprado nesta sessão de pagamento, ou null quando é a compra de outro produto da conta do Stripe
+// Curso comprado nesta sessão de pagamento, ou null quando é a compra de outro produto da conta do Stripe.
+// Num pacote de minutos, o curso vem com o id do pacote (o que fica em compras.curso) e o pacote em "pacote".
 function cursoDaSessao(sessao) {
-  return cursoPorLinkPagamento(idDe(sessao.payment_link));
+  const link = idDe(sessao.payment_link);
+  const achado = pacotePorLinkPagamento(link);
+  if (achado) return { ...achado.curso, id: achado.pacote.id, pacote: achado.pacote };
+  return cursoPorLinkPagamento(link);
 }
 
 // ── Assinaturas ──
@@ -304,12 +314,22 @@ async function liberarCompra(sessao, curso) {
   try {
     const leadId = UUID.test(String(sessao.client_reference_id || "")) ? sessao.client_reference_id : null;
     const assinatura = sessao.mode === "subscription" ? idDe(sessao.subscription) : null;
-    // Assinatura: aqui só o login; os acessos (curso e plano) vêm da sincronização logo abaixo
+    const pacote = curso.pacote || null;
+    // Assinatura: aqui só o login; os acessos (curso e plano) vêm da sincronização logo abaixo.
+    // Pacote: só o login (quem já tem conta continua com a senha); os minutos vão para editfy_creditos.
     const conta = await liberarAcesso({
-      nome: reservada.nome, email: reservada.email, curso: assinatura ? null : curso.id,
-      origem: assinatura ? "assinatura" : "stripe", referencia: assinatura || sessao.id, leadId,
+      nome: reservada.nome, email: reservada.email, curso: assinatura || pacote ? null : curso.id,
+      origem: assinatura ? "assinatura" : "stripe", referencia: assinatura || sessao.id, leadId, manterSenha: !!pacote,
     });
     await db.from("compras").update({ aluno_id: conta.alunoId }).eq("id", compra.id);
+    if (pacote) {
+      // Uma linha por compra (referencia = sessão): vale 12 meses a partir de agora (padrão do banco)
+      const { error: erroPacote } = await db.from("editfy_creditos").upsert(
+        { aluno_id: conta.alunoId, pacote: pacote.id, minutos: pacote.minutos, origem: "stripe", referencia: sessao.id },
+        { onConflict: "referencia" }
+      );
+      if (erroPacote) throw erroPacote;
+    }
     if (assinatura) {
       const sincronizada = await sincronizarAssinatura(assinatura, conta.alunoId);
       if (!sincronizada) {
@@ -318,13 +338,16 @@ async function liberarCompra(sessao, curso) {
     }
 
     const primeiroNome = String(reservada.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
-    // Assinatura com e-mail próprio (o Editefy, com a sua marca e o passo a passo para conectar) ou o da escola
-    const proprio = assinatura && curso.emailAssinatura;
+    // Pacote ou assinatura com e-mail próprio (o Editefy, com a sua marca e o passo a passo para conectar) ou o da
+    // escola. No pacote de quem já tem conta, o e-mail não leva senha (ela continua a mesma).
+    const proprio = pacote ? (conta.senha ? curso.emailPacote : curso.emailMaisMinutos)
+      : assinatura && curso.emailAssinatura;
     const envio = await enviarEmail(
-      proprio ? curso.emailAssinatura : curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra",
+      proprio || (curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra"),
       reservada.email,
-      { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha, CURSO: curso.nome,
-        LINK_CURSO: proprio ? curso.linkAssinatura : linkCurso(curso.id) },
+      { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha || "", CURSO: curso.nome,
+        MINUTOS: pacote ? String(pacote.minutos) : "",
+        LINK_CURSO: pacote ? curso.linkPacote : proprio ? curso.linkAssinatura : linkCurso(curso.id) },
       `compra-${sessao.id}`
     );
     if (!envio.ok) {
@@ -337,8 +360,9 @@ async function liberarCompra(sessao, curso) {
   }
 }
 
-// Reembolso total: marca a compra e tira o acesso ao curso comprado. Numa mensalidade, cancela a assinatura (a
-// sincronização tira o plano e o curso que ela deu; quem também comprou o curso uma vez continua com ele).
+// Reembolso total: marca a compra e tira o acesso ao curso comprado. Num pacote de minutos, tira o pacote (o que
+// sobrava sai do saldo). Numa mensalidade, cancela a assinatura (a sincronização tira o plano e o curso que ela deu;
+// quem também comprou o curso uma vez continua com ele).
 // valorReembolsado (em centavos) vem dos eventos refund.*; se for menor que o valor pago, é parcial e o acesso continua.
 async function marcarReembolso(pagamento, valorReembolsado = null) {
   if (!pagamento) return;
@@ -356,6 +380,13 @@ async function marcarReembolso(pagamento, valorReembolsado = null) {
     if (erroCompra) throw erroCompra;
     if (String(compra.stripe_sessao).startsWith("in_")) {
       await cancelarAssinaturaDaFatura(compra.stripe_sessao);
+      continue;
+    }
+    if (ehPacote(compra.curso)) {
+      const { error: erroPacote } = await db.from("editfy_creditos")
+        .update({ revogado_em: new Date().toISOString() })
+        .eq("referencia", compra.stripe_sessao).is("revogado_em", null);
+      if (erroPacote) throw erroPacote;
       continue;
     }
     if (!compra.aluno_id) continue;

@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <!--
   SITE DO EDITEFY (endereço: editefy.com; a rota fica no vercel.json, pelo domínio)
-  1. Planos, preços e links do pagamento: os mesmos da assinatura do Editefy Reels, no CATÁLOGO (miai/miai.js,
+  1. Pacotes de minutos, preços e links do pagamento: no CATÁLOGO (miai/miai.js, os "pacotes" do
      bloco 'editfy-reels'). Esta página só lê de lá: o pagamento e a conta continuam na MIAI Academy.
   2. Vídeo de demonstração: CONFIG no final deste arquivo.
   3. Textos: edite direto no HTML abaixo.
@@ -183,7 +183,7 @@ p { margin: 0; }
 .plano ul { list-style: none; margin: 4px 0 6px; padding: 0; display: grid; gap: 10px; font-size: 15px; }
 .plano li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; }
 .plano li svg { margin-top: 3px; color: var(--roxo-claro); }
-@media (min-width: 680px) { .planos { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 900px) { .planos { grid-template-columns: repeat(3, 1fr); max-width: 1040px; } }
 .planos__nota { position: relative; max-width: 860px; margin-top: 22px; color: var(--suave); font-size: 14px; }
 .aviso-checkout { margin-top: 14px; color: var(--texto); font-size: 15px; font-weight: 600; }
 .garantia { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; max-width: 860px; margin-top: 30px;
@@ -234,10 +234,10 @@ p { margin: 0; }
     <nav aria-label="Seções">
       <a href="#como">Como funciona</a>
       <a href="#recursos">O que ele faz</a>
-      <a href="#planos">Planos</a>
+      <a href="#planos">Preços</a>
       <a href="#duvidas">Dúvidas</a>
     </nav>
-    <a class="botao" href="#planos">Assinar</a>
+    <a class="botao" href="#planos">Comprar minutos</a>
   </div>
 </header>
 
@@ -353,39 +353,50 @@ p { margin: 0; }
 
   <section class="secao planos-secao" id="planos" aria-labelledby="titulo-planos" style="padding-top: 0">
     <div class="container">
-      <span class="etiqueta">Planos</span>
-      <h2 class="titulo-secao" id="titulo-planos">Escolha quantos minutos de vídeo por mês.</h2>
-      <p class="sub-secao">Cancele quando quiser. Os minutos contam o vídeo que você grava e manda, e renovam todo mês.</p>
+      <span class="etiqueta">Preços</span>
+      <h2 class="titulo-secao" id="titulo-planos">Escolha quantos minutos de vídeo quer editar.</h2>
+      <p class="sub-secao">Pagamento único, sem mensalidade. Os minutos contam o vídeo que você grava e manda, valem 12 meses e somam a cada compra.</p>
       <div class="planos">
-        <div class="plano" data-plano="editfy-reels-60">
-          <h3>60 minutos</h3>
-          <p class="plano__detalhe">Uns 20 Reels de 3 minutos por mês</p>
-          <p class="plano__preco"><span class="plano__valor">R$ 97</span><small>/mês</small></p>
+        <div class="plano" data-pacote="editefy-30">
+          <h3>30 minutos</h3>
+          <p class="plano__detalhe">Uns 10 Reels de 3 minutos</p>
+          <p class="plano__preco"><span class="plano__valor">R$ 62</span><small>pagamento único</small></p>
           <ul>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Reels, TikTok, Shorts, Stories e b-roll</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Todos os efeitos e estilos</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Passo a passo para conectar</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Os minutos valem 12 meses</li>
           </ul>
-          <a class="botao botao--largo botao--fantasma" href="#planos">Assinar 60 minutos</a>
+          <a class="botao botao--largo botao--fantasma" href="#planos">Comprar 30 minutos</a>
         </div>
-        <div class="plano plano--destaque" data-plano="editfy-reels-120">
-          <span class="plano__selo">Para quem posta todo dia</span>
-          <h3>120 minutos</h3>
-          <p class="plano__detalhe">Uns 40 Reels de 3 minutos por mês</p>
-          <p class="plano__preco"><span class="plano__valor">R$ 167</span><small>/mês</small></p>
+        <div class="plano" data-pacote="editefy-60">
+          <h3>60 minutos</h3>
+          <p class="plano__detalhe">Uns 20 Reels de 3 minutos</p>
+          <p class="plano__preco"><span class="plano__valor">R$ 97</span><small>pagamento único</small></p>
           <ul>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Tudo do plano de 60 minutos</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Tudo do pacote de 30 minutos</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>O dobro de minutos</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Melhor valor por vídeo</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Os minutos valem 12 meses</li>
           </ul>
-          <a class="botao botao--largo" href="#planos">Assinar 120 minutos <span aria-hidden="true">→</span></a>
+          <a class="botao botao--largo botao--fantasma" href="#planos">Comprar 60 minutos</a>
+        </div>
+        <div class="plano plano--destaque" data-pacote="editefy-120">
+          <span class="plano__selo">Melhor valor por minuto</span>
+          <h3>120 minutos</h3>
+          <p class="plano__detalhe">Uns 40 Reels de 3 minutos</p>
+          <p class="plano__preco"><span class="plano__valor">R$ 167</span><small>pagamento único</small></p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Tudo do pacote de 30 minutos</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Para quem posta todo dia</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Os minutos valem 12 meses</li>
+          </ul>
+          <a class="botao botao--largo" href="#planos">Comprar 120 minutos <span aria-hidden="true">→</span></a>
         </div>
       </div>
-      <p class="aviso-checkout" id="aviso-checkout" hidden>As assinaturas abrem em breve.</p>
-      <p class="planos__nota">Pagamento seguro pelo Stripe, cobrado todo mês no cartão. Troque de plano ou cancele quando quiser. Depois do pagamento, você recebe por e-mail o acesso à sua conta.</p>
+      <p class="aviso-checkout" id="aviso-checkout" hidden>As vendas abrem em breve.</p>
+      <p class="planos__nota">Pagamento único e seguro pelo Stripe, sem cobrança automática. Quando os minutos acabarem, é só comprar outro pacote. Depois do pagamento, você recebe por e-mail o acesso à sua conta.</p>
       <div class="garantia">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-        <div><h3>Garantia de 7 dias</h3><p>Assine e teste nos seus vídeos. Se em até 7 dias você achar que não é para você, devolvemos 100% do primeiro pagamento e cancelamos a assinatura, sem precisar explicar o motivo.</p></div>
+        <div><h3>Garantia de 7 dias</h3><p>Mudou de ideia? Se em até 7 dias depois da compra você ainda não tiver usado nenhum minuto do pacote, devolvemos 100% do valor, sem precisar explicar o motivo.</p></div>
       </div>
     </div>
   </section>
@@ -417,7 +428,7 @@ p { margin: 0; }
         </details>
         <details>
           <summary>Como funcionam os minutos?</summary>
-          <p>Os minutos são do vídeo que você grava e manda: um vídeo de 3 minutos usa 3 minutos, mesmo que fique mais curto depois dos cortes. Eles renovam no dia 1º de cada mês e não acumulam. Se faltar, é só trocar para o plano de 120 minutos.</p>
+          <p>Os minutos são do vídeo que você grava e manda: um vídeo de 3 minutos usa 3 minutos, mesmo que fique mais curto depois dos cortes. Cada pacote vale 12 meses e os minutos somam: comprou 30 e depois 60, fica com 90. Quando acabarem, é só comprar outro pacote. Para ver quanto sobra, pergunte na conversa: "quantos minutos eu tenho no Editefy?".</p>
         </details>
         <details>
           <summary>Como recebo o vídeo pronto?</summary>
@@ -432,8 +443,8 @@ p { margin: 0; }
           <p>Sim. Os vídeos que você edita são seus e são apagados dos nossos servidores depois de 7 dias.</p>
         </details>
         <details>
-          <summary>Posso cancelar?</summary>
-          <p>Sim, quando quiser: em "Minha conta", no fim desta página, toque em "Gerenciar assinatura". Você continua usando até o fim do mês que já pagou.</p>
+          <summary>Tem mensalidade?</summary>
+          <p>Não. Cada pacote é pago uma vez só, sem cobrança automática no cartão. Você compra outro só quando quiser.</p>
         </details>
       </div>
     </div>
@@ -473,7 +484,7 @@ p { margin: 0; }
 <script src="/miai/miai.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  CONFIGURAÇÃO — planos, preços e links do pagamento ficam no CATÁLOGO (miai/miai.js, bloco 'editfy-reels')
+//  CONFIGURAÇÃO — pacotes, preços e links do pagamento ficam no CATÁLOGO (miai/miai.js, bloco 'editfy-reels')
 // ═══════════════════════════════════════════════════════════════
 window.CONFIG = {
   // Vídeo do celular no topo (9:16, leve): começa mudo e em loop; o botão liga o som do começo.
@@ -542,10 +553,10 @@ window.CONFIG = {
     obs.observe($('#chat'));
   }
 
-  // Planos: preço (reais no Brasil, dólar fora) e link de pagamento de cada um, do catálogo da MIAI
+  // Pacotes: preço (reais no Brasil, dólar fora) e link de pagamento de cada um, do catálogo da MIAI
   if (!window.Miai) return;
   const CURSO = Miai.curso('editfy-reels') || {};
-  const planos = (CURSO.planos || []).map((p) => ({ p: p, el: document.querySelector('[data-plano="' + p.id + '"]') }))
+  const planos = (CURSO.pacotes || []).map((p) => ({ p: p, el: document.querySelector('[data-pacote="' + p.id + '"]') }))
     .filter((x) => x.el);
   const mostrarPrecos = () => planos.forEach((x) => { x.el.querySelector('.plano__valor').textContent = Miai.precoDe(x.p); });
   mostrarPrecos();

@@ -13,8 +13,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <!--
   MINHA CONTA DO EDITEFY (editefy.com/conta)
-  - Gerenciar assinatura: o portal do cliente do Stripe (portalAssinatura do bloco 'editfy-reels' em miai/miai.js),
-    onde quem assina troca de plano, troca o cartão ou cancela.
+  - Minutos: o Editefy é vendido em pacotes de minutos com pagamento único (sem assinatura). O saldo aparece na
+    conversa (ferramenta meu_plano do servidor); daqui a pessoa compra mais um pacote na página inicial.
   - Esqueci minha senha: POST /api/nova-senha com site "editefy" (e-mail nova_senha_editefy, sem a MIAI).
 -->
 <style>
@@ -64,10 +64,9 @@ form .botao { margin-top:2px; width:100%; }
   <h1>Minha conta</h1>
   <div class="cartoes">
     <section class="cartao">
-      <h2>Assinatura</h2>
-      <p>Troque de plano, troque o cartão ou cancele. Você entra com o e-mail da compra e recebe um código para confirmar.</p>
-      <a class="botao" id="portal" href="#" target="_blank" rel="noopener">Gerenciar assinatura</a>
-      <p class="aviso" id="sem-portal" hidden>Para mudar a sua assinatura agora, fale com o <a href="mailto:contato@editefy.com">suporte</a>.</p>
+      <h2>Seus minutos</h2>
+      <p>Para ver quantos minutos sobram, pergunte na conversa: <strong>quantos minutos eu tenho no Editefy?</strong> Cada pacote vale 12 meses e os minutos somam a cada compra.</p>
+      <a class="botao" href="/#planos">Comprar mais minutos</a>
     </section>
 
     <section class="cartao">
@@ -95,20 +94,11 @@ form .botao { margin-top:2px; width:100%; }
   </div>
 </footer>
 
-<script src="/miai/miai.js"></script>
 <script>
 (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
   document.querySelectorAll('[data-ano]').forEach((el) => { el.textContent = new Date().getFullYear(); });
-
-  const curso = (window.Miai && Miai.curso('editfy-reels')) || {};
-  if (curso.portalAssinatura) {
-    $('portal').href = curso.portalAssinatura;
-  } else {
-    $('portal').hidden = true;
-    $('sem-portal').hidden = false;
-  }
 
   $('form-senha').addEventListener('submit', async (ev) => {
     ev.preventDefault();

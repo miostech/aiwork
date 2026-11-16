@@ -378,3 +378,108 @@ create table if not exists public.licencas_plugin (
   criada_em timestamptz not null default now()
 );
 alter table public.licencas_plugin enable row level security;
+
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- Editefy no servidor (cópia de supabase/editfy.sql do repositório miostech/editfy-servidor)
+-- ════════════════════════════════════════════════════════════════════════════
+create table if not exists public.editfy_uso (
+  aluno_id uuid not null references public.alunos (id) on delete cascade,
+  mes date not null,                                   -- sempre o dia 1 do mês (UTC)
+  minutos numeric(10, 2) not null default 0,
+  atualizado_em timestamptz not null default now(),
+  primary key (aluno_id, mes)
+);
+
+-- Só o servidor (chave secreta) mexe nesta tabela
+alter table public.editfy_uso enable row level security;
+
+-- Soma os minutos do mês de uma vez só (sem corrida entre dois envios ao mesmo tempo) e devolve o total
+create or replace function public.editfy_somar_uso(p_aluno uuid, p_minutos numeric)
+returns numeric
+language sql
+security definer
+set search_path = public
+as $$
+  insert into editfy_uso (aluno_id, mes, minutos)
+  values (p_aluno, date_trunc('month', now() at time zone 'utc')::date, p_minutos)
+  on conflict (aluno_id, mes)
+  do update set minutos = editfy_uso.minutos + excluded.minutos, atualizado_em = now()
+  returning minutos;
+$$;
+
+revoke all on function public.editfy_somar_uso(uuid, numeric) from public, anon, authenticated;
+
+-- ── Pacotes de minutos do Editefy (desde 16/11/2026, no lugar da assinatura) ──
+-- Cada compra (ou cortesia) é uma linha, com os minutos do pacote, quanto já foi usado e o vencimento (12 meses depois
+-- da compra). O saldo é o que sobra nas linhas não vencidas e não reembolsadas; o uso gasta primeiro o pacote que
+-- vence antes. Tem acesso ao Editefy quem tem pelo menos uma linha não reembolsada (mesmo com o saldo zerado, para
+-- terminar e entregar o que já mandou). A garantia de 7 dias só vale para o pacote com "usados" = 0.
+-- O site (aviso do Stripe) cria a linha na compra e preenche revogado_em no reembolso; o servidor gasta os minutos.
+-- Cortesia à mão: insert into editfy_creditos (aluno_id, pacote, minutos, origem, referencia)
+--                 values ('<id do aluno>', 'cortesia', 60, 'manual', 'cortesia: <motivo>');
+
+create table if not exists public.editfy_creditos (
+  id          uuid primary key default gen_random_uuid(),
+  aluno_id    uuid not null references public.alunos (id) on delete cascade,
+  pacote      text not null,                    -- 'editefy-30', 'editefy-60', 'editefy-120' ou 'cortesia'
+  minutos     numeric(10, 2) not null check (minutos > 0),
+  usados      numeric(10, 2) not null default 0 check (usados >= 0),
+  origem      text not null,                    -- 'stripe' ou 'manual'
+  referencia  text unique,                      -- sessão de pagamento do Stripe (cs_...) ou uma anotação da cortesia
+  criado_em   timestamptz not null default now(),
+  vence_em    timestamptz not null default (now() + interval '12 months'),
+  revogado_em timestamptz                       -- preenchido = reembolsado: o que sobrava sai do saldo
+);
+
+create index if not exists editfy_creditos_aluno on public.editfy_creditos (aluno_id);
+
+-- Só o servidor e o site (chave secreta) mexem nesta tabela
+alter table public.editfy_creditos enable row level security;
+
+-- Saldo de minutos: o que sobra dos pacotes válidos
+create or replace function public.editfy_saldo(p_aluno uuid)
+returns numeric
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(sum(minutos - usados), 0)
+  from editfy_creditos
+  where aluno_id = p_aluno and revogado_em is null and vence_em > now() and usados < minutos;
+$$;
+
+-- Gasta minutos do saldo (do pacote que vence antes para o que vence depois, travando as linhas para dois envios ao
+-- mesmo tempo não gastarem o mesmo minuto), guarda o uso do mês em editfy_uso e devolve o saldo que sobrou.
+-- Se faltar saldo, gasta o que tem: o servidor confere o saldo antes de trazer o vídeo.
+create or replace function public.editfy_consumir(p_aluno uuid, p_minutos numeric)
+returns numeric
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  falta numeric := greatest(coalesce(p_minutos, 0), 0);
+  linha record;
+  gasto numeric;
+begin
+  for linha in
+    select id, minutos - usados as sobra
+    from editfy_creditos
+    where aluno_id = p_aluno and revogado_em is null and vence_em > now() and usados < minutos
+    order by vence_em, criado_em
+    for update
+  loop
+    exit when falta <= 0;
+    gasto := least(linha.sobra, falta);
+    update editfy_creditos set usados = usados + gasto where id = linha.id;
+    falta := falta - gasto;
+  end loop;
+  perform editfy_somar_uso(p_aluno, greatest(coalesce(p_minutos, 0), 0));
+  return editfy_saldo(p_aluno);
+end;
+$$;
+
+revoke all on function public.editfy_saldo(uuid) from public, anon, authenticated;
+revoke all on function public.editfy_consumir(uuid, numeric) from public, anon, authenticated;
