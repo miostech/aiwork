@@ -1,5 +1,6 @@
 /* Termos de uso e política de privacidade (termos.html e privacidade.html), nos dois domínios.
-   As cores e a marca do topo seguem o site: <html data-marca="miai"> no miaiacademy.com, IA Academy no resto. */
+   As cores e a marca do topo seguem o site: <html data-marca="miai"> no miaiacademy.com, IA Academy no resto.
+   O Editefy tem páginas próprias (editfy/termos.html e editfy/privacidade.html), com <html data-marca="editefy">. */
 :root {
   --bg: #FDF6F4;
   --superficie: #FFFAF8;
@@ -21,6 +22,23 @@ html[data-marca="miai"] {
   --linha: rgba(20, 19, 15, 0.12);
   --destaque: #5E1D93;
   --destaque-fundo: rgba(94, 29, 147, 0.08);
+}
+html[data-marca="editefy"] {
+  --bg: #0f0d16;
+  --superficie: #151221;
+  --tinta: #f4f2fa;
+  --suave: #a7a1b8;
+  --linha: #2c2838;
+  --destaque: #a78bfa;
+  --destaque-fundo: rgba(139, 92, 246, 0.14);
+  --fonte-titulo: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --fonte: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+html[data-marca="editefy"] h1, html[data-marca="editefy"] h2, html[data-marca="editefy"] h3 { font-weight: 700; }
+.marca-editefy {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 20px; letter-spacing: -0.01em; color: var(--tinta); text-decoration: none;
 }
 
 * { box-sizing: border-box; }

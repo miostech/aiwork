@@ -734,8 +734,8 @@ MODELOS.nova_senha_editefy = {
 const REMETENTE = process.env.EMAIL_REMETENTE || "IA Academy <onboarding@resend.dev>";
 // Mesmo endereço, com o nome da MIAI, enquanto o domínio da MIAI não estiver verificado no Resend
 const REMETENTE_MIAI = process.env.EMAIL_REMETENTE_MIAI || "MIAI Academy <" + (REMETENTE.match(/<([^>]+)>/) || [null, REMETENTE])[1] + ">";
-// O Editefy usa o mesmo endereço verificado, com o nome Editefy (EMAIL_REMETENTE_EDITEFY troca, ex.: com @editefy.com)
-const REMETENTE_EDITEFY = process.env.EMAIL_REMETENTE_EDITEFY || "Editefy <" + (REMETENTE_MIAI.match(/<([^>]+)>/) || [null, REMETENTE])[1] + ">";
+// O Editefy manda do próprio domínio, verificado no Resend (EMAIL_REMETENTE_EDITEFY, se definida, troca o padrão)
+const REMETENTE_EDITEFY = process.env.EMAIL_REMETENTE_EDITEFY || "Editefy <contato@editefy.com>";
 let resend = null;
 
 function cliente() {

@@ -352,6 +352,26 @@
     },
     {
       "source": "/termos",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/termos.html"
+    },
+    {
+      "source": "/privacidade",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/privacidade.html"
+    },
+    {
+      "source": "/termos",
       "destination": "/termos.html"
     },
     {
