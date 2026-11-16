@@ -89,6 +89,9 @@ p { margin: 0; }
 .hero__confianca { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 26px; font-size: 14px; color: var(--suave); }
 .hero__confianca span { display: inline-flex; align-items: center; gap: 7px; }
 .hero__confianca svg { color: var(--verde); }
+.no-diretorio { display: inline-block; margin-top: 18px; color: var(--roxo-claro); font-size: 14.5px; font-weight: 700; text-decoration: none; }
+.no-diretorio:hover { text-decoration: underline; }
+.no-diretorio:focus-visible { outline: 3px solid var(--roxo-claro); outline-offset: 3px; border-radius: 6px; }
 @media (min-width: 960px) {
   .hero { padding: 72px 0 104px; }
   .hero__grade { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 56px; }
@@ -203,6 +206,7 @@ p { margin: 0; }
 .duvidas summary:focus-visible { outline: 2px solid var(--roxo-claro); outline-offset: 4px; border-radius: 6px; }
 .duvidas details p { padding: 0 0 22px; color: var(--suave); max-width: 66ch; }
 .duvidas details p + p { margin-top: -10px; }
+.duvidas details p a { color: var(--roxo-claro); }
 
 /* Chamada final */
 .final { text-align: center; }
@@ -257,6 +261,7 @@ p { margin: 0; }
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Direto do celular</span>
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Garantia de 7 dias</span>
         </div>
+        <a class="no-diretorio" href="https://claude.ai/directory/editefy" target="_blank" rel="noopener">Disponível no diretório de conectores do Claude&nbsp;<span aria-hidden="true">→</span></a>
       </div>
       <div class="palco">
         <div class="celular">
@@ -408,7 +413,7 @@ p { margin: 0; }
       <div class="duvidas">
         <details>
           <summary>O que eu preciso ter?</summary>
-          <p>O app do Claude ou do ChatGPT no celular (ou o site deles no navegador), com a sua conta. Você adiciona o Editefy como conector uma vez, entra com a conta que recebeu por e-mail e pronto. Não precisa instalar nada.</p>
+          <p>O app do Claude ou do ChatGPT no celular (ou o site deles no navegador), com a sua conta. Você adiciona o Editefy como conector uma vez (no Claude, ele está no <a href="https://claude.ai/directory/editefy" target="_blank" rel="noopener">diretório de conectores</a>), entra com a conta que recebeu por e-mail e pronto. Não precisa instalar nada.</p>
         </details>
         <details>
           <summary>Preciso pagar o Claude ou o ChatGPT?</summary>

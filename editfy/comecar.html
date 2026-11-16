@@ -53,6 +53,12 @@ h1 { margin:0; font-size:clamp(32px, 6vw, 46px); line-height:1.08; letter-spacin
 .copiar code { flex:1; min-width:0; font:14px/1.4 'SFMono-Regular', Menlo, Consolas, monospace; color:var(--texto); word-break:break-all; }
 .copiar button { flex:none; padding:9px 14px; border:0; border-radius:9px; background:var(--roxo); color:#fff; font:inherit; font-size:14px; font-weight:700; cursor:pointer; }
 .copiar button.ok { background:var(--verde); }
+.abrir { display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:12px 18px; border-radius:12px; background:var(--roxo); color:#fff;
+  font-size:16px; font-weight:700; text-decoration:none; }
+.abrir:focus-visible { outline:3px solid var(--roxo-claro); outline-offset:3px; }
+.alternativa { margin-top:14px; }
+.alternativa summary { color:var(--roxo-claro); font-size:15px; font-weight:600; cursor:pointer; }
+.alternativa p { margin-top:10px; }
 .frase { display:inline-block; margin-top:10px; padding:10px 14px; border-radius:14px 14px 4px 14px; background:var(--roxo); color:#fff; font-size:15.5px; font-weight:600; }
 .duvidas { margin-top:44px; border-top:1px solid var(--borda); }
 .duvidas h2 { margin:32px 0 6px; font-size:24px; letter-spacing:-0.02em; }
@@ -95,30 +101,28 @@ h1 { margin:0; font-size:clamp(32px, 6vw, 46px); line-height:1.08; letter-spacin
     <li class="passo">
       <span class="passo__numero">1</span>
       <div>
-        <h2>Abra os conectores do Claude</h2>
-        <p>No app do Claude (ou em claude.ai, no navegador), abra <strong>Configurações → Conectores</strong> e toque em <strong>Adicionar conector personalizado</strong>.</p>
+        <h2>Abra o Editefy no Claude</h2>
+        <p>O Editefy está no diretório de conectores do Claude. Abra a página dele e entre com a sua conta do Claude:</p>
+        <a class="abrir" href="https://claude.ai/directory/editefy" target="_blank" rel="noopener">Abrir o Editefy no Claude <span aria-hidden="true">→</span></a>
+        <details class="alternativa">
+          <summary>Prefere colar o endereço?</summary>
+          <p>No app do Claude (ou em claude.ai), abra <strong>Configurações → Conectores</strong>, toque em <strong>Adicionar conector personalizado</strong>, escreva <strong>Editefy</strong> em nome e cole este endereço:</p>
+          <div class="copiar">
+            <code class="endereco">https://mcp.editefy.com/mcp</code>
+            <button type="button" class="botao-copiar">Copiar</button>
+          </div>
+        </details>
       </div>
     </li>
     <li class="passo">
       <span class="passo__numero">2</span>
       <div>
-        <h2>Cole o endereço do Editefy</h2>
-        <p>Em nome, escreva <strong>Editefy</strong>. Em endereço, cole este:</p>
-        <div class="copiar">
-          <code class="endereco">https://mcp.editefy.com/mcp</code>
-          <button type="button" class="botao-copiar">Copiar</button>
-        </div>
+        <h2>Conecte com a sua conta do Editefy</h2>
+        <p>Toque em <strong>Conectar ao Claude</strong>, entre com o e-mail e a senha que você recebeu por e-mail e toque em <strong>Permitir</strong>.</p>
       </div>
     </li>
     <li class="passo">
       <span class="passo__numero">3</span>
-      <div>
-        <h2>Entre com a sua conta</h2>
-        <p>Toque em <strong>Conectar</strong>, entre com o e-mail e a senha que você recebeu por e-mail e toque em <strong>Permitir</strong>.</p>
-      </div>
-    </li>
-    <li class="passo">
-      <span class="passo__numero">4</span>
       <div>
         <h2>Peça o primeiro vídeo</h2>
         <p>Numa conversa nova, escreva:</p>
