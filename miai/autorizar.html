@@ -41,6 +41,11 @@
            font:inherit; font-size:17px; font-weight:700; cursor:pointer; }
   .botao:disabled { opacity:.6; }
   .botao--secundario { background:transparent; color:var(--texto); border:1px solid var(--borda); }
+  a.botao { text-align:center; text-decoration:none; }
+  .esqueci { font-size:15px; text-align:center; }
+  .esqueci a, .novo p a { color:var(--roxo); }
+  .novo { display:grid; gap:12px; padding-top:22px; border-top:1px solid var(--borda); }
+  .novo b { color:var(--texto); }
   .erro { color:var(--erro); font-size:15px; min-height:1em; }
   .girando { width:28px; height:28px; border-radius:50%; border:3px solid var(--borda); border-top-color:var(--roxo);
              animation:girar 0.9s linear infinite; }
@@ -63,13 +68,19 @@
   <section class="cartao" id="login" hidden>
     <span class="rotulo">Conectar o Editefy</span>
     <h1>Entrar</h1>
-    <p>Entre com o e-mail e a senha que você recebeu por e-mail quando assinou.</p>
+    <p>Entre com o e-mail e a senha que você recebeu por e-mail na compra.</p>
     <form id="form-login">
       <input type="email" id="email" autocomplete="email" placeholder="Seu e-mail" required>
       <input type="password" id="senha" autocomplete="current-password" placeholder="Senha" required>
       <div class="erro" id="erro-login"></div>
       <button class="botao" type="submit">Entrar</button>
     </form>
+    <p class="esqueci"><a href="https://www.editefy.com/conta#senha" target="_blank" rel="noopener">Esqueci minha senha</a></p>
+    <!-- Quem ainda não é cliente: compra um pacote no site (a conta é criada na compra) e depois conecta de novo -->
+    <div class="novo">
+      <p><b>Ainda não tem conta?</b> Compre um pacote de minutos no editefy.com: a conta é criada na hora e a senha chega por e-mail. Depois, volte para a conversa e conecte o Editefy de novo.</p>
+      <a class="botao botao--secundario" href="https://www.editefy.com/#planos" target="_blank" rel="noopener">Ver os pacotes de minutos</a>
+    </div>
   </section>
 
   <section class="cartao" id="consentir" hidden>
