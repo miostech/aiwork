@@ -103,21 +103,21 @@ export const CURSOS_MIAI = [
         nome: "30 minutos",
         minutos: 30,
         // US$ 62 (R$ 62 no Brasil)
-        linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITEFY_30].filter(Boolean),
+        linksPagamento: ["plink_1UcRpFRY9p8vsUUsfCuTpsoo", process.env.STRIPE_PAYMENT_LINK_EDITEFY_30].filter(Boolean),
       },
       {
         id: "editefy-60",
         nome: "60 minutos",
         minutos: 60,
         // US$ 97 (R$ 97 no Brasil)
-        linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITEFY_60].filter(Boolean),
+        linksPagamento: ["plink_1UcRpHRY9p8vsUUs39M1fQF9", process.env.STRIPE_PAYMENT_LINK_EDITEFY_60].filter(Boolean),
       },
       {
         id: "editefy-120",
         nome: "120 minutos",
         minutos: 120,
         // US$ 167 (R$ 167 no Brasil)
-        linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITEFY_120].filter(Boolean),
+        linksPagamento: ["plink_1UcRpIRY9p8vsUUsqFFr71uA", process.env.STRIPE_PAYMENT_LINK_EDITEFY_120].filter(Boolean),
       },
     ],
     aulas: AULAS_EDITFY_REELS,

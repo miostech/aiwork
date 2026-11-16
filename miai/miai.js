@@ -85,11 +85,11 @@
       linkPagamento: '',
       pacotes: [
         { id: 'editefy-30', nome: '30 minutos', minutos: 30, preco: 'R$ 62', precoFora: 'US$ 62',
-          linkPagamento: '' },             // ex.: 'https://buy.stripe.com/...' (vazio = botão "Em breve")
+          linkPagamento: 'https://buy.stripe.com/8x28wRdCKfl7dLh8Do67S09' },   // vazio = botão "Em breve"
         { id: 'editefy-60', nome: '60 minutos', minutos: 60, preco: 'R$ 97', precoFora: 'US$ 97',
-          linkPagamento: '' },
+          linkPagamento: 'https://buy.stripe.com/5kQ5kFaqy7SF36DcTE67S0a' },
         { id: 'editefy-120', nome: '120 minutos', minutos: 120, preco: 'R$ 167', precoFora: 'US$ 167',
-          linkPagamento: '' },
+          linkPagamento: 'https://buy.stripe.com/eVq8wRgOWgpb6iP6vg67S0b' },
       ],
     },
     {
