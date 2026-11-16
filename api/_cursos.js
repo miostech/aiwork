@@ -19,6 +19,17 @@
 //   5. paginasVenda: o nome da página de vendas no contador de visitas (data-pagina do contador.js, que precisa estar
 //      em PAGINAS de api/visita.js); o painel conta os visitantes delas na parte "Por curso"
 //
+// Assinatura mensal (o Editfy Reels): em vez de um preço único, o curso tem "planos". Cada plano é um produto com preço
+// mensal no Stripe e um link de pagamento no modo assinatura, e vira um valor de acessos.curso (ex.: editfy-reels-60).
+// Quem assina recebe dois acessos: o do curso (o "id", que libera as aulas e o plugin, igual a uma compra) e o do plano
+// (que o Editfy no servidor lê para saber os minutos do mês: variável PLANOS_MINUTOS do servidor, com estes mesmos
+// nomes). O aviso do Stripe (api/stripe-webhook.js) acompanha a assinatura: troca o plano no upgrade e no downgrade e
+// tira os dois acessos quando ela acaba. Para liberar um plano à mão (cortesia), libere o curso e o plano.
+//   planos[].linksPagamento  id do link de pagamento (plink_...) de cada plano: liga o pagamento ao curso e ao plano
+//   planos[].produtos        opcional: id do produto (prod_...) de cada plano, que diz o plano da assinatura nas trocas
+//                            de plano. Sem ele, o aviso descobre o produto pelos links (vale para os produtos que os
+//                            links vendem hoje: ponha aqui o produto antigo se um link passar a vender outro).
+//
 // Variável de ambiente:
 //   MIAI_URL  endereço da MIAI Academy (ex.: https://miaiacademy.com). Enquanto estiver vazia, os e-mails de
 //             compra continuam como antes, com o link da área do aluno da IA Academy.
@@ -71,8 +82,36 @@ export const CURSOS_MIAI = [
     plugin: "editfy-reels",   // o aluno instala com editfy-reels@miai
     repo: "miostech/miai-plugin-editfy-reels",
     descricaoPlugin: "Edita os seus vídeos verticais: legenda com a palavra falada em destaque, título, cards e 45 efeitos que seguem o seu rosto, prontos para o Reels, TikTok e Shorts.",
-    // US$ 97 (R$ 97 no Brasil); STRIPE_PAYMENT_LINK_EDITFY_REELS, se definida, é aceita junto
+    // Compra única antiga (US$ 97, R$ 97 no Brasil): não é mais vendida (desative o link no Stripe), mas continua
+    // liberando quem pagou por ela. Quem comprou assim fica com as aulas e o plugin para sempre, sem o servidor.
     linksPagamento: ["plink_1UVEa9RY9p8vsUUsdFHAlweg", process.env.STRIPE_PAYMENT_LINK_EDITFY_REELS].filter(Boolean),
+    // Assinatura mensal do Editefy (vendida em editefy.com, com a marca Editefy): os planos liberam só o conector (o
+    // Editefy no servidor, pelo Claude), com os minutos de vídeo gravado por mês. As aulas e o plugin NÃO entram
+    // (assinaturaLiberaCurso: false): continuam só com quem comprou o curso uma vez. O id do plano é o nome no banco e
+    // no PLANOS_MINUTOS do servidor. Quem assina recebe o e-mail compra_editefy com o link de linkAssinatura.
+    // As variáveis STRIPE_PAYMENT_LINK_EDITFY_REELS_60/_120 e STRIPE_PRODUTO_EDITFY_REELS_60/_120, se definidas,
+    // são aceitas junto (úteis para os ids do modo de teste do Stripe).
+    assinaturaLiberaCurso: false,
+    emailAssinatura: "compra_editefy",
+    linkAssinatura: "https://www.editefy.com/comecar",
+    planos: [
+      {
+        id: "editfy-reels-60",
+        nome: "60 minutos",
+        minutos: 60,
+        // US$ 97 por mês (R$ 97 no Brasil)
+        linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITFY_REELS_60].filter(Boolean),
+        produtos: [process.env.STRIPE_PRODUTO_EDITFY_REELS_60].filter(Boolean),
+      },
+      {
+        id: "editfy-reels-120",
+        nome: "120 minutos",
+        minutos: 120,
+        // US$ 167 por mês (R$ 167 no Brasil)
+        linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITFY_REELS_120].filter(Boolean),
+        produtos: [process.env.STRIPE_PRODUTO_EDITFY_REELS_120].filter(Boolean),
+      },
+    ],
     aulas: AULAS_EDITFY_REELS,
   },
 ];
@@ -95,8 +134,17 @@ export const CURSOS_IA_ACADEMY = [
 
 export const cursoPorEndereco = (endereco) => CURSOS_MIAI.find((c) => c.endereco === endereco) || null;
 export const cursoPorId = (id) => CURSOS_MIAI.find((c) => c.id === id) || null;
+
+// Planos de assinatura de todos os cursos, cada um com o seu curso: [{ curso, plano }]
+export const PLANOS = CURSOS_MIAI.flatMap((curso) => (curso.planos || []).map((plano) => ({ curso, plano })));
+// { curso, plano } do link de pagamento (plink_...) ou do produto (prod_...) do Stripe, ou null
+export const planoPorLinkPagamento = (link) => (link && PLANOS.find((p) => p.plano.linksPagamento.includes(link))) || null;
+export const planoPorProduto = (produto) => (produto && PLANOS.find((p) => p.plano.produtos.includes(produto))) || null;
+
+// Curso do link de pagamento: o de uma compra única ou o de um plano de assinatura
 export const cursoPorLinkPagamento = (link) =>
-  (link && [...CURSOS_MIAI, ...CURSOS_IA_ACADEMY].find((c) => c.linksPagamento.includes(link))) || null;
+  (link && [...CURSOS_MIAI, ...CURSOS_IA_ACADEMY].find((c) => c.linksPagamento.includes(link)))
+  || (planoPorLinkPagamento(link) || {}).curso || null;
 
 export const totalDeAulas = (aulas) => aulas.modulos.reduce((soma, m) => soma + m.aulas.length, 0);
 

@@ -586,9 +586,156 @@ MODELOS.nova_senha_miai = {
   }),
 };
 
+// ── Editefy: e-mail de quem assina, com a marca do Editefy (sem a MIAI) e o passo a passo para conectar ──
+// O endereço do conector (o servidor do Editefy na Hetzner). EDITEFY_CONECTOR, se definida, troca o padrão.
+const CONECTOR_EDITEFY = process.env.EDITEFY_CONECTOR || "https://mcp.editefy.com/mcp";
+
+function emailEditefy({ titulo, previa, chamada, texto, rotuloSenha, passos = [], botao, nota, rodape }) {
+  const fonte = "-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,Helvetica,sans-serif";
+  const fonteSenha = "'SFMono-Regular',Menlo,Consolas,monospace";
+  const linhaPasso = (n, html) => `
+                      <tr>
+                        <td width="34" style="vertical-align:top;padding:0 0 14px;">
+                          <div style="width:26px;height:26px;border-radius:8px;background:#7C3AED;color:#FFFFFF;font-family:${fonte};font-size:14px;font-weight:700;line-height:26px;text-align:center;">${n}</div>
+                        </td>
+                        <td style="vertical-align:top;padding:2px 0 14px;font-family:${fonte};font-size:15px;line-height:1.55;color:#3F3A4D;">${html}</td>
+                      </tr>`;
+  return `<!doctype html>
+<html lang="pt-BR" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>${titulo}</title>
+<style>
+  body { margin: 0; padding: 0; background: #F4F2FA; }
+  a { color: #6D28D9; }
+  @media (max-width: 600px) { .cartao { padding: 28px 20px !important; } .titulo { font-size: 26px !important; } }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F4F2FA;">
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F4F2FA;opacity:0;">
+    ${previa}
+  </div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F2FA;">
+    <tr>
+      <td align="center" style="padding:32px 16px 40px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+          <tr>
+            <td style="padding:0 0 20px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    <div style="width:32px;height:32px;border-radius:9px;background:#7C3AED;color:#FFFFFF;font-family:${fonte};font-size:16px;line-height:32px;text-align:center;">&#9654;</div>
+                  </td>
+                  <td style="vertical-align:middle;padding:0 0 0 10px;font-family:${fonte};font-size:22px;font-weight:800;letter-spacing:-0.5px;color:#17141F;">Editefy</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td class="cartao" style="background:#FFFFFF;border:1px solid #E4E0EE;border-radius:18px;padding:36px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="titulo" style="padding:0 0 14px;font-family:${fonte};font-size:28px;line-height:1.2;font-weight:800;letter-spacing:-0.5px;color:#17141F;">${chamada}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 22px;font-family:${fonte};font-size:16px;line-height:1.6;color:#625B73;">${texto}</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 26px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F2FA;border-radius:14px;">
+                      <tr>
+                        <td style="padding:18px 20px 6px;font-family:${fonte};font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#625B73;">E-mail</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 20px 14px;font-family:${fonteSenha};font-size:16px;color:#17141F;word-break:break-all;">{{{EMAIL_ALUNO}}}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 20px 6px;font-family:${fonte};font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#625B73;">${rotuloSenha}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 20px 18px;font-family:${fonteSenha};font-size:18px;font-weight:700;color:#17141F;">{{{SENHA}}}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+${passos.length ? `
+                <tr>
+                  <td style="padding:0 0 12px;font-family:${fonte};font-size:17px;font-weight:800;color:#17141F;">Como conectar</td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 10px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${passos.map((t, i) => linhaPasso(i + 1, t)).join("")}
+                    </table>
+                  </td>
+                </tr>` : ""}
+                <tr>
+                  <td style="padding:0 0 26px;">
+                    <a href="{{{LINK_CURSO}}}" style="display:inline-block;background:#7C3AED;color:#FFFFFF;text-decoration:none;font-family:${fonte};font-size:16px;font-weight:700;padding:14px 24px;border-radius:12px;">${botao}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:18px 0 0;border-top:1px solid #E4E0EE;font-family:${fonte};font-size:14px;line-height:1.6;color:#625B73;">${nota}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 4px 0;font-family:${fonte};font-size:12px;line-height:1.6;color:#8A8399;">${rodape}<br>&copy; 2026 Editefy</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+}
+
+MODELOS.compra_editefy = {
+  marca: "editefy",
+  assunto: "Seu acesso ao Editefy",
+  html: emailEditefy({
+    titulo: "Seu acesso ao Editefy",
+    previa: "Assinatura ativa. Veja como conectar o Editefy ao seu Claude ou ChatGPT em um minuto.",
+    chamada: "Bem-vindo(a) ao Editefy, {{{NOME}}}!",
+    texto: "Sua assinatura está ativa. Para começar, conecte o Editefy e entre com os dados abaixo. Os passos são do Claude; se você usa o ChatGPT, o botão no fim mostra o passo a passo dele.",
+    rotuloSenha: "Senha",
+    passos: [
+      "No app do Claude (ou em claude.ai), abra <strong>Configurações &rarr; Conectores</strong> e toque em <strong>Adicionar conector personalizado</strong>.",
+      `Em nome, escreva <strong>Editefy</strong>. Em endereço, cole:<br><span style="font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:13px;color:#17141F;word-break:break-all;">${CONECTOR_EDITEFY}</span>`,
+      "Toque em <strong>Conectar</strong> e entre com o e-mail e a senha acima.",
+      "Numa conversa nova, escreva: <strong>Quero editar um Reels com o Editefy</strong>.",
+    ],
+    botao: "Ver o passo a passo",
+    nota: "<strong style=\"color:#17141F;\">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Se você já tinha uma conta com este e-mail, esta é a sua senha nova.",
+    rodape: "Você recebeu este e-mail porque assinou o Editefy.",
+  }),
+};
+
+MODELOS.nova_senha_editefy = {
+  marca: "editefy",
+  assunto: "Sua nova senha do Editefy",
+  html: emailEditefy({
+    titulo: "Sua nova senha do Editefy",
+    previa: "Aqui está a sua nova senha para conectar o Editefy.",
+    chamada: "Aqui está a sua nova senha, {{{NOME}}}",
+    texto: "Recebemos um pedido de nova senha. A senha anterior não vale mais: use os dados abaixo quando o Editefy pedir para entrar.",
+    rotuloSenha: "Nova senha",
+    botao: "Ver como conectar",
+    nota: "<strong style=\"color:#17141F;\">Não pediu uma nova senha?</strong> Pode usar a senha acima normalmente. Ela foi enviada só para o seu e-mail, então a sua conta continua segura.",
+    rodape: "Você recebeu este e-mail porque tem uma conta no Editefy.",
+  }),
+};
+
 const REMETENTE = process.env.EMAIL_REMETENTE || "IA Academy <onboarding@resend.dev>";
 // Mesmo endereço, com o nome da MIAI, enquanto o domínio da MIAI não estiver verificado no Resend
 const REMETENTE_MIAI = process.env.EMAIL_REMETENTE_MIAI || "MIAI Academy <" + (REMETENTE.match(/<([^>]+)>/) || [null, REMETENTE])[1] + ">";
+// O Editefy usa o mesmo endereço verificado, com o nome Editefy (EMAIL_REMETENTE_EDITEFY troca, ex.: com @editefy.com)
+const REMETENTE_EDITEFY = process.env.EMAIL_REMETENTE_EDITEFY || "Editefy <" + (REMETENTE_MIAI.match(/<([^>]+)>/) || [null, REMETENTE])[1] + ">";
 let resend = null;
 
 function cliente() {
@@ -611,7 +758,7 @@ export async function enviarEmail(tipo, para, dados, idempotencia) {
   const modelo = MODELOS[tipo];
   const html = modelo.html.replace(/\{\{\{(\w+)\}\}\}/g, (_, campo) => escapar(dados[campo]));
   const assunto = modelo.assunto.replace(/\{\{\{(\w+)\}\}\}/g, (_, campo) => String(dados[campo] ?? ""));
-  const remetente = modelo.marca === "miai" ? REMETENTE_MIAI : REMETENTE;
+  const remetente = modelo.marca === "editefy" ? REMETENTE_EDITEFY : modelo.marca === "miai" ? REMETENTE_MIAI : REMETENTE;
   try {
     for (let tentativa = 1; tentativa <= 3; tentativa++) {
       const { data, error, headers } = await cliente().emails.send(

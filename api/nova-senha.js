@@ -1,6 +1,7 @@
 // "Esqueci minha senha": gera uma senha nova e manda por e-mail.
 //   POST { email }               → e-mail da IA Academy, com o link da área do aluno
 //   POST { email, site: "miai" } → e-mail da MIAI Academy, com o link da conta da MIAI
+//   POST { email, site: "editefy" } → e-mail do Editefy (sem a MIAI), com o link de como conectar
 // Sempre responde { ok: true }, para não revelar quem tem cadastro.
 import { banco, normalizarEmail, EMAIL_VALIDO } from "./_supabase.js";
 import { trocarSenha, linkCurso } from "./_alunos.js";
@@ -16,6 +17,7 @@ export default async function handler(req, res) {
   }
   const email = normalizarEmail(req.body && req.body.email);
   const miai = !!(req.body && req.body.site === "miai");
+  const editefy = !!(req.body && req.body.site === "editefy");
   if (!EMAIL_VALIDO.test(email)) {
     return res.status(400).json({ erro: "Digite um e-mail válido." });
   }
@@ -32,11 +34,12 @@ export default async function handler(req, res) {
       const senha = await trocarSenha(aluno.id);
       const primeiroNome = String(aluno.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
       await enviarEmail(
-        miai ? "nova_senha_miai" : "nova_senha",
+        editefy ? "nova_senha_editefy" : miai ? "nova_senha_miai" : "nova_senha",
         email,
         {
           NOME: primeiroNome, EMAIL_ALUNO: email, SENHA: senha,
-          LINK_CURSO: miai ? linkMiai("/conta") || "https://miaiacademy.com/conta" : linkCurso(),
+          LINK_CURSO: editefy ? "https://www.editefy.com/comecar"
+            : miai ? linkMiai("/conta") || "https://miaiacademy.com/conta" : linkCurso(),
         },
         `nova-senha-${aluno.id}-${Date.now()}`
       );

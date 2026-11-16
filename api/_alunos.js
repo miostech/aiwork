@@ -23,7 +23,8 @@ async function acharUsuarioPorEmail(email) {
   return null;
 }
 
-// Cria o aluno (ou só troca a senha, se ele já existir) e libera um curso.
+// Cria o aluno (ou só troca a senha, se ele já existir) e libera um curso. Com curso null, só cria o login e troca a
+// senha: quem chamou libera os acessos (as assinaturas, em api/stripe-webhook.js).
 // Devolve { alunoId, senha, bloqueado }.
 export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito", origem = "validacao", referencia, leadId }) {
   const db = banco();
@@ -65,11 +66,13 @@ export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito",
   const { error: erroAluno } = await db.from("alunos").upsert(dadosAluno, { onConflict: "id" });
   if (erroAluno) throw erroAluno;
 
-  const { error: erroAcesso } = await db.from("acessos").upsert(
-    { aluno_id: alunoId, curso, origem, referencia: referencia || null, revogado_em: null },
-    { onConflict: "aluno_id,curso" }
-  );
-  if (erroAcesso) throw erroAcesso;
+  if (curso) {
+    const { error: erroAcesso } = await db.from("acessos").upsert(
+      { aluno_id: alunoId, curso, origem, referencia: referencia || null, revogado_em: null },
+      { onConflict: "aluno_id,curso" }
+    );
+    if (erroAcesso) throw erroAcesso;
+  }
 
   if (leadId) await db.from("leads").update({ aluno_id: alunoId }).eq("id", leadId);
 

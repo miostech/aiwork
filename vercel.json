@@ -12,6 +12,28 @@
       "permanent": false
     },
     {
+      "source": "/entrar",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/conta",
+      "permanent": false
+    },
+    {
+      "source": "/editfy-reels",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.editefy.com/",
+      "permanent": false
+    },
+    {
       "source": "/oauth/authorize",
       "has": [
         {
@@ -243,6 +265,46 @@
         }
       ],
       "destination": "/miai/oauth-authorization-server.json"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/index.html"
+    },
+    {
+      "source": "/comecar",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/comecar.html"
+    },
+    {
+      "source": "/obrigado",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/comecar.html"
+    },
+    {
+      "source": "/conta",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/conta.html"
     },
     {
       "source": "/.well-known/oauth-authorization-server/oauth",

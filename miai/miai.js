@@ -60,19 +60,37 @@
       linkPagamento: 'https://buy.stripe.com/5kQ00leGO1uh22zaLw67S07',   // US$ 97, com R$ 97 fixo no Brasil
     },
     {
-      endereco: 'editfy-reels',            // miaiacademy.com/editfy-reels (vendas) e /conta/editfy-reels (aulas)
+      endereco: 'editfy-reels',            // /conta/editfy-reels (aulas de quem comprou uma vez); a venda agora é no Editefy
       nome: 'Editfy Reels',
+      // Fora da vitrine da MIAI: a assinatura é vendida só em editefy.com (o vercel.json manda miaiacademy.com/editfy-reels
+      // para lá). Quem comprou o curso uma vez continua vendo as aulas na conta. Os planos e links abaixo são lidos pelo
+      // site do Editefy (editfy/index.html e editfy/conta.html).
+      oculto: true,
       area: 'Inteligência Artificial',
-      chamada: 'Grave na vertical e receba o vídeo pronto para postar: legenda em destaque, título, cards e 45 efeitos que seguem o seu rosto, feitos pela IA no seu computador.',
-      detalhes: ['Plugin do Claude Code', 'Reels, TikTok e Shorts', 'Garantia de 7 dias'],
+      chamada: 'Grave na vertical e receba o vídeo pronto para postar: legenda em destaque, título, cards e 45 efeitos que seguem o seu rosto, editados pela IA no computador ou pelo celular.',
+      detalhes: ['Assinatura mensal', 'Computador ou celular', 'Garantia de 7 dias'],
       cor: '#C2410C',
       capa: '',
       novo: true,
       professor: { nome: 'Camila', foto: '/miai/professores/camila-ia-academy.jpg' },
+      // Assinatura mensal com dois planos: o cartão da vitrine mostra o mais barato e a página de vendas, os dois.
       preco: 'R$ 97',                      // no Brasil
       precoFora: 'US$ 97',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
+      precoNota: 'por mês · plano de 60 min',   // linha pequena embaixo do preço no cartão
       parcelas: '',
-      linkPagamento: 'https://buy.stripe.com/28E7sNfKSfl7fTp7zk67S08',   // US$ 97, com R$ 97 fixo no Brasil
+      // A compra única (buy.stripe.com/28E7sNfKSfl7fTp7zk67S08, US$ 97) saiu da página: quem comprou por ela continua
+      // com as aulas e o plugin. Cada plano tem o seu link de pagamento no modo assinatura, com o preço mensal em dólar
+      // e o valor em reais fixo para o Brasil. O id do link (plink_...) também vai nos planos de api/_cursos.js.
+      linkPagamento: '',
+      planos: [
+        { id: 'editfy-reels-60', nome: '60 minutos', minutos: 60, preco: 'R$ 97', precoFora: 'US$ 97',
+          linkPagamento: '' },             // ex.: 'https://buy.stripe.com/...' (vazio = botão desligado com aviso)
+        { id: 'editfy-reels-120', nome: '120 minutos', minutos: 120, preco: 'R$ 167', precoFora: 'US$ 167',
+          linkPagamento: '' },
+      ],
+      // Portal do cliente do Stripe (o "link de login"), onde quem assina troca de plano, troca o cartão ou cancela:
+      // Stripe → Configurações → Billing → Portal do cliente. Vazio = a conta mostra o plano sem o botão.
+      portalAssinatura: '',
     },
     {
       // A Formação da IA Academy também à venda na MIAI. Depois do pagamento a pessoa segue o fluxo da IA Academy
@@ -184,10 +202,11 @@
     } else {
       const escreverPreco = () => {
         preco.textContent = precoDe(c);
-        if (parcelasDe(c)) {
-          const parcelas = document.createElement('small');
-          parcelas.textContent = parcelasDe(c);
-          preco.appendChild(parcelas);
+        const nota = parcelasDe(c) || c.precoNota || '';   // parcelas (só no Brasil) ou a nota do preço (ex.: por mês)
+        if (nota) {
+          const linha = document.createElement('small');
+          linha.textContent = nota;
+          preco.appendChild(linha);
         }
       };
       escreverPreco();

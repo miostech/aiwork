@@ -104,10 +104,10 @@ create table if not exists public.acessos (
   id          uuid primary key default gen_random_uuid(),
   criado_em   timestamptz not null default now(),
   aluno_id    uuid not null references public.alunos (id) on delete cascade,
-  curso       text not null,  -- 'gratuito' ou 'pago'
-  origem      text not null,  -- 'confirmacao', 'validacao', 'stripe' ou 'manual'
-  referencia  text,           -- id do lead, da validação ou da compra
-  revogado_em timestamptz,    -- preenchido = acesso tirado (ex.: reembolso)
+  curso       text not null,  -- 'gratuito', 'pago', o id de um curso da MIAI ou de um plano de assinatura (api/_cursos.js)
+  origem      text not null,  -- 'confirmacao', 'validacao', 'stripe', 'assinatura' ou 'manual'
+  referencia  text,           -- id do lead, da validação, da compra ou da assinatura do Stripe (sub_...)
+  revogado_em timestamptz,    -- preenchido = acesso tirado (ex.: reembolso, fim da assinatura)
   unique (aluno_id, curso)
 );
 
@@ -122,7 +122,8 @@ create table if not exists public.compras (
   id               uuid primary key default gen_random_uuid(),
   criado_em        timestamptz not null default now(),
   atualizado_em    timestamptz not null default now(),
-  stripe_sessao    text not null unique,   -- id da sessão de pagamento (cs_...)
+  stripe_sessao    text not null unique,   -- id da sessão de pagamento (cs_...); nas assinaturas, o da fatura (in_...),
+                                           -- uma linha por mensalidade paga
   stripe_pagamento text,                   -- id do pagamento (pi_...), usado para achar a compra no reembolso
   status           text not null check (status in ('aguardando', 'pago', 'falhou', 'reembolsado')),
   email            text not null,

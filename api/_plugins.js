@@ -30,7 +30,9 @@ export function enderecoLoja(req) {
   return base || `https://${req.headers.host}`;
 }
 
-// Cursos com plugin que o aluno pode usar agora (acesso não revogado e aluno não bloqueado)
+// Cursos com plugin que o aluno pode usar agora (acesso não revogado e aluno não bloqueado).
+// Nos cursos com assinatura (planos em api/_cursos.js), quem assina qualquer plano tem o acesso do próprio curso
+// (ex.: editfy-reels), então o plugin é um só para todos os planos; o fim da assinatura tira esse acesso.
 export async function cursosAtivos(db, alunoId) {
   const { data: aluno, error: erroAluno } = await db.from("alunos").select("bloqueado").eq("id", alunoId).maybeSingle();
   if (erroAluno) throw erroAluno;
