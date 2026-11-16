@@ -644,6 +644,7 @@ function emailEditefy({ titulo, previa, chamada, texto, rotuloSenha, passos = []
                 <tr>
                   <td style="padding:0 0 22px;font-family:${fonte};font-size:16px;line-height:1.6;color:#625B73;">${texto}</td>
                 </tr>
+${rotuloSenha ? `
                 <tr>
                   <td style="padding:0 0 26px;">
                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4F2FA;border-radius:14px;">
@@ -662,6 +663,7 @@ function emailEditefy({ titulo, previa, chamada, texto, rotuloSenha, passos = []
                     </table>
                   </td>
                 </tr>
+` : ""}
 ${passos.length ? `
                 <tr>
                   <td style="padding:0 0 12px;font-family:${fonte};font-size:17px;font-weight:800;color:#17141F;">Como conectar</td>
@@ -700,9 +702,9 @@ MODELOS.compra_editefy = {
   assunto: "Seu acesso ao Editefy",
   html: emailEditefy({
     titulo: "Seu acesso ao Editefy",
-    previa: "Assinatura ativa. Veja como conectar o Editefy ao seu Claude ou ChatGPT em um minuto.",
+    previa: "Seus {{{MINUTOS}}} minutos estão prontos. Veja como conectar o Editefy ao seu Claude ou ChatGPT em um minuto.",
     chamada: "Bem-vindo(a) ao Editefy, {{{NOME}}}!",
-    texto: "Sua assinatura está ativa. Para começar, conecte o Editefy e entre com os dados abaixo. Os passos são do Claude; se você usa o ChatGPT, o botão no fim mostra o passo a passo dele.",
+    texto: "Seus <strong>{{{MINUTOS}}} minutos</strong> de vídeo já estão na sua conta e valem 12 meses. Para começar, conecte o Editefy e entre com os dados abaixo. Os passos são do Claude; se você usa o ChatGPT, o botão no fim mostra o passo a passo dele.",
     rotuloSenha: "Senha",
     passos: [
       "No app do Claude (ou em claude.ai), abra <strong>Configurações &rarr; Conectores</strong> e toque em <strong>Adicionar conector personalizado</strong>.",
@@ -711,8 +713,23 @@ MODELOS.compra_editefy = {
       "Numa conversa nova, escreva: <strong>Quero editar um Reels com o Editefy</strong>.",
     ],
     botao: "Ver o passo a passo",
-    nota: "<strong style=\"color:#17141F;\">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Se você já tinha uma conta com este e-mail, esta é a sua senha nova.",
-    rodape: "Você recebeu este e-mail porque assinou o Editefy.",
+    nota: "<strong style=\"color:#17141F;\">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Quando os minutos acabarem, é só comprar outro pacote em editefy.com.",
+    rodape: "Você recebeu este e-mail porque comprou minutos do Editefy.",
+  }),
+};
+
+// Quem já tem conta e compra mais um pacote: sem senha (continua a mesma)
+MODELOS.minutos_editefy = {
+  marca: "editefy",
+  assunto: "Seus minutos do Editefy chegaram",
+  html: emailEditefy({
+    titulo: "Seus minutos do Editefy chegaram",
+    previa: "{{{MINUTOS}}} minutos a mais na sua conta do Editefy.",
+    chamada: "Seus minutos chegaram, {{{NOME}}}!",
+    texto: "Os <strong>{{{MINUTOS}}} minutos</strong> que você comprou já estão na sua conta, somados ao que você tinha, e valem 12 meses. É só pedir na conversa: <strong>Quero editar um Reels com o Editefy</strong>. Para ver o saldo, pergunte: <strong>quantos minutos eu tenho no Editefy?</strong>",
+    botao: "Ver como conectar",
+    nota: "Sua senha continua a mesma. Se não lembrar, peça uma nova em <a href=\"https://www.editefy.com/conta\" style=\"color:#7C3AED;\">editefy.com/conta</a>.",
+    rodape: "Você recebeu este e-mail porque comprou minutos do Editefy.",
   }),
 };
 

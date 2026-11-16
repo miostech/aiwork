@@ -48,8 +48,8 @@
 
     <h2 id="dados">2. Quais dados coletamos</h2>
     <ul>
-      <li><strong>Conta e assinatura:</strong> nome, e-mail, plano, situação da assinatura e os minutos de vídeo usados no mês. A senha é guardada criptografada pelo serviço de login; ninguém da equipe consegue vê-la.</li>
-      <li><strong>Pagamentos:</strong> nome, e-mail, plano, valor, moeda e situação de cada cobrança, que recebemos da Stripe. Os dados do cartão ficam só com a Stripe.</li>
+      <li><strong>Conta e minutos:</strong> nome, e-mail, os pacotes de minutos comprados, quanto de cada um foi usado e quando vencem. A senha é guardada criptografada pelo serviço de login; ninguém da equipe consegue vê-la.</li>
+      <li><strong>Pagamentos:</strong> nome, e-mail, pacote, valor, moeda e situação de cada pagamento, que recebemos da Stripe. Os dados do cartão ficam só com a Stripe.</li>
       <li><strong>Conexão com o Claude ou o ChatGPT:</strong> quando você conecta o Editefy, o app recebe uma autorização para usar o Editefy em seu nome. Nós não vemos a sua senha do Claude ou do ChatGPT nem o resto das suas conversas: recebemos só o que o assistente manda para as ferramentas do Editefy, como os pedidos de edição, os nomes dos projetos e dos arquivos e os textos que vão no vídeo (título, legenda, cards).</li>
       <li><strong>Vídeos e arquivos que você manda:</strong> os vídeos, áudios e imagens enviados pela página de envio, e o que fazemos a partir deles: a transcrição da fala, as prévias, os quadros de conferência e os vídeos prontos.</li>
       <li><strong>Perfil de edição:</strong> o nome e o @ que aparecem na plaquinha, a marca, as cores e os padrões de edição que você salvar.</li>
@@ -60,14 +60,14 @@
     <h2 id="uso">3. Para que usamos</h2>
     <ul>
       <li>fazer as edições que você pede e entregar o vídeo pronto (na página do vídeo e, se você pedir, por e-mail);</li>
-      <li>controlar os minutos do seu plano;</li>
-      <li>cobrar a assinatura, fazer reembolsos e evitar fraudes;</li>
+      <li>controlar o seu saldo de minutos;</li>
+      <li>receber os pagamentos, fazer reembolsos e evitar fraudes;</li>
       <li>responder quando você pede ajuda com uma edição;</li>
       <li>manter o serviço seguro e corrigir erros;</li>
       <li>entender quantas pessoas visitam o site e de quais campanhas elas vêm;</li>
       <li>cumprir obrigações legais.</li>
     </ul>
-    <p>Usamos esses dados para cumprir o contrato da assinatura, no nosso legítimo interesse de operar e melhorar o serviço, para cumprir obrigações legais e, quando for o caso, com o seu consentimento.</p>
+    <p>Usamos esses dados para cumprir o contrato de compra dos minutos, no nosso legítimo interesse de operar e melhorar o serviço, para cumprir obrigações legais e, quando for o caso, com o seu consentimento.</p>
     <p>Não usamos os seus vídeos, a sua voz nem o seu rosto para treinar modelos de inteligência artificial. Ninguém da equipe olha os seus vídeos, a não ser quando você pede ajuda com uma edição ou quando for preciso para resolver um erro ou cumprir a lei.</p>
 
     <h2 id="edicao">4. Como a edição trata os seus vídeos</h2>
@@ -84,7 +84,7 @@
       <li><strong>Vídeos e arquivos dos projetos</strong> (o que você mandou, as transcrições, as prévias e os vídeos prontos): são apagados automaticamente 7 dias depois de o projeto ser criado. A limpeza roda uma vez por dia. Baixe antes o que quiser guardar.</li>
       <li><strong>Perfil de edição:</strong> enquanto você tiver a conta, ou até você pedir para apagar.</li>
       <li><strong>Registros técnicos:</strong> por pouco tempo; são apagados automaticamente à medida que entram registros novos.</li>
-      <li><strong>Conta, assinatura e minutos usados:</strong> enquanto a conta existir. Os registros de cobranças e reembolsos, pelo tempo exigido por lei.</li>
+      <li><strong>Conta, pacotes e minutos usados:</strong> enquanto a conta existir. Os registros de cobranças e reembolsos, pelo tempo exigido por lei.</li>
     </ul>
     <p>Você pode pedir para apagarmos os seus vídeos e os seus dados antes desses prazos, exceto o que a lei obriga a manter.</p>
 
@@ -93,7 +93,7 @@
     <ul>
       <li><strong>Hetzner:</strong> o servidor que faz as edições e o armazenamento dos vídeos, na Finlândia (União Europeia);</li>
       <li><strong>Supabase:</strong> banco de dados e login das contas;</li>
-      <li><strong>Stripe:</strong> pagamentos, assinaturas e reembolsos;</li>
+      <li><strong>Stripe:</strong> pagamentos e reembolsos;</li>
       <li><strong>Vercel:</strong> hospedagem do site;</li>
       <li><strong>Resend:</strong> envio dos e-mails de acesso, de senha e de vídeo pronto;</li>
       <li><strong>Google:</strong> estatísticas de visitas (Google Analytics) e medição de campanhas (Google Ads) no site;</li>

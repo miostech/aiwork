@@ -24,9 +24,10 @@ async function acharUsuarioPorEmail(email) {
 }
 
 // Cria o aluno (ou só troca a senha, se ele já existir) e libera um curso. Com curso null, só cria o login e troca a
-// senha: quem chamou libera os acessos (as assinaturas, em api/stripe-webhook.js).
-// Devolve { alunoId, senha, bloqueado }.
-export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito", origem = "validacao", referencia, leadId }) {
+// senha: quem chamou libera os acessos (as assinaturas e os pacotes de minutos, em api/stripe-webhook.js).
+// Com manterSenha, quem já tem conta continua com a senha de sempre (ex.: quem compra mais um pacote): aí senha volta null.
+// Devolve { alunoId, senha, bloqueado, novo }.
+export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito", origem = "validacao", referencia, leadId, manterSenha = false }) {
   const db = banco();
   const emailNorm = normalizarEmail(email);
   const senha = gerarSenha();
@@ -36,7 +37,10 @@ export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito",
   if (erroBusca) throw erroBusca;
 
   let alunoId = existente && existente.id;
-  if (alunoId) {
+  let senhaNova = senha;
+  if (alunoId && manterSenha) {
+    senhaNova = null;
+  } else if (alunoId) {
     const { error } = await db.auth.admin.updateUserById(alunoId, { password: senha });
     if (error) throw error;
   } else {
@@ -49,8 +53,12 @@ export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito",
     if (error && error.code === "email_exists") {
       alunoId = await acharUsuarioPorEmail(emailNorm);
       if (!alunoId) throw error;
-      const { error: erroSenha } = await db.auth.admin.updateUserById(alunoId, { password: senha });
-      if (erroSenha) throw erroSenha;
+      if (manterSenha) {
+        senhaNova = null;
+      } else {
+        const { error: erroSenha } = await db.auth.admin.updateUserById(alunoId, { password: senha });
+        if (erroSenha) throw erroSenha;
+      }
     } else if (error) {
       throw error;
     } else {
@@ -60,7 +68,8 @@ export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito",
 
   // Nome e WhatsApp só entram quando vêm preenchidos, para não apagar o que o aluno já tem.
   // O nome de quem já é aluno não muda (na compra, o nome que chega é o do titular do cartão).
-  const dadosAluno = { id: alunoId, email: emailNorm, senha_enviada_em: new Date().toISOString() };
+  const dadosAluno = { id: alunoId, email: emailNorm };
+  if (senhaNova) dadosAluno.senha_enviada_em = new Date().toISOString();
   if (nome && !existente) dadosAluno.nome = nome;
   if (whatsapp) dadosAluno.whatsapp = whatsapp;
   const { error: erroAluno } = await db.from("alunos").upsert(dadosAluno, { onConflict: "id" });
@@ -76,7 +85,7 @@ export async function liberarAcesso({ nome, email, whatsapp, curso = "gratuito",
 
   if (leadId) await db.from("leads").update({ aluno_id: alunoId }).eq("id", leadId);
 
-  return { alunoId, senha, bloqueado: !!(existente && existente.bloqueado) };
+  return { alunoId, senha: senhaNova, bloqueado: !!(existente && existente.bloqueado), novo: !existente && !!senhaNova };
 }
 
 // Gera e grava uma senha nova para um aluno que já existe. Devolve a senha.
