@@ -702,9 +702,9 @@ MODELOS.compra_editefy = {
   assunto: "Seu acesso ao Editefy",
   html: emailEditefy({
     titulo: "Seu acesso ao Editefy",
-    previa: "Seus {{{MINUTOS}}} minutos estão prontos. Veja como conectar o Editefy ao seu Claude ou ChatGPT em um minuto.",
+    previa: "Seus {{{MINUTOS}}} minutos estão prontos. Veja como conectar o Editefy ao seu Claude, ChatGPT ou Grok em um minuto.",
     chamada: "Bem-vindo(a) ao Editefy, {{{NOME}}}!",
-    texto: "Seus <strong>{{{MINUTOS}}} minutos</strong> de vídeo já estão na sua conta e valem 12 meses. Para começar, conecte o Editefy e entre com os dados abaixo. Os passos são do Claude; se você usa o ChatGPT, o botão no fim mostra o passo a passo dele.",
+    texto: "Seus <strong>{{{MINUTOS}}} minutos</strong> de vídeo já estão na sua conta e valem 12 meses. Para começar, conecte o Editefy e entre com os dados abaixo. Os passos são do Claude; se você usa o ChatGPT ou o Grok, o botão no fim mostra o passo a passo deles.",
     rotuloSenha: "Senha",
     passos: [
       "No app do Claude (ou em claude.ai), abra <strong>Configurações &rarr; Conectores</strong> e toque em <strong>Adicionar conector personalizado</strong>.",
