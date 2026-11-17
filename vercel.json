@@ -12,6 +12,17 @@
       "permanent": false
     },
     {
+      "source": "/autorizar",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.editefy.com/autorizar",
+      "permanent": false
+    },
+    {
       "source": "/entrar",
       "has": [
         {
