@@ -318,6 +318,26 @@
       "destination": "/editfy/conta.html"
     },
     {
+      "source": "/sort",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/sort.html"
+    },
+    {
+      "source": "/sort/demonstracao",
+      "has": [
+        {
+          "type": "host",
+          "value": "(www\\.)?editefy\\.com"
+        }
+      ],
+      "destination": "/editfy/sort-demo.html"
+    },
+    {
       "source": "/.well-known/oauth-authorization-server/oauth",
       "has": [
         {

@@ -164,7 +164,7 @@ export const EDITEFY_SORT = {
   nome: "Editefy Sort",
   emailPacote: "compra_editefy_sort",
   emailContaExistente: "acesso_editefy_sort",
-  linkPacote: "https://claude.ai/settings/connectors",   // o botão do e-mail abre os conectores do Claude
+  linkPacote: "https://www.editefy.com/sort#conectar",   // o botão do e-mail: o passo a passo do Claude, ChatGPT e Grok
   pacotes: [
     {
       id: "sort-12-meses",   // editefy_sort_acessos.pacote e compras.curso
