@@ -10,6 +10,7 @@
 //   charge.refunded, refund.created, refund.updated → reembolso total (garantia de 7 dias): tira o acesso
 // Ao liberar, cria o login (ou troca a senha de quem já é aluno) e manda o e-mail com a senha: "acesso" para a
 // Formação IA Academy; para os cursos da MIAI, "compra_miai" (com MIAI_URL definida) ou "compra".
+// A entrega e o reembolso de cada tipo de produto ficam em api/_entregas.js, os mesmos das vendas pela Hotmart.
 // O id do cadastro (client_reference_id, preenchido pela página) liga a compra ao lead do formulário.
 //
 // Pacotes de minutos (cursos com "pacotes" em api/_cursos.js, como o Editefy): pagamento único, como uma compra
@@ -54,10 +55,8 @@
 //   + as do Supabase (api/_supabase.js), do Resend (api/_emails.js) e as opcionais dos planos (api/_cursos.js)
 import Stripe from "stripe";
 import { banco, normalizarEmail } from "./_supabase.js";
-import { liberarAcesso, linkCurso } from "./_alunos.js";
-import { enviarEmail } from "./_emails.js";
-import { comandosEditefy, licencaDoAluno } from "./_plugins.js";
-import { PLANOS, cursoPorLinkPagamento, linkMiai, pacotePorId, pacotePorLinkPagamento, planoPorProduto } from "./_cursos.js";
+import { entregarCompra, revogarCompra } from "./_entregas.js";
+import { PLANOS, cursoPorLinkPagamento, pacotePorLinkPagamento, planoPorProduto } from "./_cursos.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_nao_configurada");
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -265,77 +264,6 @@ async function cancelarAssinaturaDaFatura(idFatura) {
   await sincronizarAssinatura(id);
 }
 
-// ── Editefy Sort: acesso por tempo, em editefy_sort_acessos ──
-
-// Data mais "meses" meses; se o dia não existe no mês final, fica no último dia (31/01 + 1 mês = 28/02), como o
-// interval do Postgres
-function somarMeses(data, meses) {
-  const d = new Date(data);
-  const dia = d.getUTCDate();
-  d.setUTCDate(1);
-  d.setUTCMonth(d.getUTCMonth() + meses);
-  const ultimoDia = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
-  d.setUTCDate(Math.min(dia, ultimoDia));
-  return d;
-}
-
-// Refaz o vencimento das compras do Sort de um aluno, na ordem em que foram feitas: cada compra vale os meses do pacote
-// a partir do dia da compra ou, se ainda faltava tempo, a partir do vencimento anterior (renovar antes de vencer não
-// perde nada). As linhas feitas à mão (cortesias) ficam como estão e contam como tempo que ainda falta. Roda de novo
-// depois de um reembolso, para as compras seguintes perderem o tempo da compra reembolsada. Pode rodar quantas vezes
-// for preciso. Devolve o vencimento do acesso (o último), ou null se não sobrou nenhuma linha.
-async function acertarVencimentosSort(db, alunoId) {
-  const { data, error } = await db.from("editefy_sort_acessos")
-    .select("id, pacote, origem, criado_em, vence_em, revogado_em").eq("aluno_id", alunoId);
-  if (error) throw error;
-  const linhas = (data || []).filter((l) => !l.revogado_em)
-    .sort((a, b) => new Date(a.criado_em) - new Date(b.criado_em) || String(a.id).localeCompare(String(b.id)));
-  let fim = null;
-  for (const linha of linhas) {
-    let vence = linha.vence_em ? new Date(linha.vence_em) : null;
-    if (linha.origem === "stripe") {
-      const criado = new Date(linha.criado_em);
-      const meses = (pacotePorId(linha.pacote) || { pacote: {} }).pacote.meses || 12;
-      vence = somarMeses(fim && fim > criado ? fim : criado, meses);
-      if (!linha.vence_em || new Date(linha.vence_em).getTime() !== vence.getTime()) {
-        const { error: erro } = await db.from("editefy_sort_acessos")
-          .update({ vence_em: vence.toISOString() }).eq("id", linha.id);
-        if (erro) throw erro;
-      }
-    }
-    if (vence && (!fim || vence > fim)) fim = vence;
-  }
-  return fim;
-}
-
-// Grava a compra do Sort (uma linha por compra: referencia = sessão) e devolve até quando o acesso vale
-async function liberarSort(db, alunoId, pacote, sessao) {
-  const { error } = await db.from("editefy_sort_acessos").upsert(
-    { aluno_id: alunoId, pacote: pacote.id, origem: "stripe", referencia: sessao },
-    { onConflict: "referencia" }
-  );
-  if (error) throw error;
-  return acertarVencimentosSort(db, alunoId);
-}
-
-// Reembolso de uma compra do Sort: tira a linha dela e refaz o vencimento das outras
-async function revogarSort(db, sessao) {
-  const { data: linha, error } = await db.from("editefy_sort_acessos")
-    .select("id, aluno_id, revogado_em").eq("referencia", sessao).maybeSingle();
-  if (error) throw error;
-  if (!linha) return;
-  if (!linha.revogado_em) {
-    const { error: erro } = await db.from("editefy_sort_acessos")
-      .update({ revogado_em: new Date().toISOString() }).eq("id", linha.id);
-    if (erro) throw erro;
-  }
-  await acertarVencimentosSort(db, linha.aluno_id);
-}
-
-// Data do vencimento no e-mail, no horário de Brasília (ex.: 24/11/2027)
-const dataCurta = (data) =>
-  data ? new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(data)) : "";
-
 // ── Compras ──
 
 // Fatura da primeira mensalidade de uma sessão de assinatura
@@ -397,55 +325,15 @@ async function liberarCompra(sessao, curso) {
   try {
     const leadId = UUID.test(String(sessao.client_reference_id || "")) ? sessao.client_reference_id : null;
     const assinatura = sessao.mode === "subscription" ? idDe(sessao.subscription) : null;
-    const pacote = curso.pacote || null;
-    // Plugin vendido com a marca da Editefy (o Sort para computador): e-mail próprio com os comandos de instalação
-    const daEditefy = !pacote && !assinatura && !!curso.emailCompra;
-    // Assinatura: aqui só o login; os acessos (curso e plano) vêm da sincronização logo abaixo.
-    // Pacote: só o login (quem já tem conta continua com a senha); os minutos vão para editfy_creditos e o tempo do
-    // Sort, para editefy_sort_acessos. Plugin da Editefy: o acesso, como numa compra, mas sem trocar a senha.
-    const conta = await liberarAcesso({
-      nome: reservada.nome, email: reservada.email, curso: assinatura || pacote ? null : curso.id,
-      origem: assinatura ? "assinatura" : "stripe", referencia: assinatura || sessao.id, leadId,
-      manterSenha: !!pacote || daEditefy,
+    await entregarCompra(db, {
+      compraId: compra.id, nome: reservada.nome, email: reservada.email, curso, origem: "stripe", referencia: sessao.id,
+      leadId, assinatura,
+      sincronizar: async (id, alunoId) => {
+        if (!(await sincronizarAssinatura(id, alunoId))) {
+          throw new Error(`A assinatura ${id} não é de nenhum plano: confira os links dos planos em api/_cursos.js.`);
+        }
+      },
     });
-    await db.from("compras").update({ aluno_id: conta.alunoId }).eq("id", compra.id);
-    const vence = pacote && pacote.meses ? await liberarSort(db, conta.alunoId, pacote, sessao.id) : null;
-    if (pacote && !pacote.meses) {
-      // Uma linha por compra (referencia = sessão): vale 12 meses a partir de agora (padrão do banco)
-      const { error: erroPacote } = await db.from("editfy_creditos").upsert(
-        { aluno_id: conta.alunoId, pacote: pacote.id, minutos: pacote.minutos, origem: "stripe", referencia: sessao.id },
-        { onConflict: "referencia" }
-      );
-      if (erroPacote) throw erroPacote;
-    }
-    if (assinatura) {
-      const sincronizada = await sincronizarAssinatura(assinatura, conta.alunoId);
-      if (!sincronizada) {
-        throw new Error(`A assinatura ${assinatura} não é de nenhum plano: confira os links dos planos em api/_cursos.js.`);
-      }
-    }
-
-    // Plugin da Editefy: a licença do aluno (criada agora, se ainda não tem) e os comandos da loja "editefy"
-    const comandos = daEditefy ? comandosEditefy(await licencaDoAluno(db, conta.alunoId), [curso]).comandos : [];
-
-    const primeiroNome = String(reservada.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
-    // Pacote, assinatura ou plugin com e-mail próprio (o Editefy e os dois Sorts, com a marca e o passo a passo) ou o
-    // da escola. No pacote e no plugin da Editefy de quem já tem conta, o e-mail não leva senha (ela continua a mesma).
-    const proprio = pacote ? (conta.senha ? curso.emailPacote : curso.emailContaExistente)
-      : daEditefy ? (conta.senha ? curso.emailCompra : curso.emailContaExistente)
-      : assinatura && curso.emailAssinatura;
-    const envio = await enviarEmail(
-      proprio || (curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra"),
-      reservada.email,
-      { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha || "", CURSO: curso.nome,
-        MINUTOS: pacote && pacote.minutos ? String(pacote.minutos) : "", VENCE: dataCurta(vence),
-        COMANDO_LOJA: comandos[0] || "", COMANDO_INSTALAR: comandos[1] || "",
-        LINK_CURSO: pacote ? curso.linkPacote : daEditefy ? curso.linkCompra : proprio ? curso.linkAssinatura : linkCurso(curso.id) },
-      `compra-${sessao.id}`
-    );
-    if (!envio.ok) {
-      console.error(`Compra ${sessao.id} liberada, mas o e-mail com a senha não foi enviado. O aluno pode usar "Esqueci minha senha".`);
-    }
   } catch (erro) {
     // Desfaz a reserva para o próximo aviso do Stripe tentar de novo
     await db.from("compras").update({ liberado_em: null }).eq("id", compra.id);
@@ -475,23 +363,7 @@ async function marcarReembolso(pagamento, valorReembolsado = null) {
       await cancelarAssinaturaDaFatura(compra.stripe_sessao);
       continue;
     }
-    const doPacote = pacotePorId(compra.curso);
-    if (doPacote && doPacote.pacote.meses) {
-      await revogarSort(db, compra.stripe_sessao);
-      continue;
-    }
-    if (doPacote) {
-      const { error: erroPacote } = await db.from("editfy_creditos")
-        .update({ revogado_em: new Date().toISOString() })
-        .eq("referencia", compra.stripe_sessao).is("revogado_em", null);
-      if (erroPacote) throw erroPacote;
-      continue;
-    }
-    if (!compra.aluno_id) continue;
-    const { error: erroAcesso } = await db.from("acessos")
-      .update({ revogado_em: new Date().toISOString() })
-      .eq("aluno_id", compra.aluno_id).eq("curso", compra.curso).is("revogado_em", null);
-    if (erroAcesso) throw erroAcesso;
+    await revogarCompra(db, { alunoId: compra.aluno_id, curso: compra.curso, referencia: compra.stripe_sessao });
   }
 }
 
