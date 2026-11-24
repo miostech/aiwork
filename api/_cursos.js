@@ -170,8 +170,8 @@ export const EDITEFY_SORT = {
       id: "sort-12-meses",   // editefy_sort_acessos.pacote e compras.curso
       nome: "12 meses",
       meses: 12,
-      // Preço e link de pagamento: ainda não criados no Stripe. Ponha o id do link (plink_...) antes da variável.
-      linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT].filter(Boolean),
+      // US$ 98 (R$ 98 no Brasil), produto "Editefy Sort" no Stripe (buy.stripe.com/7sY7sN56e3CpdLhf1M67S0c)
+      linksPagamento: ["plink_1UfO11RY9p8vsUUss2DcyVuY", process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT].filter(Boolean),
     },
   ],
 };
