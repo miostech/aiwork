@@ -1,5 +1,7 @@
 // Simulação dos pacotes de minutos do Editefy, do acesso de 12 meses do Editefy Sort no celular e da compra do Editefy
-// Sort para computador (o plugin do Claude Code), sem Stripe nem Supabase de verdade: os avisos do Stripe são assinados e conferidos de verdade e o banco é falso, em memória.
+// Sort para computador (o plugin do Claude Code), vendidos pelo Stripe (no site) e pela Hotmart (nas redes), sem
+// Stripe, Hotmart nem Supabase de verdade: os avisos do Stripe são assinados e conferidos de verdade, os da Hotmart
+// levam o hottok, e o banco é falso, em memória.
 // Rodar: npm test   (ou: node --test --experimental-test-module-mocks tests/)
 import { test, mock } from "node:test";
 import assert from "node:assert/strict";
@@ -14,6 +16,8 @@ process.env.STRIPE_PAYMENT_LINK_EDITEFY_60 = "plink_teste60";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_120 = "plink_teste120";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT = "plink_testesort";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT_COMPUTADOR = "plink_testesortpc";
+process.env.HOTMART_HOTTOK = "hottok_simulacao";
+process.env.HOTMART_PRODUTOS = JSON.stringify({ 7001: "editefy-60", 7002: "sort-12-meses", 7003: "editefy-sort-computador" });
 const LINK_COMPRA_UNICA = "plink_1UVEa9RY9p8vsUUsdFHAlweg"; // a compra única antiga do curso Editfy Reels
 const trocasDeSenha = [];
 
@@ -113,6 +117,7 @@ const webhooks = new StripeDeVerdade("sk_test_simulacao").webhooks;
 mock.module("stripe", { defaultExport: class { constructor() { this.webhooks = webhooks; } } });
 
 const { default: webhook } = await import("../api/stripe-webhook.js");
+const { default: hotmart } = await import("../api/hotmart-webhook.js");
 const { default: conta } = await import("../api/conta.js");
 const { cursosAtivos } = await import("../api/_plugins.js");
 
@@ -488,4 +493,157 @@ test("quem já tem conta compra o Sort para computador sem trocar a senha; cada 
   assert.ok(temSort(hugo));
   assert.ok(!tabelas.licencas_plugin.some((l) => l.aluno_id === hugo));
   assert.ok(!(await cursosAtivos(db, hugo)).cursos.length);
+});
+
+// ── Hotmart: as mesmas compras pelos links das redes sociais (no site continua o Stripe) ──
+let numeroHotmart = 0;
+async function avisoHotmart(evento, dados, hottok = "hottok_simulacao") {
+  const corpo = JSON.stringify({ id: "hm-" + ++numeroHotmart, creation_date: Date.now(), event: evento, version: "2.0.0", data: dados });
+  const req = { method: "POST", headers: { "x-hotmart-hottok": hottok }, async *[Symbol.asyncIterator]() { yield Buffer.from(corpo); } };
+  const res = { codigo: 0, corpo: null, setHeader() {}, status(c) { this.codigo = c; return this; }, json(b) { this.corpo = b; return this; } };
+  await hotmart(req, res);
+  return res;
+}
+// Uma venda na Hotmart, como vem em "data" no aviso (Eventos de pedido 2.0.0)
+function venda(email, produto, valor, purchase = {}) {
+  return {
+    product: { id: produto, ucode: "ucode-" + produto, name: "Produto " + produto },
+    buyer: { email, name: "Gabi Hotmart", first_name: "Gabi" },
+    purchase: { transaction: "HP" + crypto.randomInt(1e9, 1e10), status: "APPROVED", price: { value: valor, currency_value: "BRL" },
+                payment: { type: "CREDIT_CARD" }, ...purchase },
+  };
+}
+const fotografia = () => JSON.stringify([tabelas.alunos, tabelas.acessos, tabelas.compras, tabelas.editfy_creditos, tabelas.editefy_sort_acessos]);
+
+test("Hotmart: aviso sem o hottok certo é recusado e não mexe em nada", async () => {
+  const antes = fotografia();
+  assert.equal((await avisoHotmart("PURCHASE_APPROVED", venda("intruso@teste.com", 7001, 97), "errado")).codigo, 401);
+  assert.equal((await avisoHotmart("PURCHASE_APPROVED", venda("intruso@teste.com", 7001, 97), "")).codigo, 401);
+  assert.equal(fotografia(), antes);
+});
+
+test("Hotmart: o pacote de 60 minutos cria a conta, grava os minutos e manda o e-mail (aviso repetido e COMPLETE não duplicam)", async () => {
+  const GABI = "gabi@teste.com";
+  const v = venda(GABI, 7001, 97);
+  const antes = emails.length;
+  assert.equal((await avisoHotmart("PURCHASE_APPROVED", v)).codigo, 200);
+  await avisoHotmart("PURCHASE_APPROVED", v);   // repetido
+  await avisoHotmart("PURCHASE_COMPLETE", { ...v, purchase: { ...v.purchase, status: "COMPLETE" } });   // garantia acabou
+  const gabi = alunoPorEmail(GABI).id;
+
+  assert.equal(creditos(gabi).length, 1);
+  assert.equal(creditos(gabi)[0].pacote, "editefy-60");
+  assert.equal(creditos(gabi)[0].origem, "hotmart");
+  assert.equal(creditos(gabi)[0].referencia, v.purchase.transaction);
+  assert.equal(saldo(gabi), 60);
+
+  const linha = tabelas.compras.find((c) => c.stripe_sessao === v.purchase.transaction);
+  assert.equal(linha.status, "pago");
+  assert.equal(linha.curso, "editefy-60");
+  assert.equal(linha.valor, 9700);
+  assert.equal(linha.moeda, "brl");
+  assert.equal(linha.aluno_id, gabi);
+
+  assert.equal(emails.length, antes + 1, "um e-mail só");
+  assert.equal(ultimoEmail().tipo, "compra_editefy");
+  assert.ok(ultimoEmail().dados.SENHA, "conta nova recebe a senha");
+  assert.equal(ultimoEmail().dados.NOME, "Gabi");
+  assert.equal(ultimoEmail().dados.MINUTOS, "60");
+});
+
+test("Hotmart: o Sort comprado pela Hotmart soma ao que foi comprado pelo Stripe", async () => {
+  const HELO = "helo@teste.com";
+  const pelaLoja = compra(HELO, LINK_SORT, 12500);
+  await aviso("checkout.session.completed", pelaLoja);
+  const helo = alunoPorEmail(HELO).id;
+  // a compra do site foi ontem (no banco de verdade, duas compras nunca têm o mesmo horário)
+  const primeira = linhaSort(pelaLoja);
+  primeira.criado_em = new Date(Date.now() - 864e5).toISOString();
+  primeira.vence_em = maisMeses(primeira.criado_em, 12).toISOString();
+
+  const v = venda(HELO, 7002, 125);
+  await avisoHotmart("PURCHASE_APPROVED", v);
+  const daHotmart = tabelas.editefy_sort_acessos.find((l) => l.referencia === v.purchase.transaction);
+  assert.equal(daHotmart.origem, "hotmart");
+  assert.equal(daHotmart.pacote, "sort-12-meses");
+  assert.equal(vencimentoSort(helo).getTime(), maisMeses(primeira.vence_em, 12).getTime(), "os 12 meses somam");
+  assert.equal(ultimoEmail().tipo, "acesso_editefy_sort", "já tinha conta: e-mail sem senha");
+  assert.equal(ultimoEmail().dados.VENCE, dataBR(vencimentoSort(helo)));
+
+  // reembolso pela Hotmart: tira só os 12 meses dela
+  await avisoHotmart("PURCHASE_REFUNDED", { ...v, purchase: { ...v.purchase, status: "REFUNDED" } });
+  assert.ok(tabelas.editefy_sort_acessos.find((l) => l.referencia === v.purchase.transaction).revogado_em);
+  assert.equal(vencimentoSort(helo).getTime(), new Date(primeira.vence_em).getTime());
+  assert.ok(temSort(helo), "a compra do site continua valendo");
+});
+
+test("Hotmart: o Sort para computador libera o plugin com o e-mail da Editefy; o chargeback tira", async () => {
+  const IVO = "ivo@teste.com";
+  const v = venda(IVO, 7003, 89);
+  await avisoHotmart("PURCHASE_APPROVED", v);
+  const ivo = alunoPorEmail(IVO).id;
+  const acesso = tabelas.acessos.find((a) => a.aluno_id === ivo);
+  assert.equal(acesso.curso, "editefy-sort-computador");
+  assert.equal(acesso.origem, "hotmart");
+  assert.equal(acesso.referencia, v.purchase.transaction);
+  const email = ultimoEmail();
+  assert.equal(email.tipo, "compra_editefy_sort_computador");
+  assert.equal(email.dados.COMANDO_INSTALAR, "/plugin install editefy-sort@editefy");
+  assert.deepEqual(await licencaConfere(lojaDe(email.dados.COMANDO_LOJA)), { ativa: true, motivo: "" });
+
+  await avisoHotmart("PURCHASE_CHARGEBACK", { ...v, purchase: { ...v.purchase, status: "CHARGEBACK" } });
+  assert.ok(tabelas.acessos.find((a) => a.aluno_id === ivo).revogado_em);
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === v.purchase.transaction).status, "reembolsado");
+  assert.deepEqual(await licencaConfere(lojaDe(email.dados.COMANDO_LOJA)), { ativa: false, motivo: "acesso retirado" });
+});
+
+test("Hotmart: boleto só libera quando é pago; boleto vencido e compra cancelada viram 'falhou'", async () => {
+  const JU = "ju@teste.com";
+  const v = venda(JU, 7001, 97, { status: "PRINTED_BILLET", payment: { type: "BILLET" } });
+  await avisoHotmart("PURCHASE_BILLET_PRINTED", v);
+  assert.equal(alunoPorEmail(JU), undefined);
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === v.purchase.transaction).status, "aguardando");
+  await avisoHotmart("PURCHASE_APPROVED", { ...v, purchase: { ...v.purchase, status: "APPROVED" } });
+  assert.equal(saldo(alunoPorEmail(JU).id), 60);
+  await avisoHotmart("PURCHASE_BILLET_PRINTED", v);   // aviso velho chegando depois
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === v.purchase.transaction).status, "pago", "paga nunca volta para aguardando");
+
+  const vencido = venda("ka@teste.com", 7001, 97, { status: "PRINTED_BILLET", payment: { type: "BILLET" } });
+  await avisoHotmart("PURCHASE_BILLET_PRINTED", vencido);
+  await avisoHotmart("PURCHASE_EXPIRED", { ...vencido, purchase: { ...vencido.purchase, status: "EXPIRED" } });
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === vencido.purchase.transaction).status, "falhou");
+  const cancelada = venda("lia@teste.com", 7002, 125, { status: "CANCELLED" });
+  await avisoHotmart("PURCHASE_CANCELED", cancelada);
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === cancelada.purchase.transaction).status, "falhou");
+  assert.equal(alunoPorEmail("ka@teste.com"), undefined);
+  assert.equal(alunoPorEmail("lia@teste.com"), undefined);
+});
+
+test("Hotmart: pedido de reembolso aberto e reembolso parcial não tiram; o reembolso tira o pacote", async () => {
+  const LU = "lu@teste.com";
+  const v = venda(LU, 7001, 97);
+  await avisoHotmart("PURCHASE_APPROVED", v);
+  const lu = alunoPorEmail(LU).id;
+  await avisoHotmart("PURCHASE_PROTEST", { ...v, purchase: { ...v.purchase, status: "DISPUTE" } });
+  await avisoHotmart("PURCHASE_REFUNDED", { ...v, purchase: { ...v.purchase, status: "PARTIALLY_REFUNDED" } });
+  assert.equal(saldo(lu), 60, "o pacote continua");
+  await avisoHotmart("PURCHASE_REFUNDED", { ...v, purchase: { ...v.purchase, status: "REFUNDED" } });
+  assert.equal(saldo(lu), 0);
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === v.purchase.transaction).status, "reembolsado");
+  // a Hotmart repete o aviso da compra: continua reembolsada, sem pacote
+  await avisoHotmart("PURCHASE_APPROVED", v);
+  assert.equal(saldo(lu), 0);
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === v.purchase.transaction).status, "reembolsado");
+});
+
+test("Hotmart: reembolso que chega antes da compra impede a liberação; venda de outro produto não mexe em nada", async () => {
+  const v = venda("mel@teste.com", 7002, 125);
+  await avisoHotmart("PURCHASE_REFUNDED", { ...v, purchase: { ...v.purchase, status: "REFUNDED" } });
+  await avisoHotmart("PURCHASE_APPROVED", v);
+  assert.equal(alunoPorEmail("mel@teste.com"), undefined);
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === v.purchase.transaction).status, "reembolsado");
+
+  const antes = fotografia();
+  assert.equal((await avisoHotmart("PURCHASE_APPROVED", venda("outro@teste.com", 9999, 50))).codigo, 200);
+  assert.equal(fotografia(), antes);
 });

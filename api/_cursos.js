@@ -212,6 +212,36 @@ export const pacotePorLinkPagamento = (link) => (link && PACOTES.find((p) => p.p
 export const pacotePorId = (id) => PACOTES.find((p) => p.pacote.id === id) || null;
 export const ehPacote = (id) => !!pacotePorId(id);
 
+// ── Hotmart: vendas pelos links que a Camila divulga nas redes sociais (no site, o pagamento continua no Stripe) ──
+// O id do produto na Hotmart (data.product.id ou data.product.ucode do aviso) → o id daqui: o de um pacote (o que fica
+// em compras.curso, ex.: "editefy-60" ou "sort-12-meses") ou o de um curso (ex.: "editefy-sort-computador"). O aviso
+// da Hotmart (api/hotmart-webhook.js) libera do mesmo jeito que uma compra pelo Stripe. Os preços ficam na Hotmart.
+// HOTMART_PRODUTOS (JSON, ex.: {"1234567":"editefy-60"}), se definida, entra junto (ex.: produtos de teste).
+function produtosHotmartExtras() {
+  try { return JSON.parse(process.env.HOTMART_PRODUTOS || "{}") || {}; } catch (e) { return {}; }
+}
+export const PRODUTOS_HOTMART = {
+  // Criados em 24/11/2026 (formato "Programa para baixar", parcelado com os juros do cliente, recuperador desligado)
+  9062647: "sort-12-meses",              // Editefy Sort (no celular, 12 meses), R$ 125
+  9062680: "editefy-sort-computador",    // Editefy Sort para computador, R$ 89
+  9062701: "editefy-30",                 // Editefy: 30 minutos de vídeo, R$ 62
+  9062717: "editefy-60",                 // Editefy: 60 minutos de vídeo, R$ 97
+  9062740: "editefy-120",                // Editefy: 120 minutos de vídeo, R$ 167
+  ...produtosHotmartExtras(),
+};
+// O produto vendido pela Hotmart, no formato que a entrega usa (como cursoDaSessao no aviso do Stripe), ou null
+export function produtoHotmart(...ids) {
+  for (const id of ids) {
+    const nosso = id != null && PRODUTOS_HOTMART[String(id)];
+    if (!nosso) continue;
+    const achado = pacotePorId(nosso);
+    if (achado) return { ...achado.curso, id: achado.pacote.id, pacote: achado.pacote };
+    const curso = cursoPorId(nosso);
+    if (curso) return curso;
+  }
+  return null;
+}
+
 // Curso do link de pagamento: o de uma compra única, o de um pacote de minutos ou o de um plano de assinatura
 export const cursoPorLinkPagamento = (link) =>
   (link && [...CURSOS_MIAI, ...CURSOS_IA_ACADEMY].find((c) => c.linksPagamento.includes(link)))

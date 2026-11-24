@@ -105,7 +105,7 @@ create table if not exists public.acessos (
   criado_em   timestamptz not null default now(),
   aluno_id    uuid not null references public.alunos (id) on delete cascade,
   curso       text not null,  -- 'gratuito', 'pago', o id de um curso da MIAI ou de um plano de assinatura (api/_cursos.js)
-  origem      text not null,  -- 'confirmacao', 'validacao', 'stripe', 'assinatura' ou 'manual'
+  origem      text not null,  -- 'confirmacao', 'validacao', 'stripe', 'hotmart', 'assinatura' ou 'manual'
   referencia  text,           -- id do lead, da validação, da compra ou da assinatura do Stripe (sub_...)
   revogado_em timestamptz,    -- preenchido = acesso tirado (ex.: reembolso, fim da assinatura)
   unique (aluno_id, curso)
@@ -123,7 +123,7 @@ create table if not exists public.compras (
   criado_em        timestamptz not null default now(),
   atualizado_em    timestamptz not null default now(),
   stripe_sessao    text not null unique,   -- id da sessão de pagamento (cs_...); nas assinaturas, o da fatura (in_...),
-                                           -- uma linha por mensalidade paga
+                                           -- uma linha por mensalidade paga; nas vendas da Hotmart, a transação (HP...)
   stripe_pagamento text,                   -- id do pagamento (pi_...), usado para achar a compra no reembolso
   status           text not null check (status in ('aguardando', 'pago', 'falhou', 'reembolsado')),
   email            text not null,
@@ -425,8 +425,8 @@ create table if not exists public.editfy_creditos (
   pacote      text not null,                    -- 'editefy-30', 'editefy-60', 'editefy-120' ou 'cortesia'
   minutos     numeric(10, 2) not null check (minutos > 0),
   usados      numeric(10, 2) not null default 0 check (usados >= 0),
-  origem      text not null,                    -- 'stripe' ou 'manual'
-  referencia  text unique,                      -- sessão de pagamento do Stripe (cs_...) ou uma anotação da cortesia
+  origem      text not null,                    -- 'stripe', 'hotmart' ou 'manual'
+  referencia  text unique,                      -- sessão do Stripe (cs_...), transação da Hotmart (HP...) ou anotação da cortesia
   criado_em   timestamptz not null default now(),
   vence_em    timestamptz not null default (now() + interval '12 months'),
   revogado_em timestamptz                       -- preenchido = reembolsado: o que sobrava sai do saldo
@@ -498,8 +498,8 @@ create table if not exists public.editefy_sort_acessos (
   id          uuid primary key default gen_random_uuid(),
   aluno_id    uuid not null references public.alunos (id) on delete cascade,
   pacote      text not null,                    -- 'sort-12-meses' ou 'cortesia'
-  origem      text not null,                    -- 'stripe' ou 'manual'
-  referencia  text unique,                      -- sessão de pagamento do Stripe (cs_...) ou uma anotação da cortesia
+  origem      text not null,                    -- 'stripe', 'hotmart' ou 'manual'
+  referencia  text unique,                      -- sessão do Stripe (cs_...), transação da Hotmart (HP...) ou anotação da cortesia
   criado_em   timestamptz not null default now(),
   vence_em    timestamptz not null default (now() + interval '12 months'),
   revogado_em timestamptz                       -- preenchido = reembolsado: o acesso acaba na hora
