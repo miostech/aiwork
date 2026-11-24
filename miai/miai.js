@@ -93,6 +93,24 @@
       ],
     },
     {
+      endereco: 'editefy-sort',            // /conta/editefy-sort (a aula que instala o plugin de quem comprou)
+      nome: 'Editefy Sort para computador',
+      // Fora da vitrine da MIAI: o Sort é vendido em editefy.com/sort (o vercel.json manda miaiacademy.com/editefy-sort
+      // para lá). Quem compra vê o curso na conta e instala o plugin pela primeira aula.
+      oculto: true,
+      area: 'Inteligência Artificial',
+      chamada: 'Jogue os vídeos, fotos, prints e áudios numa pasta e peça "organiza": cada arquivo ganha um nome que diz o que tem dentro e vai para a pasta certa, sem sair do seu computador.',
+      detalhes: ['Plugin do Claude Code', 'Mac e Windows', 'Garantia de 7 dias'],
+      cor: '#6D28D9',                      // o roxo da página do Sort (editfy/sort.html)
+      capa: '',
+      novo: true,
+      professor: null,
+      preco: 'R$ 89',                      // no Brasil
+      precoFora: 'US$ 89',                 // nos outros países (o Stripe cobra em dólar ou na moeda local)
+      parcelas: '',
+      linkPagamento: '',                   // o link do Stripe, quando for criado (o id plink_... vai em api/_cursos.js)
+    },
+    {
       // A Formação da IA Academy também à venda na MIAI. Depois do pagamento a pessoa segue o fluxo da IA Academy
       // (cadastro na Hub em iaacademy.bio/cadastro) e assiste na área do aluno de lá (aulas, abaixo).
       endereco: 'ia-academy',              // miaiacademy.com/ia-academy (vendas)

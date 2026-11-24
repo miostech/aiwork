@@ -45,6 +45,17 @@
       "permanent": false
     },
     {
+      "source": "/editefy-sort",
+      "has": [
+        {
+          "type": "host",
+          "value": "(.*\\.)?miaiacademy\\.com"
+        }
+      ],
+      "destination": "https://www.editefy.com/sort",
+      "permanent": false
+    },
+    {
       "source": "/oauth/authorize",
       "has": [
         {
