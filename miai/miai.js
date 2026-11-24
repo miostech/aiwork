@@ -82,14 +82,20 @@
       // continua com as aulas e o plugin. Agora o Editefy vende pacotes de minutos com pagamento único (desde 16/11/2026,
       // no lugar da assinatura): cada pacote tem o seu link de pagamento, com o preço em dólar e o valor em reais fixo
       // para o Brasil. O id do link (plink_...) também vai nos pacotes de api/_cursos.js.
+      // POR ENQUANTO (desde 24/11/2026) os botões levam para a Hotmart, com o order bump do Editefy Sort. A Hotmart
+      // cobra em reais (e converte nos outros países), então o preço aparece em reais para todo mundo (sem precoFora).
+      // Para voltar ao Stripe: troque linkPagamento pelo link comentado e devolva o precoFora em dólar de cada pacote.
       linkPagamento: '',
       pacotes: [
-        { id: 'editefy-30', nome: '30 minutos', minutos: 30, preco: 'R$ 62', precoFora: 'US$ 62',
-          linkPagamento: 'https://buy.stripe.com/8x28wRdCKfl7dLh8Do67S09' },   // vazio = botão "Em breve"
-        { id: 'editefy-60', nome: '60 minutos', minutos: 60, preco: 'R$ 97', precoFora: 'US$ 97',
-          linkPagamento: 'https://buy.stripe.com/5kQ5kFaqy7SF36DcTE67S0a' },
-        { id: 'editefy-120', nome: '120 minutos', minutos: 120, preco: 'R$ 167', precoFora: 'US$ 167',
-          linkPagamento: 'https://buy.stripe.com/eVq8wRgOWgpb6iP6vg67S0b' },
+        { id: 'editefy-30', nome: '30 minutos', minutos: 30, preco: 'R$ 62', // precoFora: 'US$ 62',
+          // linkPagamento: 'https://buy.stripe.com/8x28wRdCKfl7dLh8Do67S09',   // Stripe
+          linkPagamento: 'https://pay.hotmart.com/E108648114K?checkoutMode=10' },   // Hotmart; vazio = botão "Em breve"
+        { id: 'editefy-60', nome: '60 minutos', minutos: 60, preco: 'R$ 97', // precoFora: 'US$ 97',
+          // linkPagamento: 'https://buy.stripe.com/5kQ5kFaqy7SF36DcTE67S0a',   // Stripe
+          linkPagamento: 'https://pay.hotmart.com/A108648145J?checkoutMode=10' },   // Hotmart
+        { id: 'editefy-120', nome: '120 minutos', minutos: 120, preco: 'R$ 167', // precoFora: 'US$ 167',
+          // linkPagamento: 'https://buy.stripe.com/eVq8wRgOWgpb6iP6vg67S0b',   // Stripe
+          linkPagamento: 'https://pay.hotmart.com/A108648179J?checkoutMode=10' },   // Hotmart
       ],
     },
     {
