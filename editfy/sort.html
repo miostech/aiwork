@@ -478,7 +478,7 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
         </div>
       </div>
       <p class="aviso-checkout" id="aviso-checkout" hidden>As vendas abrem em breve.</p>
-      <p class="planos__nota">Pagamento seguro pelo Stripe, sem cobrança automática. Depois do pagamento, você recebe tudo por e-mail: pelo celular, o seu acesso e o passo a passo para conectar; no computador, o seu acesso e os comandos para instalar. Uma versão não inclui a outra. Comprou de novo a do celular antes de acabar? Os 12 meses somam ao tempo que falta.</p>
+      <p class="planos__nota">Pagamento seguro pela Hotmart, sem cobrança automática. Depois do pagamento, você recebe tudo por e-mail: pelo celular, o seu acesso e o passo a passo para conectar; no computador, o seu acesso e os comandos para instalar. Uma versão não inclui a outra. Comprou de novo a do celular antes de acabar? Os 12 meses somam ao tempo que falta.</p>
     </div>
   </section>
 
@@ -692,16 +692,22 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
 // ═══════════════════════════════════════════════════════════════
 //  CONFIGURAÇÃO — preços e links do pagamento das duas versões do Sort
 // ═══════════════════════════════════════════════════════════════
+// POR ENQUANTO (desde 24/11/2026) os botões levam para a Hotmart, com os order bumps. A Hotmart cobra em reais (e
+// converte nos outros países), então o preço aparece em reais para todo mundo (sem precoFora). Para voltar ao Stripe:
+// troque linkPagamento pelo link comentado e devolva o precoFora em dólar.
 window.CONFIG = {
-  // Pelo celular (o conector): o link é o de EDITEFY_SORT em api/_cursos.js
+  // Pelo celular (o conector): na Hotmart, o produto 9062647; no Stripe, o link de EDITEFY_SORT em api/_cursos.js
   preco: 'R$ 125',         // no Brasil
-  precoFora: 'US$ 125',    // nos outros países (o Stripe cobra em dólar ou na moeda local)
-  linkPagamento: 'https://buy.stripe.com/7sY6oJgOWdcZ0Yv5rc67S0e',   // vazio = botão "Em breve"
-  // No computador (o plugin do Claude Code): o link é o do curso editefy-sort-computador em api/_cursos.js
+  // precoFora: 'US$ 125',    // nos outros países (o Stripe cobra em dólar ou na moeda local)
+  // linkPagamento: 'https://buy.stripe.com/7sY6oJgOWdcZ0Yv5rc67S0e',   // Stripe
+  linkPagamento: 'https://pay.hotmart.com/V108648028G?checkoutMode=10',   // Hotmart; vazio = botão "Em breve"
+  // No computador (o plugin do Claude Code): na Hotmart, o produto 9062680; no Stripe, o link do curso
+  // editefy-sort-computador em api/_cursos.js
   computador: {
     preco: 'R$ 89',
-    precoFora: 'US$ 89',
-    linkPagamento: 'https://buy.stripe.com/28E8wR9mu2yl8qX06S67S0d',   // vazio = botão "Em breve"
+    // precoFora: 'US$ 89',
+    // linkPagamento: 'https://buy.stripe.com/28E8wR9mu2yl8qX06S67S0d',   // Stripe
+    linkPagamento: 'https://pay.hotmart.com/K108648083I?checkoutMode=10',   // Hotmart; vazio = botão "Em breve"
   },
 };
 </script>
@@ -789,7 +795,7 @@ window.CONFIG = {
     const comprar = $(botao);
     if (config.linkPagamento) {
       let url = config.linkPagamento;
-      try { const u = new URL(url); u.searchParams.set('locale', 'pt-BR'); url = u.toString(); } catch (e) {}
+      try { const u = new URL(url); if (/(^|\.)stripe\.com$/.test(u.hostname)) { u.searchParams.set('locale', 'pt-BR'); url = u.toString(); } } catch (e) {}
       comprar.href = url;
       comprar.addEventListener('click', () => { try { gtag('event', 'begin_checkout', { item_id: item }); } catch (e) {} });
     } else {
