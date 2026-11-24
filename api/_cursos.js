@@ -221,7 +221,12 @@ function produtosHotmartExtras() {
   try { return JSON.parse(process.env.HOTMART_PRODUTOS || "{}") || {}; } catch (e) { return {}; }
 }
 export const PRODUTOS_HOTMART = {
-  // preenchidos quando os produtos forem criados na Hotmart
+  // Criados em 24/11/2026 (formato "Programa para baixar", parcelado com os juros do cliente, recuperador desligado)
+  9062647: "sort-12-meses",              // Editefy Sort (no celular, 12 meses), R$ 125
+  9062680: "editefy-sort-computador",    // Editefy Sort para computador, R$ 89
+  9062701: "editefy-30",                 // Editefy: 30 minutos de vídeo, R$ 62
+  9062717: "editefy-60",                 // Editefy: 60 minutos de vídeo, R$ 97
+  9062740: "editefy-120",                // Editefy: 120 minutos de vídeo, R$ 167
   ...produtosHotmartExtras(),
 };
 // O produto vendido pela Hotmart, no formato que a entrega usa (como cursoDaSessao no aviso do Stripe), ou null
