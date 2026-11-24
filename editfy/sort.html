@@ -23,8 +23,8 @@
   - Pelo celular: o conector sort.editefy.com (Claude, ChatGPT e Grok), acesso de 12 meses, pagamento único
     (EDITEFY_SORT em api/_cursos.js). O e-mail da compra leva para #conectar.
   - No computador: o plugin do Claude Code (Mac e Windows), pagamento único que vale para sempre (o curso
-    editefy-sort-computador em api/_cursos.js). O e-mail da compra (da MIAI Academy) leva para a aula com os comandos de
-    instalação; a aba "No computador" de #conectar explica isso.
+    editefy-sort-computador em api/_cursos.js). O e-mail da compra (da Editefy) traz os dois comandos de instalação, com
+    a licença da pessoa, e o botão para #computador (a aba "No computador" de #conectar).
   1. Preços e links do pagamento: CONFIG no final deste arquivo (os mesmos links de api/_cursos.js).
   2. Demonstração: editfy/sort-demo.html (editefy.com/sort/demonstracao), com arquivos inventados. O quadro usa o
      caminho do arquivo, que também abre na prévia da Vercel (lá as rotas do editefy.com não valem).
@@ -561,11 +561,11 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
       <ol class="passos-conectar" id="passos-computador" role="tabpanel" aria-labelledby="aba-computador" hidden>
         <li class="passo-c"><span class="passo__numero">1</span><div>
           <h3>Abra o e-mail da compra</h3>
-          <p>Ele vem da <strong>MIAI Academy</strong>, onde ficam as aulas do plugin, com o seu e-mail e a sua senha. Toque no botão do e-mail para abrir a sua conta.</p>
+          <p>Ele vem da <strong>Editefy</strong>, logo depois do pagamento, com os seus dois comandos de instalação. Não achou? Olhe também o spam.</p>
         </div></li>
         <li class="passo-c"><span class="passo__numero">2</span><div>
-          <h3>Copie os seus dois comandos</h3>
-          <p>Na aula <strong>Instalar o plugin no Claude Code</strong>, copie os comandos e cole um de cada vez no Claude Code (o app do Claude para desktop, na aba <strong>Code</strong>, ou o terminal). Eles são pessoais: não compartilhe.</p>
+          <h3>Cole os dois comandos no Claude Code</h3>
+          <p>Abra o Claude Code (o app do Claude para desktop, na aba <strong>Code</strong>, ou o terminal) e cole um comando de cada vez. Eles são pessoais: não compartilhe.</p>
         </div></li>
         <li class="passo-c"><span class="passo__numero">3</span><div>
           <h3>Feche e abra o Claude Code</h3>
@@ -701,7 +701,7 @@ window.CONFIG = {
   computador: {
     preco: 'R$ 89',
     precoFora: 'US$ 89',
-    linkPagamento: '',     // vazio = botão "Em breve"
+    linkPagamento: 'https://buy.stripe.com/28E8wR9mu2yl8qX06S67S0d',   // vazio = botão "Em breve"
   },
 };
 </script>

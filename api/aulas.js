@@ -11,8 +11,8 @@ import { banco } from "./_supabase.js";
 import { CURSO as CURSO_GRATUITO } from "./_aulas.js";
 import { CURSOS_MIAI, cursoPorEndereco, totalDeAulas } from "./_cursos.js";
 
-// Aulas de cada curso pelo nome no banco (acessos.curso)
-const CURSOS = { gratuito: CURSO_GRATUITO, ...Object.fromEntries(CURSOS_MIAI.map((c) => [c.id, c.aulas])) };
+// Aulas de cada curso pelo nome no banco (acessos.curso). Os produtos sem aulas (marca "editefy") ficam de fora.
+const CURSOS = { gratuito: CURSO_GRATUITO, ...Object.fromEntries(CURSOS_MIAI.filter((c) => c.aulas).map((c) => [c.id, c.aulas])) };
 
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {
@@ -22,7 +22,8 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
 
   const pedido = String((req.query && req.query.curso) || "");
-  const curso = Object.hasOwn(CURSOS, pedido) ? pedido : (cursoPorEndereco(pedido) || { id: "gratuito" }).id;
+  const doEndereco = cursoPorEndereco(pedido);
+  const curso = Object.hasOwn(CURSOS, pedido) ? pedido : doEndereco && doEndereco.aulas ? doEndereco.id : "gratuito";
   const token = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "").trim();
   if (!token) return res.status(401).json({ erro: "Faça login para ver as aulas." });
 

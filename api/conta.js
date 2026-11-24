@@ -49,7 +49,8 @@ export default async function handler(req, res) {
       .eq("aluno_id", usuario.id).is("revogado_em", null);
     if (erroAcesso) throw erroAcesso;
 
-    const cursos = CURSOS_MIAI
+    // Os produtos sem aulas (marca "editefy", como o Editefy Sort para computador) não aparecem na conta da MIAI
+    const cursos = CURSOS_MIAI.filter((curso) => curso.aulas)
       .map((curso) => {
         const acesso = (acessos || []).find((a) => a.curso === curso.id);
         if (!acesso) return null;

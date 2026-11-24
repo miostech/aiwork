@@ -398,18 +398,19 @@ test("Sort no Pix: o acesso só começa quando o pagamento é confirmado; reembo
   assert.ok(temSort(hugo), "o acesso continua");
 });
 
-// ── Editefy Sort para computador: o plugin do Claude Code, compra única que vale para sempre ──
+// ── Editefy Sort para computador: o plugin do Claude Code, compra única que vale para sempre, só com a marca Editefy ──
 const LINK_SORT_PC = "plink_testesortpc";
-// O que a conta da MIAI, a aula "Instalar o plugin" e o plugin (licenca.py) pedem ao site
+// O que o plugin (licenca.py), o Claude Code (a loja) e a conta da MIAI pedem ao site
 async function pedir(query, alunoId) {
-  const res = { codigo: 0, corpo: null, setHeader() {}, status(c) { this.codigo = c; return this; }, json(b) { this.corpo = b; return this; } };
+  const res = { codigo: 0, corpo: null, setHeader() {}, status(c) { this.codigo = c; return this; }, json(b) { this.corpo = b; return this; },
+                send(b) { this.corpo = b; return this; } };
   await conta({ method: "GET", query, headers: alunoId ? { authorization: "Bearer token-" + alunoId, host: "teste" } : { host: "teste" } }, res);
   return res;
 }
-const licencaConfere = async (codigo) =>
-  (await pedir({ loja: "licenca", licenca: codigo, plugin: "editefy-sort" })).corpo;
+const licencaConfere = async (codigo) => (await pedir({ loja: "licenca", licenca: codigo, plugin: "editefy-sort" })).corpo;
+const lojaDe = (comando) => comando.match(/\/loja\/(EDITEFY-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4})\/marketplace\.json$/)[1];
 
-test("comprar o Sort para computador libera o plugin editefy-sort e manda o e-mail com a aula de instalação", async () => {
+test("comprar o Sort para computador libera o plugin e manda o e-mail da Editefy com os comandos (sem nada da MIAI)", async () => {
   const IRIS = "iris@teste.com";
   const sessao = compra(IRIS, LINK_SORT_PC, 8900);
   const antes = emails.length;
@@ -425,32 +426,31 @@ test("comprar o Sort para computador libera o plugin editefy-sort e manda o e-ma
   assert.equal(sortDe(iris).length, 0, "não libera o Sort do celular");
   assert.equal(creditos(iris).length, 0, "nem minutos do Editefy");
 
+  // E-mail da Editefy, com a senha da conta nova e os dois comandos da loja "editefy"
   assert.equal(emails.length, antes + 1, "um e-mail só");
   const email = ultimoEmail();
-  assert.equal(email.tipo, "compra_miai");
+  assert.equal(email.tipo, "compra_editefy_sort_computador");
   assert.ok(email.dados.SENHA, "conta nova recebe a senha");
-  assert.equal(email.dados.CURSO, "Editefy Sort para computador");
-  assert.equal(email.dados.LINK_CURSO, "https://www.miaiacademy.com/conta/editefy-sort");
+  assert.equal(email.dados.LINK_CURSO, "https://www.editefy.com/sort#computador");
+  const codigo = lojaDe(email.dados.COMANDO_LOJA);
+  assert.equal(email.dados.COMANDO_LOJA, `/plugin marketplace add https://www.editefy.com/loja/${codigo}/marketplace.json`);
+  assert.equal(email.dados.COMANDO_INSTALAR, "/plugin install editefy-sort@editefy");
+  assert.equal(tabelas.licencas_plugin.find((l) => l.aluno_id === iris).codigo, codigo.replace("EDITEFY-", "MIAI-"),
+               "a mesma licença do banco, com o prefixo da Editefy");
+  assert.ok(!JSON.stringify(email.dados).toLowerCase().includes("miai"), "nada da MIAI no e-mail");
 
-  // A conta da MIAI mostra o curso, com as aulas
-  const naConta = (await pedir({}, iris)).corpo.cursos.find((c) => c.endereco === "editefy-sort");
-  assert.equal(naConta.nome, "Editefy Sort para computador");
-  assert.equal(naConta.total, 3);
+  // Fora da MIAI: não aparece na conta nem na aula de instalação de lá
+  assert.ok(!(await pedir({}, iris)).corpo.cursos.length, "a conta da MIAI não mostra o Sort");
+  assert.equal((await pedir({ plugins: "1", acao: "minha", curso: "editefy-sort" }, iris)).codigo, 403);
+  assert.equal((await pedir({ curso: "editefy-sort" }, iris)).codigo, 200, "a conta da MIAI continua respondendo");
 
-  // A aula "Instalar o plugin" recebe os dois comandos, só com o plugin deste curso
-  const minha = await pedir({ plugins: "1", acao: "minha", curso: "editefy-sort" }, iris);
-  assert.equal(minha.codigo, 200);
-  const codigo = minha.corpo.licenca;
-  assert.match(codigo, /^MIAI-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/);
-  assert.deepEqual(minha.corpo.comandos, [
-    `/plugin marketplace add https://www.miaiacademy.com/loja/${codigo}/marketplace.json`,
-    "/plugin install editefy-sort@miai",
-  ]);
-
-  // A loja lista o plugin e o plugin confere a licença a cada sessão
-  const loja = await pedir({ loja: "catalogo", licenca: codigo });
-  assert.deepEqual(loja.corpo.plugins.map((p) => p.name), ["editefy-sort"]);
-  assert.equal(loja.corpo.plugins[0].source.url, `https://www.miaiacademy.com/p/${codigo}/editefy-sort.git`);
+  // A loja "editefy" lista o plugin, com o git em editefy.com, e o plugin confere a licença a cada sessão
+  const loja = (await pedir({ loja: "catalogo", licenca: codigo })).corpo;
+  assert.equal(loja.name, "editefy");
+  assert.equal(loja.owner.name, "Editefy");
+  assert.deepEqual(loja.plugins.map((p) => p.name), ["editefy-sort"]);
+  assert.equal(loja.plugins[0].source.url, `https://www.editefy.com/p/${codigo}/editefy-sort.git`);
+  assert.ok(!JSON.stringify(loja).toLowerCase().includes("miai"), "nada da MIAI na loja");
   assert.deepEqual(await licencaConfere(codigo), { ativa: true, motivo: "" });
 
   // Reembolso da garantia: o plugin some da loja e para de funcionar
@@ -460,14 +460,32 @@ test("comprar o Sort para computador libera o plugin editefy-sort e manda o e-ma
   assert.deepEqual((await pedir({ loja: "catalogo", licenca: codigo })).corpo.plugins, []);
 });
 
-test("um Sort não libera o outro: quem tem o do celular não instala o plugin, e a licença de outro plugin não vale", async () => {
-  const hugo = alunoPorEmail("hugo@teste.com").id;
-  assert.ok(temSort(hugo), "o Hugo tem o Sort do celular");
-  assert.equal((await pedir({ plugins: "1", acao: "minha", curso: "editefy-sort" }, hugo)).codigo, 403);
-
-  // Quem só tem o Editfy Reels tem licença, mas ela não libera o editefy-sort
+test("quem já tem conta compra o Sort para computador sem trocar a senha; cada loja mostra só os plugins dela", async () => {
+  // A Eva tem o Editfy Reels (MIAI) e a licença MIAI-... da aula de instalação
   const eva = alunoPorEmail("eva@teste.com").id;
-  const codigo = (await pedir({ plugins: "1", acao: "minha", curso: "editfy-reels" }, eva)).corpo.licenca;
-  assert.equal((await licencaConfere(codigo)).ativa, false);
-  assert.equal((await pedir({ plugins: "1", acao: "minha", curso: "editefy-sort" }, eva)).codigo, 403);
+  const miai = (await pedir({ plugins: "1", acao: "minha", curso: "editfy-reels" }, eva)).corpo;
+  assert.equal((await licencaConfere(miai.licenca)).ativa, false, "o Editfy Reels não libera o Sort");
+
+  const antes = trocasDeSenha.length;
+  await aviso("checkout.session.completed", compra("eva@teste.com", LINK_SORT_PC, 8900));
+  assert.equal(trocasDeSenha.length, antes, "a senha continua a mesma");
+  const email = ultimoEmail();
+  assert.equal(email.tipo, "acesso_editefy_sort_computador");
+  assert.equal(email.dados.SENHA, "");
+  const codigo = lojaDe(email.dados.COMANDO_LOJA);
+  assert.equal(codigo, miai.licenca.replace("MIAI-", "EDITEFY-"), "a mesma licença, com o prefixo da Editefy");
+
+  // Loja da MIAI: só o Editfy Reels (os comandos da aula também). Loja da Editefy: só o Sort.
+  assert.deepEqual((await pedir({ loja: "catalogo", licenca: miai.licenca })).corpo.plugins.map((p) => p.name), ["editfy-reels"]);
+  assert.deepEqual((await pedir({ plugins: "1", acao: "minha" }, eva)).corpo.comandos.slice(1), ["/plugin install editfy-reels@miai"]);
+  assert.deepEqual((await pedir({ loja: "catalogo", licenca: codigo })).corpo.plugins.map((p) => p.name), ["editefy-sort"]);
+  // O plugin confere com qualquer um dos dois links (ele usa o primeiro que achar no Claude Code)
+  assert.equal((await licencaConfere(codigo)).ativa, true);
+  assert.equal((await licencaConfere(miai.licenca)).ativa, true);
+
+  // Quem só tem o Sort do celular não tem o plugin
+  const hugo = alunoPorEmail("hugo@teste.com").id;
+  assert.ok(temSort(hugo));
+  assert.ok(!tabelas.licencas_plugin.some((l) => l.aluno_id === hugo));
+  assert.ok(!(await cursosAtivos(db, hugo)).cursos.length);
 });

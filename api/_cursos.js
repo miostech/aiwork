@@ -19,6 +19,9 @@
 //   5. paginasVenda: o nome da página de vendas no contador de visitas (data-pagina do contador.js, que precisa estar
 //      em PAGINAS de api/visita.js); o painel conta os visitantes delas na parte "Por curso"
 //
+// marca "editefy" (o Editefy Sort para computador): um plugin vendido só com o nome da Editefy, sem aulas e fora da
+// conta da MIAI. Leva emailCompra, emailContaExistente e linkCompra no lugar das aulas (veja o bloco dele abaixo).
+//
 // Pacotes (o Editefy): em vez de um preço único, o curso tem "pacotes" de minutos, cada um com o seu link de pagamento
 // (pagamento único); o aviso do Stripe grava cada compra em editfy_creditos (veja o bloco do Editfy Reels abaixo).
 // O Editefy Sort (EDITEFY_SORT, mais abaixo) também é um pacote, mas de tempo ("meses" em vez de "minutos"): cada
@@ -42,7 +45,6 @@ import { CURSO as AULAS_IAWORK } from "./_aulas-iawork.js";
 import { CURSO as AULAS_CANAL_DARK } from "./_aulas-canal-dark.js";
 import { CURSO as AULAS_EDITFY } from "./_aulas-editfy.js";
 import { CURSO as AULAS_EDITFY_REELS } from "./_aulas-editfy-reels.js";
-import { CURSO as AULAS_EDITEFY_SORT } from "./_aulas-editefy-sort.js";
 
 export const CURSOS_MIAI = [
   {
@@ -128,21 +130,24 @@ export const CURSOS_MIAI = [
   {
     // Editefy Sort para computador: o plugin do Claude Code que organiza os arquivos no Mac ou no Windows, sem mandar
     // os arquivos para o servidor. Vendido à parte do Editefy Sort no celular (EDITEFY_SORT, mais abaixo, o conector
-    // de 12 meses): um não libera o outro. Compra única que vale para sempre, como o Editfy Reels (reembolso ou
-    // bloqueio tiram o acesso). O aviso do Stripe libera o acesso e manda o e-mail compra_miai, com o botão para
-    // miaiacademy.com/conta/editefy-sort, onde a aula "Instalar o plugin" mostra os comandos pessoais.
-    // Fora da vitrine da MIAI (oculto no CATÁLOGO de miai/miai.js); o vercel.json manda miaiacademy.com/editefy-sort
-    // para editefy.com/sort.
-    endereco: "editefy-sort",        // miaiacademy.com/conta/editefy-sort (aulas)
+    // de 12 meses): um não libera o outro. Compra única que vale para sempre (reembolso ou bloqueio tiram o acesso).
+    // marca "editefy": só com o nome da Editefy, como os outros produtos dela. Sem aulas e fora da conta, da vitrine
+    // e dos e-mails da MIAI. O aviso do Stripe libera o acesso (quem já tem conta continua com a senha), cria a licença
+    // e manda emailCompra (conta nova, com a senha) ou emailContaExistente, os dois com os comandos de instalação da
+    // loja "editefy" (editefy.com/loja/EDITEFY-..., api/_plugins.js).
+    marca: "editefy",
+    endereco: "editefy-sort",        // só um apelido (não tem página na MIAI)
     id: "editefy-sort-computador",   // nome no banco (acessos.curso e compras.curso); diferente do Sort do celular
     nome: "Editefy Sort para computador",
-    plugin: "editefy-sort",          // "name" do plugin.json; o aluno instala com editefy-sort@miai
+    plugin: "editefy-sort",          // "name" do plugin.json; quem compra instala com editefy-sort@editefy
     repo: "miostech/miai-plugin-editefy-sort",
     descricaoPlugin: "Organiza no seu computador os vídeos, fotos, prints e áudios: dá a cada arquivo um nome que diz o que tem dentro e coloca na pasta certa, sem mandar os arquivos para o servidor.",
-    // US$ 89 (R$ 89 no Brasil): ponha aqui o id do link (plink_...) quando ele for criado no Stripe.
+    emailCompra: "compra_editefy_sort_computador",
+    emailContaExistente: "acesso_editefy_sort_computador",
+    linkCompra: "https://www.editefy.com/sort#computador",   // o botão do e-mail: o passo a passo da instalação
+    // US$ 89 (R$ 89 no Brasil), produto "Editefy Sort para computador" no Stripe (buy.stripe.com/28E8wR9mu2yl8qX06S67S0d).
     // STRIPE_PAYMENT_LINK_EDITEFY_SORT_COMPUTADOR, se definida, é aceita junto (ex.: o link do modo de teste).
-    linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT_COMPUTADOR].filter(Boolean),
-    aulas: AULAS_EDITEFY_SORT,
+    linksPagamento: ["plink_1UfPT1RY9p8vsUUst8PbXdDF", process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT_COMPUTADOR].filter(Boolean),
   },
 ];
 
