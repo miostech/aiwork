@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Editefy Sort · Chega de caçar fotos na sua galeria</title>
-<meta name="description" content="Mande a pilha toda de fotos, vídeos, prints e áudios. O Editefy Sort olha um por um, dá um nome que diz o que tem dentro e coloca cada arquivo na pasta certa, conversando no Claude, no ChatGPT ou no Grok.">
+<meta name="description" content="Mande a pilha toda de fotos, vídeos, prints e áudios. O Editefy Sort olha um por um, dá um nome que diz o que tem dentro e coloca cada arquivo na pasta certa: pelo celular, no Claude, no ChatGPT ou no Grok, ou no seu computador, pelo Claude Code.">
 <link rel="canonical" href="https://www.editefy.com/sort">
 <meta name="theme-color" content="#0f0d16">
 <meta property="og:type" content="website">
@@ -18,8 +18,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <!--
   PÁGINA DE VENDAS DO EDITEFY SORT (editefy.com/sort; a rota fica no vercel.json, pelo domínio)
-  O Sort é vendido à parte do Editefy: acesso de 12 meses, pagamento único, sem gastar os minutos do Editefy.
-  1. Preço e link do pagamento: CONFIG no final deste arquivo (o mesmo link de EDITEFY_SORT em api/_cursos.js).
+  O Sort é vendido à parte do Editefy, sem gastar os minutos do Editefy, em duas versões vendidas à parte (uma não
+  inclui a outra):
+  - Pelo celular: o conector sort.editefy.com (Claude, ChatGPT e Grok), acesso de 12 meses, pagamento único
+    (EDITEFY_SORT em api/_cursos.js). O e-mail da compra leva para #conectar.
+  - No computador: o plugin do Claude Code (Mac e Windows), pagamento único que vale para sempre (o curso
+    editefy-sort-computador em api/_cursos.js). O e-mail da compra (da MIAI Academy) leva para a aula com os comandos de
+    instalação; a aba "No computador" de #conectar explica isso.
+  1. Preços e links do pagamento: CONFIG no final deste arquivo (os mesmos links de api/_cursos.js).
   2. Demonstração: editfy/sort-demo.html (editefy.com/sort/demonstracao), com arquivos inventados. O quadro usa o
      caminho do arquivo, que também abre na prévia da Vercel (lá as rotas do editefy.com não valem).
   3. Como conectar: a parte #conectar desta página (o e-mail da compra leva para cá). Os passos do ChatGPT e do Grok
@@ -251,10 +257,15 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
 .demo-nota a { color: var(--roxo-claro); font-weight: 700; text-decoration: none; }
 .demo-nota a:hover { text-decoration: underline; }
 
-/* Preço: um cartão só */
+/* Preço: um cartão para cada versão (celular e computador) */
 .planos { max-width: 520px; }
-@media (min-width: 900px) { .planos { grid-template-columns: 1fr; max-width: 520px; } }
+@media (min-width: 900px) { .planos { grid-template-columns: 1fr 1fr; max-width: 1040px; } }
 .plano__preco small { display: inline-block; }
+.plano .botao { margin-top: auto; }
+.plano__selo--claro { background: var(--cartao-2); color: var(--roxo-claro); border: 1px solid var(--borda-forte); }
+.plano__aviso { color: var(--suave); font-size: 14px; text-align: center; }
+.abas--como { margin-top: 28px; }
+.abas--como + .passos { margin-top: 20px; }
 
 /* Como conectar */
 .conectar { max-width: 760px; }
@@ -309,8 +320,8 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
           <a class="botao botao--grande botao--fantasma" href="#demonstracao">Ver a demonstração</a>
         </div>
         <div class="hero__confianca">
-          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Sem instalar nada</span>
-          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Direto do celular</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Pelo celular, sem instalar nada</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Ou no seu Mac e Windows</span>
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Nunca apaga nada</span>
         </div>
       </div>
@@ -353,7 +364,7 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
       <div>
         <span class="etiqueta">É só pedir</span>
         <h2 class="titulo-secao" id="titulo-conversa">Você conversa. Ele arruma tudo.</h2>
-        <p class="sub-secao">Funciona dentro do Claude, do ChatGPT ou do Grok que você já usa, pelo celular ou pelo computador.</p>
+        <p class="sub-secao">Funciona dentro do Claude, do ChatGPT ou do Grok que você já usa, pelo celular ou pelo navegador. Ou no seu computador, pelo Claude Code, sem os arquivos saírem dele.</p>
         <ul class="pontos">
           <li>
             <span class="pontos__icone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
@@ -384,11 +395,21 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
     <div class="container">
       <span class="etiqueta">Como funciona</span>
       <h2 class="titulo-secao" id="titulo-como">Da galeria bagunçada às pastas prontas em 4 passos.</h2>
-      <ol class="passos">
+      <div class="abas abas--como" role="tablist" aria-label="Qual versão do Editefy Sort">
+        <button type="button" role="tab" id="aba-como-celular" aria-controls="como-celular" aria-selected="true">Pelo celular</button>
+        <button type="button" role="tab" id="aba-como-computador" aria-controls="como-computador" aria-selected="false">No computador</button>
+      </div>
+      <ol class="passos" id="como-celular" role="tabpanel" aria-labelledby="aba-como-celular">
         <li class="passo"><span class="passo__numero">1</span><h3>Compre e conecte</h3><p>Você compra o acesso de 12 meses, adiciona o Editefy Sort no Claude, no ChatGPT ou no Grok, uma vez só, e entra com a sua conta.</p></li>
         <li class="passo"><span class="passo__numero">2</span><h3>Mande a pilha</h3><p>A IA te dá um link. Você escolhe as fotos, os vídeos, os prints e os áudios direto da galeria, até 200 de uma vez.</p></li>
         <li class="passo"><span class="passo__numero">3</span><h3>Ele olha um por um</h3><p>Vê três momentos de cada vídeo, escuta o primeiro minuto da fala e olha cada foto. Depois dá o nome e escolhe a pasta.</p></li>
         <li class="passo"><span class="passo__numero">4</span><h3>Baixe tudo organizado</h3><p>Você recebe um link com tudo nas pastas e um zip para baixar. No iPhone, ele vai para o app Arquivos.</p></li>
+      </ol>
+      <ol class="passos" id="como-computador" role="tabpanel" aria-labelledby="aba-como-computador" hidden>
+        <li class="passo"><span class="passo__numero">1</span><h3>Compre e instale</h3><p>Você compra uma vez, cola dois comandos no Claude Code e o plugin instala o que faltar no seu Mac ou Windows.</p></li>
+        <li class="passo"><span class="passo__numero">2</span><h3>Jogue na pasta</h3><p>Arraste os vídeos, fotos, prints e áudios para a pasta Organizar, na sua Área de Trabalho, e peça "organiza".</p></li>
+        <li class="passo"><span class="passo__numero">3</span><h3>Ele olha um por um</h3><p>Vê três momentos de cada vídeo, escuta o começo da fala no próprio computador e olha cada foto. Depois dá o nome e escolhe a pasta.</p></li>
+        <li class="passo"><span class="passo__numero">4</span><h3>Tudo no lugar</h3><p>Os arquivos ficam nas pastas, ali mesmo no seu computador, e a animação abre no navegador.</p></li>
       </ol>
     </div>
   </section>
@@ -397,7 +418,7 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
     <div class="container">
       <span class="etiqueta">O resultado</span>
       <h2 class="titulo-secao" id="titulo-demo">No fim, você recebe isto.</h2>
-      <p class="sub-secao">Um link com os seus arquivos voando para as pastas e um zip com tudo pronto para baixar.</p>
+      <p class="sub-secao">Um link com os seus arquivos voando para as pastas e um zip com tudo pronto para baixar. No computador, a animação abre no seu navegador e os arquivos já ficam nas pastas.</p>
       <div class="demo-caixa">
         <iframe id="demo" src="/editfy/sort-demo.html" title="Demonstração do Editefy Sort com arquivos de exemplo" loading="lazy" scrolling="no"></iframe>
       </div>
@@ -416,8 +437,8 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
         <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v4"/></svg><h3>Escuta o que você fala</h3><p>Nos vídeos falando para a câmera, ele ouve o primeiro minuto para entender o assunto.</p></div>
         <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg><h3>Separa foto de print</h3><p>Olha cada imagem e sabe o que é foto e o que é print de tela.</p></div>
         <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg><h3>Nunca apaga nada</h3><p>Não apaga e não troca nenhum arquivo por cima. Os nomes antigos ficam num arquivo de texto.</p></div>
-        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg><h3>Pilhas grandes</h3><p>Até 200 arquivos e 20 GB de cada vez, com vídeos de até 4 GB.</p></div>
-        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg><h3>Pelo celular</h3><p>O trabalho pesado roda nos servidores da Editefy. Não esquenta o celular e não gasta bateria.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg><h3>Pilhas grandes</h3><p>Pelo celular, até 200 arquivos e 20 GB de cada vez. No computador, tudo o que estiver na pasta Organizar.</p></div>
+        <div class="recurso"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg><h3>No celular ou no computador</h3><p>No celular, o trabalho pesado roda nos servidores da Editefy e não gasta bateria. No computador, tudo roda na sua máquina.</p></div>
       </div>
     </div>
   </section>
@@ -425,13 +446,13 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
   <section class="secao planos-secao" id="preco" aria-labelledby="titulo-preco" style="padding-top: 0">
     <div class="container">
       <span class="etiqueta">Preço</span>
-      <h2 class="titulo-secao" id="titulo-preco">Um ano de galeria organizada.</h2>
-      <p class="sub-secao">Pagamento único, sem mensalidade. Organize quantas pilhas quiser durante 12 meses.</p>
+      <h2 class="titulo-secao" id="titulo-preco">Escolha onde organizar.</h2>
+      <p class="sub-secao">Pagamento único, sem mensalidade. Pelo celular, no Claude, no ChatGPT ou no Grok, ou no seu computador, pelo Claude Code. As duas versões são vendidas à parte.</p>
       <div class="planos">
         <div class="plano plano--destaque" id="plano-sort">
           <span class="plano__selo">Acesso de 12 meses</span>
-          <h3>Editefy Sort</h3>
-          <p class="plano__detalhe">Para quem cria e vive com a galeria cheia</p>
+          <h3>Pelo celular</h3>
+          <p class="plano__detalhe">Para quem cria e vive com a galeria cheia. Sem instalar nada.</p>
           <p class="plano__preco"><span class="plano__valor">R$ 98</span><small>pagamento único</small></p>
           <ul>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Quantas organizações quiser por 12 meses</li>
@@ -439,11 +460,25 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No Claude, no ChatGPT ou no Grok</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Não gasta os seus minutos do Editefy</li>
           </ul>
-          <a class="botao botao--largo botao--grande" id="comprar" href="#preco">Comprar o Editefy Sort <span aria-hidden="true">→</span></a>
+          <a class="botao botao--largo botao--grande" id="comprar" href="#preco">Comprar pelo celular <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="plano" id="plano-computador">
+          <span class="plano__selo plano__selo--claro">Para sempre</span>
+          <h3>No computador</h3>
+          <p class="plano__detalhe">Plugin do Claude Code para Mac e Windows. Os arquivos não saem do seu computador.</p>
+          <p class="plano__preco"><span class="plano__valor">R$ 89</span><small>pagamento único</small></p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Organize quantas vezes quiser, para sempre</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Direto na pasta do seu computador</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No Claude Code, com uma assinatura do Claude</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Não gasta os seus minutos do Editefy</li>
+          </ul>
+          <a class="botao botao--largo botao--grande" id="comprar-computador" href="#preco">Comprar para computador <span aria-hidden="true">→</span></a>
+          <p class="plano__aviso" id="aviso-computador" hidden>A versão para computador abre em breve.</p>
         </div>
       </div>
       <p class="aviso-checkout" id="aviso-checkout" hidden>As vendas abrem em breve.</p>
-      <p class="planos__nota">Pagamento seguro pelo Stripe, sem cobrança automática. Depois do pagamento, você recebe por e-mail o seu acesso e o passo a passo para conectar. Comprou de novo antes de acabar? Os 12 meses somam ao tempo que falta.</p>
+      <p class="planos__nota">Pagamento seguro pelo Stripe, sem cobrança automática. Depois do pagamento, você recebe tudo por e-mail: pelo celular, o seu acesso e o passo a passo para conectar; no computador, o seu acesso e os comandos para instalar. Uma versão não inclui a outra. Comprou de novo a do celular antes de acabar? Os 12 meses somam ao tempo que falta.</p>
     </div>
   </section>
 
@@ -456,6 +491,7 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
         <button type="button" role="tab" id="aba-claude" aria-controls="passos-claude" aria-selected="true">Claude</button>
         <button type="button" role="tab" id="aba-chatgpt" aria-controls="passos-chatgpt" aria-selected="false">ChatGPT</button>
         <button type="button" role="tab" id="aba-grok" aria-controls="passos-grok" aria-selected="false">Grok</button>
+        <button type="button" role="tab" id="aba-computador" aria-controls="passos-computador" aria-selected="false">No computador</button>
       </div>
 
       <ol class="passos-conectar" id="passos-claude" role="tabpanel" aria-labelledby="aba-claude">
@@ -521,6 +557,26 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
           <span class="frase">Quero organizar minhas fotos com o Editefy Sort</span>
         </div></li>
       </ol>
+
+      <ol class="passos-conectar" id="passos-computador" role="tabpanel" aria-labelledby="aba-computador" hidden>
+        <li class="passo-c"><span class="passo__numero">1</span><div>
+          <h3>Abra o e-mail da compra</h3>
+          <p>Ele vem da <strong>MIAI Academy</strong>, onde ficam as aulas do plugin, com o seu e-mail e a sua senha. Toque no botão do e-mail para abrir a sua conta.</p>
+        </div></li>
+        <li class="passo-c"><span class="passo__numero">2</span><div>
+          <h3>Copie os seus dois comandos</h3>
+          <p>Na aula <strong>Instalar o plugin no Claude Code</strong>, copie os comandos e cole um de cada vez no Claude Code (o app do Claude para desktop, na aba <strong>Code</strong>, ou o terminal). Eles são pessoais: não compartilhe.</p>
+        </div></li>
+        <li class="passo-c"><span class="passo__numero">3</span><div>
+          <h3>Feche e abra o Claude Code</h3>
+          <p>No primeiro pedido, o plugin instala sozinho o que faltar no seu computador. Leva alguns minutos e precisa de uns 3 GB livres.</p>
+        </div></li>
+        <li class="passo-c"><span class="passo__numero">4</span><div>
+          <h3>Peça a primeira organização</h3>
+          <p>Jogue os arquivos na pasta <strong>Organizar</strong> (Área de Trabalho → Editefy Sort) e escreva:</p>
+          <span class="frase">organiza</span>
+        </div></li>
+      </ol>
     </div>
   </section>
 
@@ -530,12 +586,19 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
       <h2 class="titulo-secao" id="titulo-duvidas">Perguntas frequentes.</h2>
       <div class="duvidas">
         <details>
+          <summary>Qual a diferença entre a versão do celular e a do computador?</summary>
+          <p>A do celular funciona no Claude, no ChatGPT ou no Grok, sem instalar nada: os arquivos vão para o servidor da Editefy, são organizados lá e saem 24 horas depois do último uso. Vale 12 meses.</p>
+          <p>A do computador é um plugin do Claude Code para Mac e Windows: tudo roda na sua máquina e os arquivos não saem dela. Vale para sempre. As duas são vendidas à parte: uma não inclui a outra.</p>
+        </details>
+        <details>
           <summary>O que eu preciso ter?</summary>
-          <p>O app do Claude, do ChatGPT ou do Grok no celular (ou o site deles no navegador), com a sua conta. Você adiciona o Editefy Sort como conector uma vez (o passo a passo está <a href="#conectar">aqui em cima</a>), entra com a conta que recebeu por e-mail e pronto. Não precisa instalar nada.</p>
+          <p>Pelo celular: o app do Claude, do ChatGPT ou do Grok (ou o site deles no navegador), com a sua conta. Você adiciona o Editefy Sort como conector uma vez (o passo a passo está <a href="#conectar">aqui em cima</a>), entra com a conta que recebeu por e-mail e pronto. Não precisa instalar nada.</p>
+          <p>No computador: o Claude Code (o app do Claude para desktop ou o terminal) com uma assinatura do Claude, num Mac ou num Windows 10 ou 11 com uns 3 GB livres. O resto o plugin instala sozinho na primeira vez.</p>
         </details>
         <details>
           <summary>Preciso pagar o Claude, o ChatGPT ou o Grok?</summary>
-          <p>Não. O ChatGPT e o Grok aceitam o Sort no plano gratuito. No Claude, o plano gratuito aceita um conector personalizado: se você já usa o Editefy nele, conecte o Sort no ChatGPT ou no Grok, ou use um plano pago do Claude.</p>
+          <p>Pelo celular, não. O ChatGPT e o Grok aceitam o Sort no plano gratuito. No Claude, o plano gratuito aceita um conector personalizado: se você já usa o Editefy nele, conecte o Sort no ChatGPT ou no Grok, ou use um plano pago do Claude.</p>
+          <p>No computador, sim: o Claude Code precisa de uma assinatura do Claude.</p>
         </details>
         <details>
           <summary>Que arquivos ele organiza?</summary>
@@ -543,11 +606,11 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
         </details>
         <details>
           <summary>Quantos arquivos dá para mandar?</summary>
-          <p>Até 200 arquivos e 20 GB por organização, com até 4 GB por arquivo. Tem mais que isso? Faça outra organização: durante os 12 meses, você organiza quantas pilhas quiser.</p>
+          <p>Pelo celular, até 200 arquivos e 20 GB por organização, com até 4 GB por arquivo. Tem mais que isso? Faça outra organização: durante os 12 meses, você organiza quantas pilhas quiser. No computador, ele organiza tudo o que estiver na pasta Organizar.</p>
         </details>
         <details>
           <summary>Quanto tempo leva?</summary>
-          <p>Perto de 1 minuto por vídeo com fala e poucos segundos por foto, print ou áudio. Antes de começar, a IA te diz quanto tempo vai levar.</p>
+          <p>Pelo celular, perto de 1 minuto por vídeo com fala. No computador, uns 15 segundos por vídeo com fala no Mac com chip Apple e até uns 40 no Windows e no Mac Intel. Fotos, prints e áudios levam poucos segundos. Antes de começar, a IA te diz quanto tempo vai levar.</p>
         </details>
         <details>
           <summary>Ele apaga ou troca algum arquivo?</summary>
@@ -555,11 +618,13 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
         </details>
         <details>
           <summary>Como recebo tudo organizado?</summary>
-          <p>A IA te manda um link com a organização e um zip com as pastas para baixar. No iPhone, o zip vai para o app Arquivos: toque nele e as pastas aparecem. As pastas ficam no app Arquivos, não viram álbuns na galeria.</p>
+          <p>Pelo celular, a IA te manda um link com a organização e um zip com as pastas para baixar. No iPhone, o zip vai para o app Arquivos: toque nele e as pastas aparecem. As pastas ficam no app Arquivos, não viram álbuns na galeria.</p>
+          <p>No computador, os arquivos já ficam nas pastas, dentro da pasta Organizar, e a animação abre no navegador.</p>
         </details>
         <details>
           <summary>Meus arquivos ficam com vocês?</summary>
-          <p>Só enquanto você organiza: eles saem do servidor da Editefy 24 horas depois do último uso. O link e o zip valem 7 dias.</p>
+          <p>Pelo celular, só enquanto você organiza: eles saem do servidor da Editefy 24 horas depois do último uso. O link e o zip valem 7 dias.</p>
+          <p>No computador, os arquivos não saem dele. Para dar os nomes, o Claude vê só as prévias: 3 quadros de cada vídeo, uma cópia pequena de cada foto e o começo da fala, transcrito no seu computador.</p>
         </details>
         <details>
           <summary>Posso escolher as pastas?</summary>
@@ -567,11 +632,11 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
         </details>
         <details>
           <summary>Gasta os meus minutos do Editefy?</summary>
-          <p>Não. O Sort é vendido à parte e não usa os minutos de edição. O login é o mesmo: quem já tem conta no Editefy entra com o mesmo e-mail e a mesma senha.</p>
+          <p>Não. O Sort é vendido à parte e não usa os minutos de edição. Na versão do celular, o login é o mesmo: quem já tem conta no Editefy entra com o mesmo e-mail e a mesma senha.</p>
         </details>
         <details>
           <summary>Tem mensalidade?</summary>
-          <p>Não. É um pagamento único que vale 12 meses, sem cobrança automática no cartão. Para continuar depois, é só comprar de novo: se ainda faltar tempo, os 12 meses somam.</p>
+          <p>Não. Pelo celular, é um pagamento único que vale 12 meses, sem cobrança automática no cartão. Para continuar depois, é só comprar de novo: se ainda faltar tempo, os 12 meses somam. No computador, é um pagamento único que vale para sempre.</p>
         </details>
       </div>
     </div>
@@ -625,12 +690,19 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
 <script src="/miai/miai.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════
-//  CONFIGURAÇÃO — preço e link do pagamento do Sort (o link é o de EDITEFY_SORT em api/_cursos.js)
+//  CONFIGURAÇÃO — preços e links do pagamento das duas versões do Sort
 // ═══════════════════════════════════════════════════════════════
 window.CONFIG = {
+  // Pelo celular (o conector): o link é o de EDITEFY_SORT em api/_cursos.js
   preco: 'R$ 98',          // no Brasil
   precoFora: 'US$ 98',     // nos outros países (o Stripe cobra em dólar ou na moeda local)
   linkPagamento: 'https://buy.stripe.com/7sY7sN56e3CpdLhf1M67S0c',   // vazio = botão "Em breve"
+  // No computador (o plugin do Claude Code): o link é o do curso editefy-sort-computador em api/_cursos.js
+  computador: {
+    preco: 'R$ 89',
+    precoFora: 'US$ 89',
+    linkPagamento: '',     // vazio = botão "Em breve"
+  },
 };
 </script>
 <script>
@@ -668,8 +740,18 @@ window.CONFIG = {
     if (altura > 200 && altura < 5000) demo.style.height = Math.ceil(altura) + 'px';
   });
 
-  // Abas Claude / ChatGPT / Grok (editefy.com/sort#chatgpt e #grok já abrem a aba deles)
-  const abas = [['claude', 'passos-claude'], ['chatgpt', 'passos-chatgpt'], ['grok', 'passos-grok']];
+  // Como funciona: abas Pelo celular / No computador
+  const abasComo = ['celular', 'computador'];
+  function mostrarComo(nome) {
+    abasComo.forEach((aba) => {
+      $('#aba-como-' + aba).setAttribute('aria-selected', String(aba === nome));
+      $('#como-' + aba).hidden = aba !== nome;
+    });
+  }
+  abasComo.forEach((aba) => $('#aba-como-' + aba).addEventListener('click', () => mostrarComo(aba)));
+
+  // Abas Claude / ChatGPT / Grok / No computador (editefy.com/sort#chatgpt, #grok e #computador já abrem a aba deles)
+  const abas = [['claude', 'passos-claude'], ['chatgpt', 'passos-chatgpt'], ['grok', 'passos-grok'], ['computador', 'passos-computador']];
   function mostrarAba(nome) {
     abas.forEach(([aba, lista]) => {
       $('#aba-' + aba).setAttribute('aria-selected', String(aba === nome));
@@ -677,7 +759,7 @@ window.CONFIG = {
     });
   }
   abas.forEach(([aba]) => $('#aba-' + aba).addEventListener('click', () => mostrarAba(aba)));
-  if (location.hash === '#chatgpt' || location.hash === '#grok') {
+  if (location.hash === '#chatgpt' || location.hash === '#grok' || location.hash === '#computador') {
     mostrarAba(location.hash.slice(1));
     addEventListener('load', () => $('#conectar').scrollIntoView({ behavior: 'instant' }));   // depois de montar a página inteira
   }
@@ -698,23 +780,27 @@ window.CONFIG = {
     });
   });
 
-  // Preço (reais no Brasil, dólar fora) e link do pagamento
-  const valor = $('#plano-sort .plano__valor');
-  const mostrarPreco = () => { if (window.Miai) valor.textContent = Miai.precoDe(C); };
-  mostrarPreco();
-  if (window.Miai) Miai.pais.then(mostrarPreco);
-  const comprar = $('#comprar');
-  if (C.linkPagamento) {
-    let url = C.linkPagamento;
-    try { const u = new URL(url); u.searchParams.set('locale', 'pt-BR'); url = u.toString(); } catch (e) {}
-    comprar.href = url;
-    comprar.addEventListener('click', () => { try { gtag('event', 'begin_checkout', { item_id: 'sort-12-meses' }); } catch (e) {} });
-  } else {
-    comprar.textContent = 'Em breve';
-    comprar.setAttribute('aria-disabled', 'true');
-    comprar.addEventListener('click', (e) => e.preventDefault());
-    $('#aviso-checkout').hidden = false;
+  // Preço (reais no Brasil, dólar fora) e link do pagamento de cada versão
+  function montarPlano(cartao, botao, aviso, config, item) {
+    const valor = $(cartao + ' .plano__valor');
+    const mostrarPreco = () => { if (window.Miai) valor.textContent = Miai.precoDe(config); };
+    mostrarPreco();
+    if (window.Miai) Miai.pais.then(mostrarPreco);
+    const comprar = $(botao);
+    if (config.linkPagamento) {
+      let url = config.linkPagamento;
+      try { const u = new URL(url); u.searchParams.set('locale', 'pt-BR'); url = u.toString(); } catch (e) {}
+      comprar.href = url;
+      comprar.addEventListener('click', () => { try { gtag('event', 'begin_checkout', { item_id: item }); } catch (e) {} });
+    } else {
+      comprar.textContent = 'Em breve';
+      comprar.setAttribute('aria-disabled', 'true');
+      comprar.addEventListener('click', (e) => e.preventDefault());
+      $(aviso).hidden = false;
+    }
   }
+  montarPlano('#plano-sort', '#comprar', '#aviso-checkout', C, 'sort-12-meses');
+  montarPlano('#plano-computador', '#comprar-computador', '#aviso-computador', C.computador, 'editefy-sort-computador');
 })();
 </script>
 </body>
