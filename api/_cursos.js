@@ -21,6 +21,8 @@
 //
 // Pacotes (o Editefy): em vez de um preço único, o curso tem "pacotes" de minutos, cada um com o seu link de pagamento
 // (pagamento único); o aviso do Stripe grava cada compra em editfy_creditos (veja o bloco do Editfy Reels abaixo).
+// O Editefy Sort (EDITEFY_SORT, mais abaixo) também é um pacote, mas de tempo ("meses" em vez de "minutos"): cada
+// compra vai para editefy_sort_acessos.
 //
 // Assinatura mensal (usada pelo Editefy até 16/11/2026; nenhum curso vende assim hoje): o curso tem "planos". Cada plano é um produto com preço
 // mensal no Stripe e um link de pagamento no modo assinatura, e vira um valor de acessos.curso (ex.: editfy-reels-60).
@@ -92,10 +94,10 @@ export const CURSOS_MIAI = [
     // assinatura): pagamento único, e cada compra soma os minutos ao saldo e vale 12 meses. Libera só o conector (o
     // Editefy no servidor, pelo Claude e pelo ChatGPT), sem as aulas e o plugin. O aviso do Stripe grava a compra na
     // tabela editfy_creditos (o servidor lê o saldo de lá) e manda o e-mail emailPacote (conta nova, com a senha) ou
-    // emailMaisMinutos (quem já tem conta, sem trocar a senha). O reembolso tira o pacote.
+    // emailContaExistente (quem já tem conta, sem trocar a senha). O reembolso tira o pacote.
     // As variáveis STRIPE_PAYMENT_LINK_EDITEFY_30/_60/_120, se definidas, são aceitas junto (ex.: links do modo de teste).
     emailPacote: "compra_editefy",
-    emailMaisMinutos: "minutos_editefy",
+    emailContaExistente: "minutos_editefy",
     linkPacote: "https://www.editefy.com/comecar",
     pacotes: [
       {
@@ -149,11 +151,39 @@ export const PLANOS = CURSOS_MIAI.flatMap((curso) => (curso.planos || []).map((p
 export const planoPorLinkPagamento = (link) => (link && PLANOS.find((p) => p.plano.linksPagamento.includes(link))) || null;
 export const planoPorProduto = (produto) => (produto && PLANOS.find((p) => p.plano.produtos.includes(produto))) || null;
 
-// Pacotes de minutos de todos os cursos, cada um com o seu curso: [{ curso, pacote }]
-export const PACOTES = CURSOS_MIAI.flatMap((curso) => (curso.pacotes || []).map((pacote) => ({ curso, pacote })));
+// Editefy Sort (vendido em editefy.com, à parte do Editefy): organiza uma pilha de vídeos, fotos e áudios conversando,
+// num conector próprio (sort.editefy.com, com o mesmo login do Editefy). Pagamento único que dá 12 meses de acesso,
+// sem minutos (o Sort não gasta os minutos do Editefy). Não é um curso: sem aulas, sem plugin e fora da conta da MIAI
+// e do painel. O aviso do Stripe grava cada compra em editefy_sort_acessos (o servidor do Sort confere o acesso lá):
+// quem compra com tempo sobrando de uma compra anterior ganha os 12 meses somados ao vencimento atual. O reembolso
+// tira o acesso daquela compra. E-mails: emailPacote (conta nova, com a senha) ou emailContaExistente (quem já tem
+// conta, sem trocar a senha), os dois com o vencimento e o passo a passo para conectar.
+// STRIPE_PAYMENT_LINK_EDITEFY_SORT, se definida, é aceita junto (ex.: o link do modo de teste).
+export const EDITEFY_SORT = {
+  id: "editefy-sort",
+  nome: "Editefy Sort",
+  emailPacote: "compra_editefy_sort",
+  emailContaExistente: "acesso_editefy_sort",
+  linkPacote: "https://claude.ai/settings/connectors",   // o botão do e-mail abre os conectores do Claude
+  pacotes: [
+    {
+      id: "sort-12-meses",   // editefy_sort_acessos.pacote e compras.curso
+      nome: "12 meses",
+      meses: 12,
+      // Preço e link de pagamento: ainda não criados no Stripe. Ponha o id do link (plink_...) antes da variável.
+      linksPagamento: [process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT].filter(Boolean),
+    },
+  ],
+};
+
+// Pacotes de todos os cursos e do Sort, cada um com o seu curso (ou produto): [{ curso, pacote }]
+export const PACOTES = [...CURSOS_MIAI, EDITEFY_SORT]
+  .flatMap((curso) => (curso.pacotes || []).map((pacote) => ({ curso, pacote })));
 // { curso, pacote } do link de pagamento (plink_...) do Stripe, ou null
 export const pacotePorLinkPagamento = (link) => (link && PACOTES.find((p) => p.pacote.linksPagamento.includes(link))) || null;
-export const ehPacote = (id) => PACOTES.some((p) => p.pacote.id === id);
+// { curso, pacote } pelo id do pacote (o que fica em compras.curso), ou null
+export const pacotePorId = (id) => PACOTES.find((p) => p.pacote.id === id) || null;
+export const ehPacote = (id) => !!pacotePorId(id);
 
 // Curso do link de pagamento: o de uma compra única, o de um pacote de minutos ou o de um plano de assinatura
 export const cursoPorLinkPagamento = (link) =>

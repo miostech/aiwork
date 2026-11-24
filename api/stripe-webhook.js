@@ -15,8 +15,15 @@
 // Pacotes de minutos (cursos com "pacotes" em api/_cursos.js, como o Editefy): pagamento único, como uma compra
 //   checkout.session.completed / async_payment_succeeded → cria o login (quem já tem conta continua com a senha),
 //                                              grava o pacote em editfy_creditos (o servidor do Editefy lê o saldo de lá)
-//                                              e manda emailPacote (conta nova, com a senha) ou emailMaisMinutos
+//                                              e manda emailPacote (conta nova, com a senha) ou emailContaExistente
 //   reembolso total                          → tira o pacote (revogado_em em editfy_creditos)
+//
+// Editefy Sort (EDITEFY_SORT em api/_cursos.js, um pacote de 12 meses de acesso): pagamento único, como um pacote
+//   checkout.session.completed / async_payment_succeeded → cria o login (quem já tem conta continua com a senha),
+//                                              grava a compra em editefy_sort_acessos (o servidor do Sort confere o
+//                                              acesso lá) com o vencimento: 12 meses a partir de hoje ou, se ainda falta
+//                                              tempo de uma compra anterior, a partir do vencimento atual
+//   reembolso total                          → tira aquela compra (revogado_em) e refaz o vencimento das outras
 //
 // Assinaturas (cursos com "planos" em api/_cursos.js; nenhum curso vende assim hoje):
 //   checkout.session.completed               → primeira mensalidade: cria o login e manda a senha, como numa compra
@@ -45,7 +52,7 @@ import Stripe from "stripe";
 import { banco, normalizarEmail } from "./_supabase.js";
 import { liberarAcesso, linkCurso } from "./_alunos.js";
 import { enviarEmail } from "./_emails.js";
-import { PLANOS, cursoPorLinkPagamento, ehPacote, linkMiai, pacotePorLinkPagamento, planoPorProduto } from "./_cursos.js";
+import { PLANOS, cursoPorLinkPagamento, linkMiai, pacotePorId, pacotePorLinkPagamento, planoPorProduto } from "./_cursos.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_nao_configurada");
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -253,6 +260,77 @@ async function cancelarAssinaturaDaFatura(idFatura) {
   await sincronizarAssinatura(id);
 }
 
+// ── Editefy Sort: acesso por tempo, em editefy_sort_acessos ──
+
+// Data mais "meses" meses; se o dia não existe no mês final, fica no último dia (31/01 + 1 mês = 28/02), como o
+// interval do Postgres
+function somarMeses(data, meses) {
+  const d = new Date(data);
+  const dia = d.getUTCDate();
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + meses);
+  const ultimoDia = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  d.setUTCDate(Math.min(dia, ultimoDia));
+  return d;
+}
+
+// Refaz o vencimento das compras do Sort de um aluno, na ordem em que foram feitas: cada compra vale os meses do pacote
+// a partir do dia da compra ou, se ainda faltava tempo, a partir do vencimento anterior (renovar antes de vencer não
+// perde nada). As linhas feitas à mão (cortesias) ficam como estão e contam como tempo que ainda falta. Roda de novo
+// depois de um reembolso, para as compras seguintes perderem o tempo da compra reembolsada. Pode rodar quantas vezes
+// for preciso. Devolve o vencimento do acesso (o último), ou null se não sobrou nenhuma linha.
+async function acertarVencimentosSort(db, alunoId) {
+  const { data, error } = await db.from("editefy_sort_acessos")
+    .select("id, pacote, origem, criado_em, vence_em, revogado_em").eq("aluno_id", alunoId);
+  if (error) throw error;
+  const linhas = (data || []).filter((l) => !l.revogado_em)
+    .sort((a, b) => new Date(a.criado_em) - new Date(b.criado_em) || String(a.id).localeCompare(String(b.id)));
+  let fim = null;
+  for (const linha of linhas) {
+    let vence = linha.vence_em ? new Date(linha.vence_em) : null;
+    if (linha.origem === "stripe") {
+      const criado = new Date(linha.criado_em);
+      const meses = (pacotePorId(linha.pacote) || { pacote: {} }).pacote.meses || 12;
+      vence = somarMeses(fim && fim > criado ? fim : criado, meses);
+      if (!linha.vence_em || new Date(linha.vence_em).getTime() !== vence.getTime()) {
+        const { error: erro } = await db.from("editefy_sort_acessos")
+          .update({ vence_em: vence.toISOString() }).eq("id", linha.id);
+        if (erro) throw erro;
+      }
+    }
+    if (vence && (!fim || vence > fim)) fim = vence;
+  }
+  return fim;
+}
+
+// Grava a compra do Sort (uma linha por compra: referencia = sessão) e devolve até quando o acesso vale
+async function liberarSort(db, alunoId, pacote, sessao) {
+  const { error } = await db.from("editefy_sort_acessos").upsert(
+    { aluno_id: alunoId, pacote: pacote.id, origem: "stripe", referencia: sessao },
+    { onConflict: "referencia" }
+  );
+  if (error) throw error;
+  return acertarVencimentosSort(db, alunoId);
+}
+
+// Reembolso de uma compra do Sort: tira a linha dela e refaz o vencimento das outras
+async function revogarSort(db, sessao) {
+  const { data: linha, error } = await db.from("editefy_sort_acessos")
+    .select("id, aluno_id, revogado_em").eq("referencia", sessao).maybeSingle();
+  if (error) throw error;
+  if (!linha) return;
+  if (!linha.revogado_em) {
+    const { error: erro } = await db.from("editefy_sort_acessos")
+      .update({ revogado_em: new Date().toISOString() }).eq("id", linha.id);
+    if (erro) throw erro;
+  }
+  await acertarVencimentosSort(db, linha.aluno_id);
+}
+
+// Data do vencimento no e-mail, no horário de Brasília (ex.: 24/11/2027)
+const dataCurta = (data) =>
+  data ? new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(new Date(data)) : "";
+
 // ── Compras ──
 
 // Fatura da primeira mensalidade de uma sessão de assinatura
@@ -316,13 +394,15 @@ async function liberarCompra(sessao, curso) {
     const assinatura = sessao.mode === "subscription" ? idDe(sessao.subscription) : null;
     const pacote = curso.pacote || null;
     // Assinatura: aqui só o login; os acessos (curso e plano) vêm da sincronização logo abaixo.
-    // Pacote: só o login (quem já tem conta continua com a senha); os minutos vão para editfy_creditos.
+    // Pacote: só o login (quem já tem conta continua com a senha); os minutos vão para editfy_creditos e o tempo do
+    // Sort, para editefy_sort_acessos.
     const conta = await liberarAcesso({
       nome: reservada.nome, email: reservada.email, curso: assinatura || pacote ? null : curso.id,
       origem: assinatura ? "assinatura" : "stripe", referencia: assinatura || sessao.id, leadId, manterSenha: !!pacote,
     });
     await db.from("compras").update({ aluno_id: conta.alunoId }).eq("id", compra.id);
-    if (pacote) {
+    const vence = pacote && pacote.meses ? await liberarSort(db, conta.alunoId, pacote, sessao.id) : null;
+    if (pacote && !pacote.meses) {
       // Uma linha por compra (referencia = sessão): vale 12 meses a partir de agora (padrão do banco)
       const { error: erroPacote } = await db.from("editfy_creditos").upsert(
         { aluno_id: conta.alunoId, pacote: pacote.id, minutos: pacote.minutos, origem: "stripe", referencia: sessao.id },
@@ -338,15 +418,15 @@ async function liberarCompra(sessao, curso) {
     }
 
     const primeiroNome = String(reservada.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
-    // Pacote ou assinatura com e-mail próprio (o Editefy, com a sua marca e o passo a passo para conectar) ou o da
-    // escola. No pacote de quem já tem conta, o e-mail não leva senha (ela continua a mesma).
-    const proprio = pacote ? (conta.senha ? curso.emailPacote : curso.emailMaisMinutos)
+    // Pacote ou assinatura com e-mail próprio (o Editefy e o Sort, com a marca e o passo a passo para conectar) ou o
+    // da escola. No pacote de quem já tem conta, o e-mail não leva senha (ela continua a mesma).
+    const proprio = pacote ? (conta.senha ? curso.emailPacote : curso.emailContaExistente)
       : assinatura && curso.emailAssinatura;
     const envio = await enviarEmail(
       proprio || (curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra"),
       reservada.email,
       { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha || "", CURSO: curso.nome,
-        MINUTOS: pacote ? String(pacote.minutos) : "",
+        MINUTOS: pacote && pacote.minutos ? String(pacote.minutos) : "", VENCE: dataCurta(vence),
         LINK_CURSO: pacote ? curso.linkPacote : proprio ? curso.linkAssinatura : linkCurso(curso.id) },
       `compra-${sessao.id}`
     );
@@ -361,8 +441,8 @@ async function liberarCompra(sessao, curso) {
 }
 
 // Reembolso total: marca a compra e tira o acesso ao curso comprado. Num pacote de minutos, tira o pacote (o que
-// sobrava sai do saldo). Numa mensalidade, cancela a assinatura (a sincronização tira o plano e o curso que ela deu;
-// quem também comprou o curso uma vez continua com ele).
+// sobrava sai do saldo). No Sort, tira o tempo daquela compra. Numa mensalidade, cancela a assinatura (a
+// sincronização tira o plano e o curso que ela deu; quem também comprou o curso uma vez continua com ele).
 // valorReembolsado (em centavos) vem dos eventos refund.*; se for menor que o valor pago, é parcial e o acesso continua.
 async function marcarReembolso(pagamento, valorReembolsado = null) {
   if (!pagamento) return;
@@ -382,7 +462,12 @@ async function marcarReembolso(pagamento, valorReembolsado = null) {
       await cancelarAssinaturaDaFatura(compra.stripe_sessao);
       continue;
     }
-    if (ehPacote(compra.curso)) {
+    const doPacote = pacotePorId(compra.curso);
+    if (doPacote && doPacote.pacote.meses) {
+      await revogarSort(db, compra.stripe_sessao);
+      continue;
+    }
+    if (doPacote) {
       const { error: erroPacote } = await db.from("editfy_creditos")
         .update({ revogado_em: new Date().toISOString() })
         .eq("referencia", compra.stripe_sessao).is("revogado_em", null);

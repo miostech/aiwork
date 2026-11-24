@@ -1,5 +1,5 @@
-// Simulação dos pacotes de minutos do Editefy no Mac, sem Stripe nem Supabase de verdade: os avisos do Stripe são
-// assinados e conferidos de verdade e o banco é falso, em memória.
+// Simulação dos pacotes de minutos do Editefy e do acesso de 12 meses do Editefy Sort no Mac, sem Stripe nem Supabase
+// de verdade: os avisos do Stripe são assinados e conferidos de verdade e o banco é falso, em memória.
 // Rodar: npm test   (ou: node --test --experimental-test-module-mocks tests/)
 import { test, mock } from "node:test";
 import assert from "node:assert/strict";
@@ -12,12 +12,13 @@ process.env.MIAI_URL = "https://www.miaiacademy.com";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_30 = "plink_teste30";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_60 = "plink_teste60";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_120 = "plink_teste120";
+process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT = "plink_testesort";
 const LINK_COMPRA_UNICA = "plink_1UVEa9RY9p8vsUUsdFHAlweg"; // a compra única antiga do curso Editfy Reels
 const trocasDeSenha = [];
 
 // ── Banco falso (o pedaço do supabase-js que as funções usam) ──
-const tabelas = { alunos: [], acessos: [], compras: [], leads: [], licencas_plugin: [], editfy_creditos: [] };
-const unicas = { alunos: [["id"]], acessos: [["aluno_id", "curso"]], compras: [["stripe_sessao"]], licencas_plugin: [["aluno_id"], ["codigo"]], editfy_creditos: [["referencia"]] };
+const tabelas = { alunos: [], acessos: [], compras: [], leads: [], licencas_plugin: [], editfy_creditos: [], editefy_sort_acessos: [] };
+const unicas = { alunos: [["id"]], acessos: [["aluno_id", "curso"]], compras: [["stripe_sessao"]], licencas_plugin: [["aluno_id"], ["codigo"]], editfy_creditos: [["referencia"]], editefy_sort_acessos: [["referencia"]] };
 const usuarios = []; // auth.users
 
 class Consulta {
@@ -240,8 +241,158 @@ test("a compra única antiga do curso continua liberando as aulas e o plugin, se
 });
 
 test("compra de outro produto da conta não mexe em nada", async () => {
-  const antes = JSON.stringify([tabelas.acessos, tabelas.editfy_creditos]);
+  const antes = JSON.stringify([tabelas.acessos, tabelas.editfy_creditos, tabelas.editefy_sort_acessos]);
   await aviso("checkout.session.completed", compra("outra@teste.com", "plink_outro", 5000));
-  assert.equal(JSON.stringify([tabelas.acessos, tabelas.editfy_creditos]), antes);
+  assert.equal(JSON.stringify([tabelas.acessos, tabelas.editfy_creditos, tabelas.editefy_sort_acessos]), antes);
   assert.ok(!tabelas.compras.some((c) => c.email === "outra@teste.com"));
+});
+
+// ── Editefy Sort: acesso de 12 meses ──
+const LINK_SORT = "plink_testesort";
+const sortDe = (alunoId) => tabelas.editefy_sort_acessos.filter((l) => l.aluno_id === alunoId);
+const linhaSort = (sessao) => tabelas.editefy_sort_acessos.find((l) => l.referencia === sessao.id);
+// O que o servidor do Sort faz (editfy_servidor/sort/acesso.py): vale a linha não reembolsada que vence por último
+function vencimentoSort(alunoId) {
+  const datas = sortDe(alunoId).filter((l) => !l.revogado_em).map((l) => new Date(l.vence_em).getTime());
+  return datas.length ? new Date(Math.max(...datas)) : null;
+}
+const temSort = (alunoId) => { const v = vencimentoSort(alunoId); return !!v && v > new Date(); };
+// Mesma conta do aviso: meses a mais, no último dia do mês quando o dia não existe (31/01 + 1 mês = 28/02)
+function maisMeses(data, meses) {
+  const d = new Date(data);
+  const dia = d.getUTCDate();
+  d.setUTCDate(1);
+  d.setUTCMonth(d.getUTCMonth() + meses);
+  d.setUTCDate(Math.min(dia, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate()));
+  return d;
+}
+const dataBR = (d) => new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo" }).format(d);
+const ultimoEmail = () => emails[emails.length - 1];
+const FIA = "fia@teste.com";
+let fia, primeiraFia, segundaFia;
+
+test("comprar o Sort cria a conta e libera 12 meses, sem minutos (aviso repetido não duplica)", async () => {
+  primeiraFia = compra(FIA, LINK_SORT, 9700);
+  const antes = emails.length;
+  await aviso("checkout.session.completed", primeiraFia);
+  await aviso("checkout.session.completed", primeiraFia); // repetido
+  fia = alunoPorEmail(FIA).id;
+
+  assert.equal(sortDe(fia).length, 1);
+  const linha = linhaSort(primeiraFia);
+  assert.equal(linha.pacote, "sort-12-meses");
+  assert.equal(linha.origem, "stripe");
+  assert.equal(new Date(linha.vence_em).getTime(), maisMeses(linha.criado_em, 12).getTime(), "vale 12 meses a partir da compra");
+  assert.ok(temSort(fia));
+
+  assert.equal(emails.length, antes + 1, "um e-mail só");
+  const email = ultimoEmail();
+  assert.equal(email.tipo, "compra_editefy_sort");
+  assert.ok(email.dados.SENHA, "conta nova recebe a senha");
+  assert.equal(email.dados.VENCE, dataBR(new Date(linha.vence_em)));
+  assert.match(email.dados.VENCE, /^\d{2}\/\d{2}\/\d{4}$/);
+  assert.equal(email.dados.MINUTOS, "");
+  assert.equal(email.dados.LINK_CURSO, "https://claude.ai/settings/connectors");
+
+  const registro = tabelas.compras.find((c) => c.stripe_sessao === primeiraFia.id);
+  assert.equal(registro.curso, "sort-12-meses");
+  assert.equal(registro.status, "pago");
+  assert.equal(registro.aluno_id, fia);
+  assert.equal(creditos(fia).length, 0, "o Sort não dá minutos do Editefy");
+  assert.ok(!tabelas.acessos.some((a) => a.aluno_id === fia), "nem aulas, nem plugin");
+});
+
+test("renovar antes de vencer soma os 12 meses ao vencimento atual", async () => {
+  // a primeira compra foi ontem (no banco de verdade, duas compras nunca têm o mesmo horário)
+  const primeira = linhaSort(primeiraFia);
+  primeira.criado_em = new Date(Date.now() - 864e5).toISOString();
+  primeira.vence_em = maisMeses(primeira.criado_em, 12).toISOString();
+  const venceAntes = vencimentoSort(fia);
+  segundaFia = compra(FIA, LINK_SORT, 9700);
+  await aviso("checkout.session.completed", segundaFia);
+  assert.equal(sortDe(fia).length, 2);
+  assert.equal(new Date(linhaSort(segundaFia).vence_em).getTime(), maisMeses(venceAntes, 12).getTime());
+  assert.equal(vencimentoSort(fia).getTime(), maisMeses(venceAntes, 12).getTime(), "cerca de 24 meses no total");
+  assert.equal(new Date(linhaSort(primeiraFia).vence_em).getTime(), venceAntes.getTime(), "a primeira compra não muda");
+  const email = ultimoEmail();
+  assert.equal(email.tipo, "acesso_editefy_sort", "quem já tem conta recebe o e-mail sem senha");
+  assert.equal(email.dados.SENHA, "");
+  assert.equal(email.dados.VENCE, dataBR(vencimentoSort(fia)));
+});
+
+test("reembolso de uma compra do Sort tira só o tempo dela", async () => {
+  const segundaAntes = new Date(linhaSort(segundaFia).vence_em);
+  // reembolsa a primeira: a segunda passa a valer 12 meses a partir do dia dela, e não 24
+  await aviso("charge.refunded", { id: "ch_s1", object: "charge", refunded: true, payment_intent: primeiraFia.payment_intent });
+  await aviso("refund.created", { id: "re_s1", object: "refund", status: "succeeded", amount: 9700, payment_intent: primeiraFia.payment_intent });
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === primeiraFia.id).status, "reembolsado");
+  assert.ok(linhaSort(primeiraFia).revogado_em, "a compra reembolsada sai");
+  const segunda = linhaSort(segundaFia);
+  assert.ok(!segunda.revogado_em, "a outra continua");
+  assert.equal(new Date(segunda.vence_em).getTime(), maisMeses(segunda.criado_em, 12).getTime());
+  assert.ok(new Date(segunda.vence_em) < segundaAntes);
+  assert.ok(temSort(fia));
+
+  // aviso repetido do Stripe não muda nada
+  const antes = JSON.stringify(sortDe(fia));
+  await aviso("charge.refunded", { id: "ch_s1", object: "charge", refunded: true, payment_intent: primeiraFia.payment_intent });
+  assert.equal(JSON.stringify(sortDe(fia)), antes);
+
+  // e o aviso repetido da compra reembolsada não devolve o acesso
+  await aviso("checkout.session.completed", primeiraFia);
+  assert.ok(linhaSort(primeiraFia).revogado_em);
+
+  // reembolsando a outra, o acesso acaba
+  await aviso("charge.refunded", { id: "ch_s2", object: "charge", refunded: true, payment_intent: segundaFia.payment_intent });
+  assert.equal(temSort(fia), false);
+  assert.equal(vencimentoSort(fia), null);
+});
+
+test("comprar o Sort depois de vencer conta 12 meses a partir de hoje", async () => {
+  const GIL = "gil@teste.com";
+  const antiga = compra(GIL, LINK_SORT, 9700);
+  await aviso("checkout.session.completed", antiga);
+  const gil = alunoPorEmail(GIL).id;
+  // a compra antiga foi há 14 meses (venceu há 2)
+  const linha = linhaSort(antiga);
+  linha.criado_em = maisMeses(new Date(), -14).toISOString();
+  linha.vence_em = maisMeses(linha.criado_em, 12).toISOString();
+  assert.equal(temSort(gil), false);
+
+  const nova = compra(GIL, LINK_SORT, 9700);
+  await aviso("checkout.session.completed", nova);
+  const novaLinha = linhaSort(nova);
+  assert.equal(new Date(novaLinha.vence_em).getTime(), maisMeses(novaLinha.criado_em, 12).getTime());
+  assert.equal(linhaSort(antiga).vence_em, linha.vence_em, "a antiga continua vencida");
+  assert.ok(temSort(gil));
+});
+
+test("quem tem o Editefy compra o Sort sem trocar a senha e sem mexer nos minutos; a cortesia soma", async () => {
+  const antes = trocasDeSenha.length;
+  // cortesia à mão até 29/02/2028: a compra soma 12 meses e cai no último dia de fevereiro de 2029
+  tabelas.editefy_sort_acessos.push({ id: crypto.randomUUID(), aluno_id: ana, pacote: "cortesia", origem: "manual",
+    referencia: "cortesia: teste", criado_em: new Date(Date.now() - 864e5).toISOString(), vence_em: "2028-02-29T12:00:00.000Z",
+    revogado_em: null });
+  await aviso("checkout.session.completed", compra(ANA, LINK_SORT, 9700));
+  assert.equal(trocasDeSenha.length, antes, "a senha continua a mesma");
+  assert.equal(saldo(ana), 90, "os minutos do Editefy continuam iguais");
+  assert.equal(vencimentoSort(ana).toISOString(), "2029-02-28T12:00:00.000Z");
+  assert.equal(sortDe(ana).find((l) => l.origem === "manual").vence_em, "2028-02-29T12:00:00.000Z", "a cortesia não muda");
+  const email = ultimoEmail();
+  assert.equal(email.tipo, "acesso_editefy_sort");
+  assert.equal(email.dados.SENHA, "");
+  assert.equal(email.dados.VENCE, "28/02/2029");
+});
+
+test("Sort no Pix: o acesso só começa quando o pagamento é confirmado; reembolso parcial não tira", async () => {
+  const HUGO = "hugo@teste.com";
+  const sessao = compra(HUGO, LINK_SORT, 9700, { payment_status: "unpaid" });
+  await aviso("checkout.session.completed", sessao);
+  assert.equal(alunoPorEmail(HUGO), undefined);
+  assert.equal(linhaSort(sessao), undefined);
+  await aviso("checkout.session.async_payment_succeeded", { ...sessao, payment_status: "paid" });
+  const hugo = alunoPorEmail(HUGO).id;
+  assert.ok(temSort(hugo));
+  await aviso("refund.created", { id: "re_s3", object: "refund", status: "succeeded", amount: 1000, payment_intent: sessao.payment_intent });
+  assert.ok(temSort(hugo), "o acesso continua");
 });
