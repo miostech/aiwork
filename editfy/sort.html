@@ -210,6 +210,23 @@ p { margin: 0; }
 section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título quando o link leva para uma parte */
 .marca span { color: var(--suave); font-weight: 700; }
 
+/* Faixa do topo: leva para o outro produto da Editefy (aparece também no celular, onde o menu some) */
+.outro-topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 10px; padding: 10px 16px; text-align: center;
+  font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--suave); text-decoration: none;
+  background: linear-gradient(90deg, rgba(139, 92, 246, .26), rgba(240, 171, 252, .14)); border-bottom: 1px solid var(--borda-forte); }
+.outro-topo b { color: var(--texto); }
+.outro-topo span { color: var(--roxo-claro); font-weight: 700; white-space: nowrap; }
+.outro-topo:hover span { text-decoration: underline; }
+.outro-topo:focus-visible { outline: 3px solid var(--roxo-claro); outline-offset: -3px; }
+
+/* O outro produto da Editefy (vendido à parte, cada um com a sua página: editefy.com e editefy.com/sort) */
+.outro-produto { display: grid; gap: 18px; padding: 32px 24px; border: 1px solid var(--borda-forte); border-radius: 24px;
+  background: radial-gradient(circle at 100% 0%, rgba(139, 92, 246, .28), transparent 60%), var(--fundo-2); }
+.outro-produto h2 { font-size: clamp(28px, 4.4vw, 42px); max-width: 20ch; }
+.outro-produto p { color: var(--suave); max-width: 56ch; }
+.outro-produto .botao { justify-self: start; }
+@media (min-width: 900px) { .outro-produto { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 40px; } .outro-produto .botao { justify-self: end; } }
+
 /* Antes e depois, na primeira dobra */
 .antes-depois { position: relative; display: grid; gap: 12px; width: min(100%, 480px); justify-self: center; }
 .ad-cartao { padding: 18px 18px 14px; border: 1px solid var(--borda); border-radius: 22px; background: var(--cartao); }
@@ -260,6 +277,8 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
 </head>
 <body>
 
+<a class="outro-topo" href="/">Também da Editefy: <b>seus Reels editados pela IA</b> <span>Conhecer o Editefy →</span></a>
+
 <header class="topo" id="topo">
   <div class="container topo__linha">
     <a class="marca" href="/sort" aria-label="Editefy Sort, início">
@@ -272,6 +291,7 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
       <a href="#preco">Preço</a>
       <a href="#conectar">Conectar</a>
       <a href="#duvidas">Dúvidas</a>
+      <a href="/">Editefy</a>
     </nav>
     <a class="botao" href="#preco">Comprar</a>
   </div>
@@ -553,6 +573,19 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
           <summary>Tem mensalidade?</summary>
           <p>Não. É um pagamento único que vale 12 meses, sem cobrança automática no cartão. Para continuar depois, é só comprar de novo: se ainda faltar tempo, os 12 meses somam.</p>
         </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-editefy" style="padding-top: 0">
+    <div class="container">
+      <div class="outro-produto">
+        <div>
+          <span class="etiqueta">Também da Editefy</span>
+          <h2 id="titulo-editefy" style="margin-top: 12px">Organizou? Agora edite os seus Reels conversando.</h2>
+          <p style="margin-top: 12px">O Editefy coloca legenda, título, cortes e efeitos nos seus vídeos, dentro do Claude, do ChatGPT ou do Grok. Vendido à parte, em pacotes de minutos.</p>
+        </div>
+        <a class="botao botao--grande" href="/">Conhecer o Editefy <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
