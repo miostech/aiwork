@@ -208,13 +208,22 @@ p { margin: 0; }
 .duvidas details p + p { margin-top: -10px; }
 .duvidas details p a { color: var(--roxo-claro); }
 
-/* Editefy Sort (vendido à parte, página própria em editefy.com/sort) */
-.sort-chamada { display: grid; gap: 18px; padding: 32px 24px; border: 1px solid var(--borda-forte); border-radius: 24px;
+/* Faixa do topo: leva para o outro produto da Editefy (aparece também no celular, onde o menu some) */
+.outro-topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 10px; padding: 10px 16px; text-align: center;
+  font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--suave); text-decoration: none;
+  background: linear-gradient(90deg, rgba(139, 92, 246, .26), rgba(240, 171, 252, .14)); border-bottom: 1px solid var(--borda-forte); }
+.outro-topo b { color: var(--texto); }
+.outro-topo span { color: var(--roxo-claro); font-weight: 700; white-space: nowrap; }
+.outro-topo:hover span { text-decoration: underline; }
+.outro-topo:focus-visible { outline: 3px solid var(--roxo-claro); outline-offset: -3px; }
+
+/* O outro produto da Editefy (vendido à parte, cada um com a sua página: editefy.com e editefy.com/sort) */
+.outro-produto { display: grid; gap: 18px; padding: 32px 24px; border: 1px solid var(--borda-forte); border-radius: 24px;
   background: radial-gradient(circle at 100% 0%, rgba(139, 92, 246, .28), transparent 60%), var(--fundo-2); }
-.sort-chamada h2 { font-size: clamp(28px, 4.4vw, 42px); max-width: 20ch; }
-.sort-chamada p { color: var(--suave); max-width: 56ch; }
-.sort-chamada .botao { justify-self: start; }
-@media (min-width: 900px) { .sort-chamada { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 40px; } .sort-chamada .botao { justify-self: end; } }
+.outro-produto h2 { font-size: clamp(28px, 4.4vw, 42px); max-width: 20ch; }
+.outro-produto p { color: var(--suave); max-width: 56ch; }
+.outro-produto .botao { justify-self: start; }
+@media (min-width: 900px) { .outro-produto { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 40px; } .outro-produto .botao { justify-self: end; } }
 
 /* Chamada final */
 .final { text-align: center; }
@@ -236,6 +245,8 @@ p { margin: 0; }
 <script src="/contador.js" data-pagina="editfy-site" defer></script>
 </head>
 <body>
+
+<a class="outro-topo" href="/sort">Novo: <b>Editefy Sort</b> arruma a sua galeria de fotos e vídeos <span>Conhecer →</span></a>
 
 <header class="topo" id="topo">
   <div class="container topo__linha">
@@ -466,7 +477,7 @@ p { margin: 0; }
 
   <section class="secao" aria-labelledby="titulo-sort" style="padding-top: 0">
     <div class="container">
-      <div class="sort-chamada">
+      <div class="outro-produto">
         <div>
           <span class="etiqueta">Novo · Editefy Sort</span>
           <h2 id="titulo-sort" style="margin-top: 12px">Chega de caçar fotos na sua galeria.</h2>
