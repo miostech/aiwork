@@ -755,7 +755,7 @@ const passosSort = (entrar) => [
   "No app do Claude (ou em claude.ai), abra <strong>Configurações &rarr; Conectores</strong> e toque em <strong>Adicionar conector personalizado</strong>.",
   `Em nome, escreva <strong>Editefy Sort</strong>. Em endereço, cole:<br><span style="font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:13px;color:#17141F;word-break:break-all;">${CONECTOR_SORT}</span>`,
   `Toque em <strong>Conectar</strong> e ${entrar}.`,
-  "Numa conversa nova, escreva: <strong>Quero organizar meus arquivos com o Editefy Sort</strong>.",
+  "Numa conversa nova, escreva: <strong>Quero organizar minhas fotos com o Editefy Sort</strong>.",
 ];
 
 MODELOS.compra_editefy_sort = {
