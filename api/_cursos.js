@@ -19,6 +19,9 @@
 //   5. paginasVenda: o nome da página de vendas no contador de visitas (data-pagina do contador.js, que precisa estar
 //      em PAGINAS de api/visita.js); o painel conta os visitantes delas na parte "Por curso"
 //
+// marca "editefy" (o Editefy Sort para computador): um plugin vendido só com o nome da Editefy, sem aulas e fora da
+// conta da MIAI. Leva emailCompra, emailContaExistente e linkCompra no lugar das aulas (veja o bloco dele abaixo).
+//
 // Pacotes (o Editefy): em vez de um preço único, o curso tem "pacotes" de minutos, cada um com o seu link de pagamento
 // (pagamento único); o aviso do Stripe grava cada compra em editfy_creditos (veja o bloco do Editfy Reels abaixo).
 // O Editefy Sort (EDITEFY_SORT, mais abaixo) também é um pacote, mas de tempo ("meses" em vez de "minutos"): cada
@@ -123,6 +126,28 @@ export const CURSOS_MIAI = [
       },
     ],
     aulas: AULAS_EDITFY_REELS,
+  },
+  {
+    // Editefy Sort para computador: o plugin do Claude Code que organiza os arquivos no Mac ou no Windows, sem mandar
+    // os arquivos para o servidor. Vendido à parte do Editefy Sort no celular (EDITEFY_SORT, mais abaixo, o conector
+    // de 12 meses): um não libera o outro. Compra única que vale para sempre (reembolso ou bloqueio tiram o acesso).
+    // marca "editefy": só com o nome da Editefy, como os outros produtos dela. Sem aulas e fora da conta, da vitrine
+    // e dos e-mails da MIAI. O aviso do Stripe libera o acesso (quem já tem conta continua com a senha), cria a licença
+    // e manda emailCompra (conta nova, com a senha) ou emailContaExistente, os dois com os comandos de instalação da
+    // loja "editefy" (editefy.com/loja/EDITEFY-..., api/_plugins.js).
+    marca: "editefy",
+    endereco: "editefy-sort",        // só um apelido (não tem página na MIAI)
+    id: "editefy-sort-computador",   // nome no banco (acessos.curso e compras.curso); diferente do Sort do celular
+    nome: "Editefy Sort para computador",
+    plugin: "editefy-sort",          // "name" do plugin.json; quem compra instala com editefy-sort@editefy
+    repo: "miostech/miai-plugin-editefy-sort",
+    descricaoPlugin: "Organiza no seu computador os vídeos, fotos, prints e áudios: dá a cada arquivo um nome que diz o que tem dentro e coloca na pasta certa, sem mandar os arquivos para o servidor.",
+    emailCompra: "compra_editefy_sort_computador",
+    emailContaExistente: "acesso_editefy_sort_computador",
+    linkCompra: "https://www.editefy.com/sort#computador",   // o botão do e-mail: o passo a passo da instalação
+    // US$ 89 (R$ 89 no Brasil), produto "Editefy Sort para computador" no Stripe (buy.stripe.com/28E8wR9mu2yl8qX06S67S0d).
+    // STRIPE_PAYMENT_LINK_EDITEFY_SORT_COMPUTADOR, se definida, é aceita junto (ex.: o link do modo de teste).
+    linksPagamento: ["plink_1UfPT1RY9p8vsUUst8PbXdDF", process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT_COMPUTADOR].filter(Boolean),
   },
 ];
 

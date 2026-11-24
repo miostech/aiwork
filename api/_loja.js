@@ -1,5 +1,8 @@
 // Loja dos plugins do Claude Code (marketplace "miai"): cada aluno adiciona a dele uma vez só, com o link pessoal que
 // aparece na aula "Instalar o plugin", e vê nela só os plugins dos cursos que comprou.
+// Os plugins da Editefy (marca "editefy" em api/_cursos.js, como o Editefy Sort para computador) ficam na loja
+// "editefy": o mesmo código com o prefixo EDITEFY- (editefy.com/loja/EDITEFY-.../marketplace.json, no e-mail da compra).
+// O catálogo de cada loja mostra só os plugins da sua marca; o git e a conferência da licença aceitam os dois prefixos.
 // Atendida pela função api/conta.js; o vercel.json leva estes endereços para lá:
 //   GET  /loja/<licença>/marketplace.json        → catálogo (cada plugin aponta para /p/<licença>/<plugin>.git)
 //   GET  /p/<licença>/<plugin>.git/info/refs     → git só leitura: confere a licença e repassa, em streaming, o
@@ -19,9 +22,17 @@
 import { Readable } from "node:stream";
 import { banco } from "./_supabase.js";
 import { CURSOS_MIAI } from "./_cursos.js";
-import { LICENCA, cursosAtivos, enderecoLoja } from "./_plugins.js";
+import { LICENCA, codigoNoBanco, cursosAtivos, ehEditefy, enderecoLoja, lojaEditefy } from "./_plugins.js";
 
 const PLUGINS = CURSOS_MIAI.filter((c) => c.plugin);
+// As duas lojas: a da MIAI (licença MIAI-...) e a da Editefy (a mesma licença como EDITEFY-..., só os plugins dela)
+const LOJAS = {
+  miai: { name: "miai", description: "Plugins da MIAI Academy", owner: { name: "MIAI Academy", url: "https://www.miaiacademy.com" },
+          perdida: "Licença não encontrada. Copie o comando de novo na aula \"Instalar o plugin\" da MIAI.\n" },
+  editefy: { name: "editefy", description: "Plugins da Editefy", owner: { name: "Editefy", url: "https://www.editefy.com" },
+             perdida: "Licença não encontrada. Copie o comando de novo do e-mail da compra da Editefy.\n" },
+};
+const lojaDo = (codigo) => (String(codigo).startsWith("EDITEFY-") ? "editefy" : "miai");
 
 async function corpoBruto(req) {
   const partes = [];
@@ -33,7 +44,7 @@ async function corpoBruto(req) {
 async function liberadosPor(codigo) {
   if (!LICENCA.test(codigo)) return { existe: false, cursos: [], motivo: "licença não encontrada" };
   const db = banco();
-  const { data: linha, error } = await db.from("licencas_plugin").select("aluno_id").eq("codigo", codigo).maybeSingle();
+  const { data: linha, error } = await db.from("licencas_plugin").select("aluno_id").eq("codigo", codigoNoBanco(codigo)).maybeSingle();
   if (error) throw error;
   if (!linha) return { existe: false, cursos: [], motivo: "licença não encontrada" };
   return { existe: true, ...(await cursosAtivos(db, linha.aluno_id)) };
@@ -59,18 +70,22 @@ async function versaoDe(repo) {
 }
 
 async function catalogo(req, res, codigo) {
-  const { existe, cursos } = await liberadosPor(codigo);
+  const loja = lojaDo(codigo);
+  const { existe, cursos: todos } = await liberadosPor(codigo);
   if (!existe) {
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    return res.status(404).send("Licença não encontrada. Copie o comando de novo na aula \"Instalar o plugin\" da MIAI.\n");
+    return res.status(404).send(LOJAS[loja].perdida);
   }
-  const base = enderecoLoja(req);
+  // Cada loja mostra só os plugins da sua marca
+  const cursos = todos.filter((c) => ehEditefy(c) === (loja === "editefy"));
+  const base = loja === "editefy" ? lojaEditefy() : enderecoLoja(req);
   const versoes = process.env.GITHUB_TOKEN ? await Promise.all(cursos.map((c) => versaoDe(c.repo))) : [];
   // Licença sem nenhum curso ativo (reembolso) continua sendo uma loja válida, só que vazia
+  const { name, description, owner } = LOJAS[loja];
   return res.status(200).json({
-    name: "miai",
-    description: "Plugins da MIAI Academy",
-    owner: { name: "MIAI Academy", url: "https://www.miaiacademy.com" },
+    name,
+    description,
+    owner,
     plugins: cursos.map((c, i) => ({
       name: c.plugin,
       description: c.descricaoPlugin || c.nome,

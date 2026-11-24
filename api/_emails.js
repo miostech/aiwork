@@ -590,7 +590,7 @@ MODELOS.nova_senha_miai = {
 // O endereço do conector (o servidor do Editefy na Hetzner). EDITEFY_CONECTOR, se definida, troca o padrão.
 const CONECTOR_EDITEFY = process.env.EDITEFY_CONECTOR || "https://mcp.editefy.com/mcp";
 
-function emailEditefy({ titulo, previa, chamada, texto, rotuloSenha, passos = [], botao, nota, rodape }) {
+function emailEditefy({ titulo, previa, chamada, texto, rotuloSenha, passos = [], tituloPassos = "Como conectar", botao, nota, rodape }) {
   const fonte = "-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,Helvetica,sans-serif";
   const fonteSenha = "'SFMono-Regular',Menlo,Consolas,monospace";
   const linhaPasso = (n, html) => `
@@ -666,7 +666,7 @@ ${rotuloSenha ? `
 ` : ""}
 ${passos.length ? `
                 <tr>
-                  <td style="padding:0 0 12px;font-family:${fonte};font-size:17px;font-weight:800;color:#17141F;">Como conectar</td>
+                  <td style="padding:0 0 12px;font-family:${fonte};font-size:17px;font-weight:800;color:#17141F;">${tituloPassos}</td>
                 </tr>
                 <tr>
                   <td style="padding:0 0 10px;">
@@ -787,6 +787,52 @@ MODELOS.acesso_editefy_sort = {
     botao: "Ver o passo a passo",
     nota: "Sua senha continua a mesma. Se não lembrar, peça uma nova em <a href=\"https://www.editefy.com/conta\" style=\"color:#7C3AED;\">editefy.com/conta</a>.",
     rodape: "Você recebeu este e-mail porque comprou o Editefy Sort.",
+  }),
+};
+
+// ── Editefy Sort para computador: e-mail de quem compra o plugin, com a marca do Editefy e os dois comandos de
+// instalação (a loja "editefy", em editefy.com, com a licença da pessoa: {{{COMANDO_LOJA}}} e {{{COMANDO_INSTALAR}}}) ──
+const comandoEmail = (campo) =>
+  `<span style="display:block;margin-top:6px;padding:10px 12px;border-radius:10px;background:#F4F2FA;font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:13px;color:#17141F;word-break:break-all;">{{{${campo}}}}</span>`;
+const passosSortComputador = [
+  "Abra o <strong>Claude Code</strong> no seu Mac ou Windows: o app do Claude para desktop, na aba <strong>Code</strong>, ou o terminal.",
+  `Cole este comando e aperte Enter:${comandoEmail("COMANDO_LOJA")}`,
+  `Depois cole este:${comandoEmail("COMANDO_INSTALAR")}`,
+  "Feche e abra o Claude Code. Jogue os arquivos na pasta <strong>Organizar</strong> (Área de Trabalho &rarr; Editefy Sort) e escreva: <strong>organiza</strong>. Na primeira vez, ele instala o que faltar no computador (leva alguns minutos).",
+];
+const notaSortComputador = "<strong style=\"color:#17141F;\">Guarde este e-mail.</strong> Os comandos são pessoais e valem para 1 computador: não compartilhe. Se eles forem usados em outro computador ou compartilhados, o acesso pode ser desativado.";
+
+MODELOS.compra_editefy_sort_computador = {
+  marca: "editefy",
+  assunto: "Seu Editefy Sort para computador",
+  html: emailEditefy({
+    titulo: "Seu Editefy Sort para computador",
+    previa: "Seu Editefy Sort para computador está liberado. Cole os dois comandos no Claude Code para instalar.",
+    chamada: "Bem-vindo(a) ao Editefy Sort, {{{NOME}}}!",
+    texto: "Seu Editefy Sort para computador está liberado, para sempre. Ele roda no Claude Code do seu Mac ou Windows e os arquivos não saem do computador. Para instalar, siga os passos abaixo. Junto, criamos a sua conta da Editefy, que serve para os outros produtos dela:",
+    rotuloSenha: "Senha",
+    passos: passosSortComputador,
+    tituloPassos: "Como instalar",
+    botao: "Ver o passo a passo",
+    nota: notaSortComputador,
+    rodape: "Você recebeu este e-mail porque comprou o Editefy Sort para computador.",
+  }),
+};
+
+// Quem já tem conta (no Editefy ou na escola): sem senha (continua a mesma)
+MODELOS.acesso_editefy_sort_computador = {
+  marca: "editefy",
+  assunto: "Seu Editefy Sort para computador está liberado",
+  html: emailEditefy({
+    titulo: "Seu Editefy Sort para computador está liberado",
+    previa: "Seu Editefy Sort para computador está liberado. Cole os dois comandos no Claude Code para instalar.",
+    chamada: "Seu Editefy Sort está liberado, {{{NOME}}}!",
+    texto: "Seu Editefy Sort para computador está liberado, para sempre. Ele roda no Claude Code do seu Mac ou Windows e os arquivos não saem do computador. Para instalar, siga os passos abaixo.",
+    passos: passosSortComputador,
+    tituloPassos: "Como instalar",
+    botao: "Ver o passo a passo",
+    nota: notaSortComputador,
+    rodape: "Você recebeu este e-mail porque comprou o Editefy Sort para computador.",
   }),
 };
 

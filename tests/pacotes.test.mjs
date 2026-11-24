@@ -1,5 +1,5 @@
-// Simulação dos pacotes de minutos do Editefy e do acesso de 12 meses do Editefy Sort no Mac, sem Stripe nem Supabase
-// de verdade: os avisos do Stripe são assinados e conferidos de verdade e o banco é falso, em memória.
+// Simulação dos pacotes de minutos do Editefy, do acesso de 12 meses do Editefy Sort no celular e da compra do Editefy
+// Sort para computador (o plugin do Claude Code), sem Stripe nem Supabase de verdade: os avisos do Stripe são assinados e conferidos de verdade e o banco é falso, em memória.
 // Rodar: npm test   (ou: node --test --experimental-test-module-mocks tests/)
 import { test, mock } from "node:test";
 import assert from "node:assert/strict";
@@ -13,6 +13,7 @@ process.env.STRIPE_PAYMENT_LINK_EDITEFY_30 = "plink_teste30";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_60 = "plink_teste60";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_120 = "plink_teste120";
 process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT = "plink_testesort";
+process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT_COMPUTADOR = "plink_testesortpc";
 const LINK_COMPRA_UNICA = "plink_1UVEa9RY9p8vsUUsdFHAlweg"; // a compra única antiga do curso Editfy Reels
 const trocasDeSenha = [];
 
@@ -395,4 +396,96 @@ test("Sort no Pix: o acesso só começa quando o pagamento é confirmado; reembo
   assert.ok(temSort(hugo));
   await aviso("refund.created", { id: "re_s3", object: "refund", status: "succeeded", amount: 1000, payment_intent: sessao.payment_intent });
   assert.ok(temSort(hugo), "o acesso continua");
+});
+
+// ── Editefy Sort para computador: o plugin do Claude Code, compra única que vale para sempre, só com a marca Editefy ──
+const LINK_SORT_PC = "plink_testesortpc";
+// O que o plugin (licenca.py), o Claude Code (a loja) e a conta da MIAI pedem ao site
+async function pedir(query, alunoId) {
+  const res = { codigo: 0, corpo: null, setHeader() {}, status(c) { this.codigo = c; return this; }, json(b) { this.corpo = b; return this; },
+                send(b) { this.corpo = b; return this; } };
+  await conta({ method: "GET", query, headers: alunoId ? { authorization: "Bearer token-" + alunoId, host: "teste" } : { host: "teste" } }, res);
+  return res;
+}
+const licencaConfere = async (codigo) => (await pedir({ loja: "licenca", licenca: codigo, plugin: "editefy-sort" })).corpo;
+const lojaDe = (comando) => comando.match(/\/loja\/(EDITEFY-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4})\/marketplace\.json$/)[1];
+
+test("comprar o Sort para computador libera o plugin e manda o e-mail da Editefy com os comandos (sem nada da MIAI)", async () => {
+  const IRIS = "iris@teste.com";
+  const sessao = compra(IRIS, LINK_SORT_PC, 8900);
+  const antes = emails.length;
+  await aviso("checkout.session.completed", sessao);
+  await aviso("checkout.session.completed", sessao); // repetido
+  const iris = alunoPorEmail(IRIS).id;
+
+  const acesso = tabelas.acessos.filter((a) => a.aluno_id === iris);
+  assert.equal(acesso.length, 1);
+  assert.equal(acesso[0].curso, "editefy-sort-computador");
+  assert.equal(acesso[0].origem, "stripe");
+  assert.equal(tabelas.compras.find((c) => c.stripe_sessao === sessao.id).curso, "editefy-sort-computador");
+  assert.equal(sortDe(iris).length, 0, "não libera o Sort do celular");
+  assert.equal(creditos(iris).length, 0, "nem minutos do Editefy");
+
+  // E-mail da Editefy, com a senha da conta nova e os dois comandos da loja "editefy"
+  assert.equal(emails.length, antes + 1, "um e-mail só");
+  const email = ultimoEmail();
+  assert.equal(email.tipo, "compra_editefy_sort_computador");
+  assert.ok(email.dados.SENHA, "conta nova recebe a senha");
+  assert.equal(email.dados.LINK_CURSO, "https://www.editefy.com/sort#computador");
+  const codigo = lojaDe(email.dados.COMANDO_LOJA);
+  assert.equal(email.dados.COMANDO_LOJA, `/plugin marketplace add https://www.editefy.com/loja/${codigo}/marketplace.json`);
+  assert.equal(email.dados.COMANDO_INSTALAR, "/plugin install editefy-sort@editefy");
+  assert.equal(tabelas.licencas_plugin.find((l) => l.aluno_id === iris).codigo, codigo.replace("EDITEFY-", "MIAI-"),
+               "a mesma licença do banco, com o prefixo da Editefy");
+  assert.ok(!JSON.stringify(email.dados).toLowerCase().includes("miai"), "nada da MIAI no e-mail");
+
+  // Fora da MIAI: não aparece na conta nem na aula de instalação de lá
+  assert.ok(!(await pedir({}, iris)).corpo.cursos.length, "a conta da MIAI não mostra o Sort");
+  assert.equal((await pedir({ plugins: "1", acao: "minha", curso: "editefy-sort" }, iris)).codigo, 403);
+  assert.equal((await pedir({ curso: "editefy-sort" }, iris)).codigo, 200, "a conta da MIAI continua respondendo");
+
+  // A loja "editefy" lista o plugin, com o git em editefy.com, e o plugin confere a licença a cada sessão
+  const loja = (await pedir({ loja: "catalogo", licenca: codigo })).corpo;
+  assert.equal(loja.name, "editefy");
+  assert.equal(loja.owner.name, "Editefy");
+  assert.deepEqual(loja.plugins.map((p) => p.name), ["editefy-sort"]);
+  assert.equal(loja.plugins[0].source.url, `https://www.editefy.com/p/${codigo}/editefy-sort.git`);
+  assert.ok(!JSON.stringify(loja).toLowerCase().includes("miai"), "nada da MIAI na loja");
+  assert.deepEqual(await licencaConfere(codigo), { ativa: true, motivo: "" });
+
+  // Reembolso da garantia: o plugin some da loja e para de funcionar
+  await aviso("charge.refunded", { id: "ch_pc", object: "charge", refunded: true, payment_intent: sessao.payment_intent });
+  assert.ok(tabelas.acessos.find((a) => a.aluno_id === iris).revogado_em);
+  assert.deepEqual(await licencaConfere(codigo), { ativa: false, motivo: "acesso retirado" });
+  assert.deepEqual((await pedir({ loja: "catalogo", licenca: codigo })).corpo.plugins, []);
+});
+
+test("quem já tem conta compra o Sort para computador sem trocar a senha; cada loja mostra só os plugins dela", async () => {
+  // A Eva tem o Editfy Reels (MIAI) e a licença MIAI-... da aula de instalação
+  const eva = alunoPorEmail("eva@teste.com").id;
+  const miai = (await pedir({ plugins: "1", acao: "minha", curso: "editfy-reels" }, eva)).corpo;
+  assert.equal((await licencaConfere(miai.licenca)).ativa, false, "o Editfy Reels não libera o Sort");
+
+  const antes = trocasDeSenha.length;
+  await aviso("checkout.session.completed", compra("eva@teste.com", LINK_SORT_PC, 8900));
+  assert.equal(trocasDeSenha.length, antes, "a senha continua a mesma");
+  const email = ultimoEmail();
+  assert.equal(email.tipo, "acesso_editefy_sort_computador");
+  assert.equal(email.dados.SENHA, "");
+  const codigo = lojaDe(email.dados.COMANDO_LOJA);
+  assert.equal(codigo, miai.licenca.replace("MIAI-", "EDITEFY-"), "a mesma licença, com o prefixo da Editefy");
+
+  // Loja da MIAI: só o Editfy Reels (os comandos da aula também). Loja da Editefy: só o Sort.
+  assert.deepEqual((await pedir({ loja: "catalogo", licenca: miai.licenca })).corpo.plugins.map((p) => p.name), ["editfy-reels"]);
+  assert.deepEqual((await pedir({ plugins: "1", acao: "minha" }, eva)).corpo.comandos.slice(1), ["/plugin install editfy-reels@miai"]);
+  assert.deepEqual((await pedir({ loja: "catalogo", licenca: codigo })).corpo.plugins.map((p) => p.name), ["editefy-sort"]);
+  // O plugin confere com qualquer um dos dois links (ele usa o primeiro que achar no Claude Code)
+  assert.equal((await licencaConfere(codigo)).ativa, true);
+  assert.equal((await licencaConfere(miai.licenca)).ativa, true);
+
+  // Quem só tem o Sort do celular não tem o plugin
+  const hugo = alunoPorEmail("hugo@teste.com").id;
+  assert.ok(temSort(hugo));
+  assert.ok(!tabelas.licencas_plugin.some((l) => l.aluno_id === hugo));
+  assert.ok(!(await cursosAtivos(db, hugo)).cursos.length);
 });

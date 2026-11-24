@@ -6,7 +6,9 @@
 //   GET /api/plugins?acao=minha&curso=editfy-reels
 //       Authorization: Bearer <token do login>  → { licenca, loja, comandos, plugins: [{ nome, curso }] }
 //       Usado pela aula "Instalar o plugin" (miai/aulas.html). Cria a licença na primeira vez.
-//       Com "curso" (o endereço), os comandos instalam só o plugin desse curso; sem ele, todos os do aluno.
+//       Com "curso" (o endereço), os comandos instalam só o plugin desse curso; sem ele, todos os da MIAI do aluno.
+//       Os plugins da Editefy (marca "editefy") ficam de fora: os comandos deles (loja "editefy", em editefy.com) vão
+//       no e-mail da compra (comandosEditefy, usado por api/stripe-webhook.js).
 //
 // Variável de ambiente (opcional):
 //   PLUGINS_URL   endereço do site onde fica a loja (padrão: MIAI_URL, ou o próprio endereço do pedido)
@@ -16,12 +18,37 @@ import { banco } from "./_supabase.js";
 import { CURSOS_MIAI, linkMiai } from "./_cursos.js";
 
 const LETRAS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // sem 0/O e 1/I, que se confundem
-export const LICENCA = /^MIAI-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+// A licença é uma só por aluno e fica no banco como MIAI-XXXX-XXXX-XXXX. Nos plugins da Editefy (marca "editefy" em
+// api/_cursos.js) ela aparece como EDITEFY-XXXX-XXXX-XXXX, com o mesmo código, e a loja vira a "editefy" em editefy.com.
+export const LICENCA = /^(MIAI|EDITEFY)-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+export const codigoNoBanco = (codigo) => String(codigo).replace(/^EDITEFY-/, "MIAI-");
+export const ehEditefy = (curso) => curso.marca === "editefy";
 const CURSOS_COM_PLUGIN = CURSOS_MIAI.filter((c) => c.plugin);
+// Endereço da loja da Editefy (EDITEFY_LOJA_URL, se definida, troca o padrão)
+export const lojaEditefy = () => String(process.env.EDITEFY_LOJA_URL || "https://www.editefy.com").trim().replace(/\/+$/, "");
 
 function novaLicenca() {
   const bloco = () => Array.from({ length: 4 }, () => LETRAS[crypto.randomInt(LETRAS.length)]).join("");
   return `MIAI-${bloco()}-${bloco()}-${bloco()}`;
+}
+
+// A licença do aluno (MIAI-...): a primeira vez cria (a chave única do banco resolve dois pedidos ao mesmo tempo)
+export async function licencaDoAluno(db, alunoId) {
+  let { data: linha, error: erroBusca } = await db.from("licencas_plugin").select("codigo").eq("aluno_id", alunoId).maybeSingle();
+  if (erroBusca) throw erroBusca;
+  if (!linha) {
+    const { error: erroNova } = await db.from("licencas_plugin").insert({ aluno_id: alunoId, codigo: novaLicenca() });
+    if (erroNova && erroNova.code !== "23505") throw erroNova; // 23505 = outro pedido criou primeiro
+    ({ data: linha, error: erroBusca } = await db.from("licencas_plugin").select("codigo").eq("aluno_id", alunoId).single());
+    if (erroBusca) throw erroBusca;
+  }
+  return linha.codigo;
+}
+
+// Comandos de instalação dos plugins da Editefy (vão no e-mail da compra): a loja "editefy", em editefy.com
+export function comandosEditefy(codigo, cursos) {
+  const loja = `${lojaEditefy()}/loja/${codigoNoBanco(codigo).replace(/^MIAI-/, "EDITEFY-")}/marketplace.json`;
+  return { loja, comandos: [`/plugin marketplace add ${loja}`, ...cursos.map((c) => `/plugin install ${c.plugin}@editefy`)] };
 }
 
 // Endereço do site onde a loja responde (os links do catálogo e dos comandos usam ele)
@@ -56,25 +83,18 @@ async function minha(req, res, db) {
   if (error || !data || !data.user) return res.status(401).json({ erro: "Sua sessão expirou. Entre de novo." });
 
   const alunoId = data.user.id;
-  const ativos = (await cursosAtivos(db, alunoId)).cursos;
+  // Só os plugins da MIAI: os da Editefy têm os comandos no e-mail da compra (comandosEditefy)
+  const ativos = (await cursosAtivos(db, alunoId)).cursos.filter((c) => !ehEditefy(c));
   // Cada aula mostra só o plugin do seu curso
   const pedido = String((req.query && req.query.curso) || "");
   const cursos = pedido ? ativos.filter((c) => c.endereco === pedido) : ativos;
   if (!cursos.length) return res.status(403).json({ erro: "Seu acesso a um curso com plugin não está liberado." });
 
-  // Uma licença por aluno: a primeira vez cria (a chave única do banco resolve duas abas abrindo juntas)
-  let { data: linha, error: erroBusca } = await db.from("licencas_plugin").select("codigo").eq("aluno_id", alunoId).maybeSingle();
-  if (erroBusca) throw erroBusca;
-  if (!linha) {
-    const { error: erroNova } = await db.from("licencas_plugin").insert({ aluno_id: alunoId, codigo: novaLicenca() });
-    if (erroNova && erroNova.code !== "23505") throw erroNova; // 23505 = outra aba criou primeiro
-    ({ data: linha, error: erroBusca } = await db.from("licencas_plugin").select("codigo").eq("aluno_id", alunoId).single());
-    if (erroBusca) throw erroBusca;
-  }
-
-  const loja = `${enderecoLoja(req)}/loja/${linha.codigo}/marketplace.json`;
+  // Uma licença por aluno
+  const codigo = await licencaDoAluno(db, alunoId);
+  const loja = `${enderecoLoja(req)}/loja/${codigo}/marketplace.json`;
   return res.status(200).json({
-    licenca: linha.codigo,
+    licenca: codigo,
     loja,
     comandos: [`/plugin marketplace add ${loja}`, ...cursos.map((c) => `/plugin install ${c.plugin}@miai`)],
     plugins: cursos.map((c) => ({ nome: c.plugin, curso: c.endereco })),

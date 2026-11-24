@@ -18,6 +18,10 @@
 //                                              e manda emailPacote (conta nova, com a senha) ou emailContaExistente
 //   reembolso total                          → tira o pacote (revogado_em em editfy_creditos)
 //
+// Editefy Sort para computador (o curso de marca "editefy" em api/_cursos.js, um plugin): pagamento único, como uma
+//   compra, mas quem já tem conta continua com a senha; cria a licença do plugin e manda emailCompra (conta nova, com
+//   a senha) ou emailContaExistente, os dois com os comandos de instalação da loja "editefy". Reembolso: tira o acesso.
+//
 // Editefy Sort (EDITEFY_SORT em api/_cursos.js, um pacote de 12 meses de acesso): pagamento único, como um pacote
 //   checkout.session.completed / async_payment_succeeded → cria o login (quem já tem conta continua com a senha),
 //                                              grava a compra em editefy_sort_acessos (o servidor do Sort confere o
@@ -52,6 +56,7 @@ import Stripe from "stripe";
 import { banco, normalizarEmail } from "./_supabase.js";
 import { liberarAcesso, linkCurso } from "./_alunos.js";
 import { enviarEmail } from "./_emails.js";
+import { comandosEditefy, licencaDoAluno } from "./_plugins.js";
 import { PLANOS, cursoPorLinkPagamento, linkMiai, pacotePorId, pacotePorLinkPagamento, planoPorProduto } from "./_cursos.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_nao_configurada");
@@ -393,12 +398,15 @@ async function liberarCompra(sessao, curso) {
     const leadId = UUID.test(String(sessao.client_reference_id || "")) ? sessao.client_reference_id : null;
     const assinatura = sessao.mode === "subscription" ? idDe(sessao.subscription) : null;
     const pacote = curso.pacote || null;
+    // Plugin vendido com a marca da Editefy (o Sort para computador): e-mail próprio com os comandos de instalação
+    const daEditefy = !pacote && !assinatura && !!curso.emailCompra;
     // Assinatura: aqui só o login; os acessos (curso e plano) vêm da sincronização logo abaixo.
     // Pacote: só o login (quem já tem conta continua com a senha); os minutos vão para editfy_creditos e o tempo do
-    // Sort, para editefy_sort_acessos.
+    // Sort, para editefy_sort_acessos. Plugin da Editefy: o acesso, como numa compra, mas sem trocar a senha.
     const conta = await liberarAcesso({
       nome: reservada.nome, email: reservada.email, curso: assinatura || pacote ? null : curso.id,
-      origem: assinatura ? "assinatura" : "stripe", referencia: assinatura || sessao.id, leadId, manterSenha: !!pacote,
+      origem: assinatura ? "assinatura" : "stripe", referencia: assinatura || sessao.id, leadId,
+      manterSenha: !!pacote || daEditefy,
     });
     await db.from("compras").update({ aluno_id: conta.alunoId }).eq("id", compra.id);
     const vence = pacote && pacote.meses ? await liberarSort(db, conta.alunoId, pacote, sessao.id) : null;
@@ -417,17 +425,22 @@ async function liberarCompra(sessao, curso) {
       }
     }
 
+    // Plugin da Editefy: a licença do aluno (criada agora, se ainda não tem) e os comandos da loja "editefy"
+    const comandos = daEditefy ? comandosEditefy(await licencaDoAluno(db, conta.alunoId), [curso]).comandos : [];
+
     const primeiroNome = String(reservada.nome || "").trim().split(/\s+/)[0] || "aluno(a)";
-    // Pacote ou assinatura com e-mail próprio (o Editefy e o Sort, com a marca e o passo a passo para conectar) ou o
-    // da escola. No pacote de quem já tem conta, o e-mail não leva senha (ela continua a mesma).
+    // Pacote, assinatura ou plugin com e-mail próprio (o Editefy e os dois Sorts, com a marca e o passo a passo) ou o
+    // da escola. No pacote e no plugin da Editefy de quem já tem conta, o e-mail não leva senha (ela continua a mesma).
     const proprio = pacote ? (conta.senha ? curso.emailPacote : curso.emailContaExistente)
+      : daEditefy ? (conta.senha ? curso.emailCompra : curso.emailContaExistente)
       : assinatura && curso.emailAssinatura;
     const envio = await enviarEmail(
       proprio || (curso.site === "iaacademy" ? "acesso" : linkMiai() ? "compra_miai" : "compra"),
       reservada.email,
       { NOME: primeiroNome, EMAIL_ALUNO: reservada.email, SENHA: conta.senha || "", CURSO: curso.nome,
         MINUTOS: pacote && pacote.minutos ? String(pacote.minutos) : "", VENCE: dataCurta(vence),
-        LINK_CURSO: pacote ? curso.linkPacote : proprio ? curso.linkAssinatura : linkCurso(curso.id) },
+        COMANDO_LOJA: comandos[0] || "", COMANDO_INSTALAR: comandos[1] || "",
+        LINK_CURSO: pacote ? curso.linkPacote : daEditefy ? curso.linkCompra : proprio ? curso.linkAssinatura : linkCurso(curso.id) },
       `compra-${sessao.id}`
     );
     if (!envio.ok) {
