@@ -292,7 +292,7 @@ test("comprar o Sort cria a conta e libera 12 meses, sem minutos (aviso repetido
   assert.equal(email.dados.VENCE, dataBR(new Date(linha.vence_em)));
   assert.match(email.dados.VENCE, /^\d{2}\/\d{2}\/\d{4}$/);
   assert.equal(email.dados.MINUTOS, "");
-  assert.equal(email.dados.LINK_CURSO, "https://claude.ai/settings/connectors");
+  assert.equal(email.dados.LINK_CURSO, "https://www.editefy.com/sort#conectar");
 
   const registro = tabelas.compras.find((c) => c.stripe_sessao === primeiraFia.id);
   assert.equal(registro.curso, "sort-12-meses");

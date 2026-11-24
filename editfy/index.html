@@ -208,6 +208,14 @@ p { margin: 0; }
 .duvidas details p + p { margin-top: -10px; }
 .duvidas details p a { color: var(--roxo-claro); }
 
+/* Editefy Sort (vendido à parte, página própria em editefy.com/sort) */
+.sort-chamada { display: grid; gap: 18px; padding: 32px 24px; border: 1px solid var(--borda-forte); border-radius: 24px;
+  background: radial-gradient(circle at 100% 0%, rgba(139, 92, 246, .28), transparent 60%), var(--fundo-2); }
+.sort-chamada h2 { font-size: clamp(28px, 4.4vw, 42px); max-width: 20ch; }
+.sort-chamada p { color: var(--suave); max-width: 56ch; }
+.sort-chamada .botao { justify-self: start; }
+@media (min-width: 900px) { .sort-chamada { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 40px; } .sort-chamada .botao { justify-self: end; } }
+
 /* Chamada final */
 .final { text-align: center; }
 .final__caixa { padding: 56px 22px; border-radius: 28px; border: 1px solid var(--borda-forte);
@@ -240,6 +248,7 @@ p { margin: 0; }
       <a href="#recursos">O que ele faz</a>
       <a href="#planos">Preços</a>
       <a href="#duvidas">Dúvidas</a>
+      <a href="/sort">Editefy Sort</a>
     </nav>
     <a class="botao" href="#planos">Comprar minutos</a>
   </div>
@@ -455,6 +464,19 @@ p { margin: 0; }
     </div>
   </section>
 
+  <section class="secao" aria-labelledby="titulo-sort" style="padding-top: 0">
+    <div class="container">
+      <div class="sort-chamada">
+        <div>
+          <span class="etiqueta">Novo · Editefy Sort</span>
+          <h2 id="titulo-sort" style="margin-top: 12px">Chega de caçar fotos na sua galeria.</h2>
+          <p style="margin-top: 12px">Mande a pilha de fotos, vídeos, prints e áudios e receba cada arquivo com um nome que diz o que tem dentro, na pasta certa. Vendido à parte, sem gastar os seus minutos.</p>
+        </div>
+        <a class="botao botao--grande" href="/sort">Conhecer o Editefy Sort <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
   <section class="secao final" aria-labelledby="titulo-final" style="padding-top: 0">
     <div class="container">
       <div class="final__caixa">
@@ -477,6 +499,7 @@ p { margin: 0; }
       <p class="rodape__aviso" style="margin-top: 12px">Claude é marca da Anthropic, ChatGPT é marca da OpenAI e Grok é marca da xAI. O Editefy não tem vínculo com essas empresas.</p>
     </div>
     <div class="rodape__links">
+      <a href="/sort">Editefy Sort</a>
       <a href="/conta">Minha conta</a>
       <a href="/termos">Termos</a>
       <a href="/privacidade">Privacidade</a>

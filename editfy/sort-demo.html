@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="pt-BR">
+<!--
+  DEMONSTRAÇÃO DO EDITEFY SORT (editefy.com/sort/demonstracao, embutida em editfy/sort.html)
+  Cópia da página que a pessoa recebe no fim de uma organização (editfy_servidor/sort/pagina.html do editfy-servidor),
+  com arquivos INVENTADOS no lugar dos dados (nenhum arquivo real de cliente). Mudanças em relação à original:
+  a faixa "Demonstração" no topo, as miniaturas desenhadas (emoji num fundo), o botão do zip que não baixa nada e a
+  animação que só começa quando aparece na tela. Se a página do servidor mudar, copie de novo e refaça essas partes.
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demonstração · Editefy Sort</title>
+<meta name="robots" content="noindex">
+<style>
+/* Editefy Sort no servidor: a página da organização, aberta pelo link que a pessoa recebe na conversa.
+   Identidade da Editefy (editefy.com): fundo escuro arroxeado, roxo #8b5cf6, verde #22c55e, títulos 800 bem justos.
+   Plus Jakarta Sans quando está instalada; senão, a fonte do sistema (a página não busca nada fora do Editefy). */
+:root{
+  --fundo:#0F0D16; --fundo-2:#151221; --cartao:#1A1724; --cartao-2:#211D2E;
+  --borda:#2C2838; --borda-forte:#3D3750;
+  --texto:#F4F2FA; --suave:#A7A1B8; --apagado:#6F6884;
+  --roxo:#8B5CF6; --roxo-claro:#A78BFA; --roxo-escuro:#6D28D9; --verde:#22C55E;
+  --grad:linear-gradient(90deg,#C4B5FD,#8B5CF6 60%,#F0ABFC);
+  --raio:18px;
+  --f:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fundo);color:var(--texto)}
+body{font:16px/1.55 var(--f);overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(800px 480px at 12% -8%,rgba(139,92,246,.22),transparent 70%),
+                   radial-gradient(700px 520px at 100% 40%,rgba(109,40,217,.16),transparent 70%);
+  background-attachment:fixed}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px 72px}
+
+/* barra do topo, como no site */
+.barra{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--borda)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+.logo svg{width:32px;height:32px;display:block}
+.logo span{color:var(--suave);font-weight:700}
+.acoes{display:flex;align-items:center;gap:10px}
+.status{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--suave);background:var(--cartao);
+  border:1px solid var(--borda);border-radius:999px;padding:8px 14px;white-space:nowrap}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--roxo-claro);box-shadow:0 0 0 0 rgba(167,139,250,.6);animation:pulsa 1.4s infinite}
+.status.ok i{background:var(--verde);animation:none}
+@keyframes pulsa{70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+button{font:600 14px/1 var(--f);border:0;border-radius:14px;padding:13px 20px;background:var(--roxo);color:#fff;cursor:pointer;transition:background .2s,transform .15s}
+button:hover:not(:disabled){background:#7C4DEB;transform:translateY(-1px)}
+button:disabled{background:var(--cartao-2);color:var(--apagado);cursor:default}
+#denovo{background:var(--cartao);border:1px solid var(--borda-forte);color:var(--texto)}
+#denovo:hover:not(:disabled){background:var(--cartao-2)}
+#denovo:disabled{color:var(--apagado)}
+
+/* baixar as pastas (o zip) */
+.baixar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:22px 0 0}
+.zip{display:inline-flex;align-items:center;gap:10px;font:700 16px/1 var(--f);color:#fff;text-decoration:none;
+  background:var(--roxo);border-radius:14px;padding:16px 22px;box-shadow:0 12px 30px rgba(139,92,246,.35);transition:background .2s,transform .15s}
+.zip:hover{background:#7C4DEB;transform:translateY(-1px)}
+.zip svg{width:20px;height:20px}
+.zip-info{font-size:13px;color:var(--suave);line-height:1.5}
+.zip-info b{color:var(--texto);font-weight:700}
+
+/* chamada */
+.chamada{padding:44px 0 26px}
+.olho{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--roxo-claro)}
+h1{margin:12px 0 0;font-weight:800;font-size:64px;line-height:1.02;letter-spacing:-.03em}
+h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin:14px 0 0;color:var(--suave);font-size:17px}
+
+/* números */
+.numeros{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:8px 0 22px}
+.num{background:var(--cartao);border:1px solid var(--borda);border-radius:var(--raio);padding:16px 18px}
+.num small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--suave)}
+.num b{display:block;margin-top:8px;font-size:38px;font-weight:800;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.num:first-child b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.num b.pula{animation:pula .35s ease}
+@keyframes pula{40%{transform:translateY(-4px)}}
+
+/* cena: a câmera no centro de toda a largura, sem caixa; as pastas embaixo */
+.cena{display:block}
+.palco{position:relative;height:420px;overflow:visible;isolation:isolate}
+.palco::before{content:"";position:absolute;left:50%;top:50%;width:620px;height:620px;margin:-310px 0 0 -310px;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(139,92,246,.34),transparent 62%)}
+.fila{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--suave);
+  background:var(--cartao-2);border:1px solid var(--borda);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.fila b{color:var(--texto);font-weight:800;font-size:14px}
+.camera{position:absolute;left:50%;top:50%;width:200px;height:162px;margin:-81px 0 0 -100px;z-index:5;
+  filter:drop-shadow(0 20px 40px rgba(139,92,246,.45));animation:flutua 3.4s ease-in-out infinite}
+.camera svg{width:100%;height:100%;display:block;overflow:visible}
+.c-lampada{fill:#EDE9FE;transition:fill .12s}
+.camera.dispara .c-lampada{fill:#FFFFFF}
+.c-diafragma{transform-origin:100px 100px;transition:transform .3s ease}
+.camera.dispara .c-diafragma{transform:rotate(70deg) scale(.8)}
+.camera .ok{position:absolute;top:-12px;right:-6px;width:44px;height:44px;border-radius:50%;background:var(--verde);color:#062712;
+  font:800 22px/44px var(--f);text-align:center;transform:scale(0);transition:transform .5s cubic-bezier(.3,1.7,.5,1);box-shadow:0 8px 24px rgba(34,197,94,.45)}
+.camera.feito .ok{transform:scale(1)}
+@keyframes flutua{50%{transform:translateY(-7px)}}
+.flash{position:absolute;left:50%;top:50%;width:520px;height:520px;margin:-260px 0 0 -260px;pointer-events:none;opacity:0;z-index:6;
+  background:radial-gradient(circle,rgba(237,233,254,.9),rgba(237,233,254,0) 60%)}
+.legenda{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:14px;font-weight:600;color:var(--suave)}
+/* cada arquivo sai como um card de Reels */
+.reel{position:absolute;left:50%;top:50%;width:98px;height:174px;margin:-87px 0 0 -49px;border-radius:14px;overflow:hidden;
+  background:var(--cartao-2) center/cover no-repeat;border:1px solid rgba(255,255,255,.14);
+  box-shadow:0 16px 36px rgba(0,0,0,.5),0 0 0 1px rgba(139,92,246,.25);z-index:4;will-change:transform,opacity;opacity:0;
+  display:flex;align-items:center;justify-content:center;font-size:34px}
+.reel .leg{position:absolute;left:0;right:0;bottom:0;padding:22px 8px 8px;font-size:10.5px;font-weight:700;line-height:1.25;color:#fff;
+  background:linear-gradient(transparent,rgba(15,13,22,.92));display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.confete{position:absolute;left:50%;top:50%;width:8px;height:13px;border-radius:2px;z-index:7;pointer-events:none}
+
+/* pastas */
+.pastas{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.pasta{background:var(--cartao);border:1px solid var(--borda);border-radius:24px;padding:18px 18px 12px;transition:transform .3s ease,border-color .3s,box-shadow .3s}
+.pasta.pulo{transform:translateY(-4px);border-color:var(--cor);box-shadow:0 12px 34px color-mix(in srgb,var(--cor) 25%,transparent)}
+.pasta .cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pasta .nome{display:flex;align-items:center;gap:10px;min-width:0}
+.pasta .ico{flex:none;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--cor) 18%,transparent);border:1px solid color-mix(in srgb,var(--cor) 35%,transparent)}
+.pasta .ico svg{width:17px;height:17px}
+.pasta h3{margin:0;font-size:18px;font-weight:800;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pasta .nova{flex:none;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--roxo-claro);
+  background:rgba(139,92,246,.14);border-radius:999px;padding:3px 8px}
+.pasta .qtd{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--cor);font-variant-numeric:tabular-nums}
+.minis{display:flex;flex-wrap:wrap;gap:6px;min-height:20px;margin:14px 0 10px}
+.mini{width:44px;height:78px;border-radius:9px;background:var(--cartao-2) center/cover no-repeat;border:1px solid var(--borda-forte);
+  display:flex;align-items:center;justify-content:center;font-size:18px;animation:pousa .45s cubic-bezier(.3,1.5,.5,1) both}
+.mini.extra{font-size:13px;font-weight:800;color:var(--suave);background:var(--cartao-2);animation:none}
+@keyframes pousa{from{opacity:0;transform:translateY(-12px) scale(.7)}to{opacity:1;transform:none}}
+.pasta ul{list-style:none;margin:0;padding:0}
+.pasta li{padding:9px 0;border-top:1px solid var(--borda);font-size:13px;animation:entra .4s ease both}
+.pasta li .novo{display:block;overflow-wrap:anywhere;font-weight:600}
+.pasta li .velho{display:block;color:var(--apagado);font-size:12px;overflow-wrap:anywhere}
+@keyframes entra{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pasta:not(.aberta) li:nth-child(n+7){display:none}
+.pasta .mais{display:none;width:100%;margin-top:2px;padding:10px 0 4px;background:none;border-top:1px solid var(--borda);border-radius:0;
+  color:var(--roxo-claro);font-size:13px;font-weight:700;text-align:left}
+.pasta .mais:hover{background:none;color:var(--texto);transform:none}
+.deixados{margin-top:16px;color:var(--suave);font-size:13px}
+.rodape{margin-top:44px;padding-top:20px;border-top:1px solid var(--borda);display:flex;justify-content:center;gap:8px;align-items:center;color:var(--apagado);font-size:13px}
+.rodape i{width:7px;height:7px;border-radius:50%;background:var(--verde)}
+
+@media (max-width:900px){
+  .palco{height:380px}
+  .numeros{grid-template-columns:repeat(3,1fr)}
+  h1{font-size:52px}
+}
+@media (max-width:520px){
+  .wrap{padding:0 16px 60px}
+  .zip{width:100%;justify-content:center}
+  /* no celular a câmera vem logo depois do botão do zip, para a animação aparecer sem rolar; os números vão depois */
+  .wrap{display:flex;flex-direction:column}
+  .cena{order:1} .numeros{order:2;margin-top:18px} .rodape{order:3}
+  .barra .status{display:none}
+  .chamada{padding:30px 0 18px}
+  h1{font-size:40px}
+  .numeros{grid-template-columns:repeat(2,1fr);gap:10px}
+  .num:last-child{grid-column:1 / -1}
+  .num b{font-size:32px}
+  .palco{height:340px}
+  .palco::before{width:420px;height:420px;margin:-210px 0 0 -210px}
+  .camera{width:160px;height:130px;margin:-65px 0 0 -80px}
+  .reel{width:82px;height:146px;margin:-73px 0 0 -41px}
+}
+@media (prefers-reduced-motion: reduce){
+  .camera,.status i{animation:none} .mini,.pasta li{animation:none} .pasta{transition:none}
+}
+.demo{position:sticky;top:0;z-index:20;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;color:var(--texto);
+  background:rgba(139,92,246,.22);border-bottom:1px solid var(--borda-forte);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.demo a{color:var(--roxo-claro)}
+/* dentro da página de vendas: só a barra, a câmera e as pastas (com as miniaturas), sem a lista de nomes */
+.embutida body{background-attachment:scroll}
+.embutida .chamada,.embutida .numeros,.embutida .rodape,.embutida .deixados{display:none}
+.embutida .pasta ul,.embutida .pasta .mais{display:none!important}
+.embutida .wrap{padding-bottom:24px}
+.embutida .pastas{grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.embutida .pasta{padding:14px 14px 6px;border-radius:18px}
+.embutida .pasta h3{font-size:15px}
+.embutida .pasta .qtd{font-size:24px}
+@media (max-width:520px){ .embutida .pasta .ico{display:none} .embutida .pasta h3{font-size:14.5px} }
+</style>
+</head>
+<body>
+<div class="demo" id="demo" hidden>Demonstração com arquivos de exemplo · <a href="/sort">voltar para o Editefy Sort</a></div>
+<div class="wrap">
+  <div class="barra">
+    <div class="logo">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <defs><linearGradient id="gl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs>
+        <rect width="32" height="32" rx="9" fill="url(#gl)"/>
+        <path d="M8.5 12.2c0-1 .8-1.8 1.8-1.8h3.4l1.6 1.8h6.4c1 0 1.8.8 1.8 1.8v6.6c0 1-.8 1.8-1.8 1.8H10.3c-1 0-1.8-.8-1.8-1.8z" fill="#fff"/>
+        <path d="M24.2 5.6l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7z" fill="#fff"/>
+      </svg>
+      Editefy <span>Sort</span>
+    </div>
+    <div class="acoes">
+      <div class="status" id="status"><i></i><span id="statusTxt">Organizando…</span></div>
+      <button id="denovo" disabled>Ver de novo</button>
+    </div>
+  </div>
+
+  <div class="chamada">
+    <div class="olho">Organizado pelo Editefy Sort</div>
+    <h1>Tudo no <span>lugar.</span></h1>
+    <p class="sub" id="sub"></p>
+    <div class="baixar" id="baixar" hidden>
+      <a class="zip" id="zip" href="#" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>
+        Baixar as pastas
+      </a>
+      <div class="zip-info"><b id="zipTam"></b> <span id="zipVale"></span><br>No iPhone, o zip vai para o app Arquivos: toque nele e as pastas aparecem.</div>
+    </div>
+  </div>
+
+  <div class="numeros">
+    <div class="num"><small>Arquivos</small><b id="nTotal">0</b></div>
+    <div class="num"><small>Fotos e prints</small><b id="nFotos">0</b></div>
+    <div class="num"><small>Vídeos e áudios</small><b id="nVideos">0</b></div>
+    <div class="num"><small>Pastas</small><b id="nPastas">0</b></div>
+    <div class="num"><small>Renomeados</small><b id="nRenom">0</b></div>
+  </div>
+
+  <div class="cena">
+    <div class="palco" id="palco">
+      <div class="fila"><b id="restam">0</b> na fila</div>
+      <div class="flash" id="flash"></div>
+      <div class="camera" id="camera" aria-hidden="true">
+        <svg viewBox="0 0 200 162">
+          <defs>
+            <linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+            <linearGradient id="gv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A2440"/><stop offset="1" stop-color="#0F0D16"/></linearGradient>
+          </defs>
+          <rect x="52" y="10" width="96" height="12" rx="6" fill="#211D2E" stroke="#3D3750"/>
+          <rect x="62" y="14" width="76" height="4" rx="2" fill="#0F0D16"/>
+          <rect x="8" y="20" width="184" height="134" rx="34" fill="#211D2E" stroke="#3D3750" stroke-width="2"/>
+          <path d="M42 20 H158 A34 34 0 0 1 192 54 V58 H8 V54 A34 34 0 0 1 42 20 Z" fill="url(#gc)"/>
+          <rect x="24" y="30" width="26" height="18" rx="6" fill="#0F0D16" opacity=".85"/>
+          <rect x="29" y="34" width="9" height="6" rx="2" fill="#fff" opacity=".35"/>
+          <rect x="140" y="29" width="38" height="20" rx="6" class="c-lampada"/>
+          <text x="100" y="45" text-anchor="middle" font-family="-apple-system,Helvetica,sans-serif" font-size="12" font-weight="800" letter-spacing="3" fill="#fff">SORT</text>
+          <path d="M127 30l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z" fill="#fff"/>
+          <circle cx="100" cy="100" r="44" fill="#151221" stroke="#3D3750" stroke-width="2"/>
+          <circle cx="100" cy="100" r="36" fill="url(#gc)"/>
+          <circle cx="100" cy="100" r="28" fill="url(#gv)"/>
+          <g class="c-diafragma">
+            <circle cx="100" cy="100" r="16" fill="#2C2838"/>
+            <path d="M100 84 L109 100 L100 116 L91 100 Z" fill="#4C3F73"/>
+            <path d="M84 100 L100 91 L116 100 L100 109 Z" fill="#4C3F73" opacity=".6"/>
+          </g>
+          <circle cx="90" cy="89" r="7" fill="#fff" opacity=".75"/>
+          <circle cx="112" cy="112" r="3" fill="#fff" opacity=".3"/>
+          <circle cx="170" cy="86" r="9" fill="#8B5CF6"/>
+          <circle cx="170" cy="86" r="4" fill="#fff" opacity=".35"/>
+        </svg>
+        <div class="ok">✓</div>
+      </div>
+      <div class="legenda" id="legenda"></div>
+    </div>
+    <div>
+      <div class="pastas" id="pastas"></div>
+      <div class="deixados" id="deixados"></div>
+    </div>
+  </div>
+
+  <div class="rodape"><i></i><span id="rodape">Editefy Sort</span></div>
+</div>
+<script>
+const D = (Object.assign({"pastas": [{"nome": "Falando", "cor": "#A78BFA", "nova": false}, {"nome": "Narração", "cor": "#F472B6", "nova": false}, {"nome": "B-roll", "cor": "#22C55E", "nova": false}, {"nome": "Fotos", "cor": "#60A5FA", "nova": false}, {"nome": "Prints", "cor": "#FBBF24", "nova": false}, {"nome": "Músicas", "cor": "#FB923C", "nova": false}, {"nome": "Sons", "cor": "#A78BFA", "nova": false}, {"nome": "Editados", "cor": "#F472B6", "nova": false}, {"nome": "Outros", "cor": "#A7A1B8", "nova": false}], "arquivos": [{"antigo": "IMG_4801.MOV", "novo": "2026-11-02_bom-dia-com-cafe-na-varanda.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "☕", "fundo": "#4c3f73"}, {"antigo": "IMG_4803.HEIC", "novo": "2026-11-02_cafe-da-manha-com-frutas.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🍓", "fundo": "#7c2d3a"}, {"antigo": "Screenshot 2026-11-03 at 09.12.png", "novo": "2026-11-03_print-comentario-de-seguidora.png", "pasta": "Prints", "tipo": "imagem", "emoji": "💬", "fundo": "#1f3a5f"}, {"antigo": "IMG_4812.MOV", "novo": "2026-11-03_dica-de-autoestima-pela-manha.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "🪞", "fundo": "#5b3a75"}, {"antigo": "Gravação 14.m4a", "novo": "2026-11-04_narracao-passeio-em-lisboa.m4a", "pasta": "Narração", "tipo": "áudio"}, {"antigo": "IMG_4820.MOV", "novo": "2026-11-04_bonde-amarelo-subindo-a-rua.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🚋", "fundo": "#7a5a12"}, {"antigo": "IMG_4821.MOV", "novo": "2026-11-04_por-do-sol-no-miradouro.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🌅", "fundo": "#7c3a1d"}, {"antigo": "IMG_4822.HEIC", "novo": "2026-11-04_selfie-no-miradouro.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🤳", "fundo": "#3a4f7c"}, {"antigo": "IMG_4830.HEIC", "novo": "2026-11-05_pasteis-de-nata-na-mesa.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🥮", "fundo": "#7a5a12"}, {"antigo": "final_v3_AGORA_VAI.mp4", "novo": "2026-11-05_reel-editado-autoestima.mp4", "pasta": "Editados", "tipo": "vídeo", "emoji": "🎬", "fundo": "#4c3f73"}, {"antigo": "IMG_4841.MOV", "novo": "2026-11-06_storytime-a-amiga-que-sumiu.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "🗣️", "fundo": "#5b3a75"}, {"antigo": "IMG_4845.MOV", "novo": "2026-11-06_maos-mexendo-a-massa-do-bolo.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🥣", "fundo": "#6b4a2a"}, {"antigo": "Gravação 15.m4a", "novo": "2026-11-06_narracao-receita-de-bolo.m4a", "pasta": "Narração", "tipo": "áudio"}, {"antigo": "IMG_4850.HEIC", "novo": "2026-11-07_bolo-de-cenoura-pronto.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🍰", "fundo": "#7c3a1d"}, {"antigo": "IMG_4851.PNG", "novo": "2026-11-07_print-metricas-do-reels.png", "pasta": "Prints", "tipo": "imagem", "emoji": "📊", "fundo": "#1f3a5f"}, {"antigo": "lofi calma (1).mp3", "novo": "2026-11-07_musica-lofi-calma.mp3", "pasta": "Músicas", "tipo": "áudio"}, {"antigo": "whoosh.wav", "novo": "2026-11-07_som-de-transicao-whoosh.wav", "pasta": "Sons", "tipo": "áudio"}, {"antigo": "IMG_4860.MOV", "novo": "2026-11-08_resposta-da-caixinha-sobre-dinheiro.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "💸", "fundo": "#2f5a3a"}, {"antigo": "IMG_4862.JPG", "novo": "2026-11-08_look-do-dia-no-espelho.jpg", "pasta": "Fotos", "tipo": "imagem", "emoji": "👗", "fundo": "#5b3a75"}, {"antigo": "IMG_4866.PNG", "novo": "2026-11-08_print-caixinha-de-perguntas.png", "pasta": "Prints", "tipo": "imagem", "emoji": "❓", "fundo": "#1f3a5f"}, {"antigo": "IMG_4870.MOV", "novo": "2026-11-09_chuva-na-janela-camera-lenta.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🌧️", "fundo": "#2c3e57"}, {"antigo": "IMG_4871.HEIC", "novo": "2026-11-09_jantar-com-as-amigas.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🥂", "fundo": "#7c2d3a"}, {"antigo": "roteiro.pdf", "novo": "2026-11-09_roteiro-da-semana.pdf", "pasta": "Outros", "tipo": "outro"}, {"antigo": "IMG_4880.MOV", "novo": "2026-11-10_gancho-ninguem-te-conta-isso.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "🤫", "fundo": "#4c3f73"}], "deixados": []}, {quando: Date.now(), expira: Math.floor(Date.now() / 1000) + 7 * 86400, zip: {link: '#demonstracao', nome: '', mb: 2870}})) || {quando: 0, pastas: [], arquivos: [], deixados: [], zip: null, expira: 0};
+// Demonstração: miniaturas desenhadas (um emoji num fundo colorido, em 9:16) no lugar das fotos de verdade
+D.arquivos.forEach(a => {
+  if(!a.emoji) return;
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 160"><defs><linearGradient id="f" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="' + a.fundo + '"/><stop offset="1" stop-color="#0F0D16"/></linearGradient></defs>'
+    + '<rect width="90" height="160" fill="url(#f)"/><text x="45" y="92" font-size="42" text-anchor="middle">' + a.emoji + '</text></svg>';
+  // parênteses e aspas também codificados: a miniatura entra num url(...) do CSS sem aspas
+  a.mini = "data:image/svg+xml," + encodeURIComponent(svg).replace(/[()']/g, c => "%" + c.charCodeAt(0).toString(16).toUpperCase());
+});
+const EMOJI = {"vídeo":"🎬","imagem":"🖼️","áudio":"🎵","outro":"📄"};
+const CORES_CONFETE = ["#A78BFA","#8B5CF6","#C4B5FD","#F0ABFC","#22C55E","#F4F2FA"];
+const ICONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2.2h7.5A2.5 2.5 0 0 1 21 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>';
+const reduz = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const $ = id => document.getElementById(id);
+let rodada = 0;
+const cont = {nTotal:0, nFotos:0, nVideos:0, nPastas:0, nRenom:0};
+
+function el(tag, cls, txt){ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
+function fundo(e, a){ if(a.mini){ e.style.backgroundImage = "url(" + a.mini + ")"; } else { e.prepend(document.createTextNode(EMOJI[a.tipo] || "📄")); } }
+function legenda(nome){ return nome.replace(/^\d{4}-\d\d-\d\d_/, "").replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "); }
+function plural(n, um, varios){ return n + " " + (n === 1 ? um : varios); }
+function data(ms, hora){
+  if(!ms) return "";
+  const o = hora ? {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"} : {day:"2-digit", month:"2-digit"};
+  try { return new Date(ms).toLocaleString("pt-BR", o); } catch(_) { return ""; }
+}
+function mb(m){ return m >= 1024 ? (m / 1024).toFixed(1).replace(".", ",") + " GB" : Math.max(1, Math.round(m)) + " MB"; }
+
+// o zip e até quando os arquivos ficam guardados
+(function(){
+  const vale = data((D.expira || 0) * 1000);
+  if(D.zip && D.zip.link){
+    $("zip").href = D.zip.link;
+    if(D.zip.nome) $("zip").setAttribute("download", D.zip.nome);
+    $("zipTam").textContent = "zip · " + mb(D.zip.mb || 0);
+    $("zipVale").textContent = vale ? "· o link vale até " + vale : "";
+    $("baixar").hidden = false;
+  }
+  $("rodape").textContent = "Editefy Sort" + (vale ? " · os arquivos ficam guardados até " + vale + " e depois são apagados" : "");
+})();
+function soma(id, q){
+  cont[id] += q; const b = $(id); b.textContent = cont[id];
+  if(!reduz){ b.classList.remove("pula"); void b.offsetWidth; b.classList.add("pula"); }
+}
+
+function montar(){
+  rodada++;
+  const arqs = (D && D.arquivos) || [];
+  Object.keys(cont).forEach(k => { cont[k] = 0; $(k).textContent = 0; });
+  $("sub").textContent = arqs.length ? (plural(arqs.length, "arquivo renomeado", "arquivos renomeados") + " e guardados nas pastas certas · " + data(D.quando, true))
+                                     : "Nada novo desta vez.";
+  $("status").classList.remove("ok"); $("statusTxt").textContent = arqs.length ? "Organizando…" : "Nada para organizar";
+  $("camera").classList.remove("feito", "dispara");
+  $("restam").textContent = arqs.length;
+  $("legenda").textContent = arqs.length ? "preparando seus arquivos…" : "nada para organizar desta vez";
+  $("palco").querySelectorAll(".reel,.confete").forEach(c => c.remove());
+  const caixa = $("pastas"); caixa.innerHTML = "";
+  const alvo = {};
+  (D.pastas || []).forEach(p => {
+    const box = el("div", "pasta"); box.style.setProperty("--cor", p.cor);
+    const cab = el("div", "cab"); const nome = el("div", "nome");
+    const ico = el("div", "ico"); ico.innerHTML = ICONE; ico.style.color = p.cor;
+    nome.append(ico, el("h3", null, p.nome));
+    if(p.nova) nome.append(el("span", "nova", "nova"));
+    const qtd = el("div", "qtd", "0"); cab.append(nome, qtd);
+    const minis = el("div", "minis"); const ul = el("ul");
+    const mais = el("button", "mais");
+    const t = {box, qtd, minis, ul, mais, n: 0, lancados: 0};
+    mais.addEventListener("click", () => { box.classList.toggle("aberta"); rotuloMais(t); });
+    box.append(cab, minis, ul, mais); caixa.append(box);
+    alvo[p.nome] = t;
+  });
+  const d = D.deixados || [];
+  $("deixados").textContent = d.length ? ("Ficaram onde estavam: " + d.join(", ")) : "";
+  return {arqs, alvo};
+}
+
+// a lista de nomes mostra 6; o resto abre no botão
+function rotuloMais(t){
+  t.mais.style.display = t.n > 6 ? "block" : "none";
+  t.mais.textContent = t.box.classList.contains("aberta") ? "mostrar menos" : ("ver todos os " + t.n + " nomes");
+}
+
+function chegar(a, alvo){
+  const t = alvo[a.pasta]; if(!t) return;
+  t.n++; t.qtd.textContent = t.n;
+  rotuloMais(t);
+  // até 40 miniaturas por pasta; depois um quadradinho "+N"
+  if(t.n <= 40){
+    const m = el("div", "mini"); fundo(m, a); m.title = a.novo; t.minis.append(m);
+  } else {
+    if(!t.extra){ t.extra = el("div", "mini extra"); t.minis.append(t.extra); }
+    t.extra.textContent = "+" + (t.n - 40);
+  }
+  const li = el("li"); li.append(el("span", "novo", a.novo), el("span", "velho", "era " + a.antigo)); t.ul.append(li);
+  if(!reduz){ t.box.classList.add("pulo"); setTimeout(() => t.box.classList.remove("pulo"), 340); }
+  soma("nTotal", 1);
+  if(a.tipo === "imagem") soma("nFotos", 1);
+  if(a.tipo === "vídeo" || a.tipo === "áudio") soma("nVideos", 1);
+  if(t.n === 1) soma("nPastas", 1);
+  if(a.novo !== a.antigo) soma("nRenom", 1);
+}
+
+// o flash pisca no máximo 2 vezes por segundo, mesmo em rajada (seguro para quem é sensível a luz piscando)
+let ultimoFlash = 0;
+function clique(){
+  const cam = $("camera");
+  cam.classList.add("dispara"); setTimeout(() => cam.classList.remove("dispara"), 180);
+  cam.querySelector("svg").animate([{transform:"scale(1)"},{transform:"scale(.94,.92)"},{transform:"scale(1)"}], {duration: 220, easing: "ease-out"});
+  const agora = performance.now();
+  if(agora - ultimoFlash >= 500){
+    ultimoFlash = agora;
+    $("flash").animate([{opacity: 0}, {opacity: .9, offset: .18}, {opacity: 0}], {duration: 420, easing: "ease-out"});
+  }
+}
+
+function confete(){
+  const palco = $("palco");
+  for(let i = 0; i < 80; i++){
+    const c = el("div", "confete");
+    c.style.background = CORES_CONFETE[i % CORES_CONFETE.length];
+    if(i % 3 === 0){ c.style.width = "7px"; c.style.height = "7px"; c.style.borderRadius = "50%"; }
+    palco.append(c);
+    const ang = Math.random() * Math.PI * 2, forca = 80 + Math.random() * 200;
+    const x = Math.cos(ang) * forca, y = Math.sin(ang) * forca * .7 - 70, giro = (Math.random() - .5) * 900;
+    c.animate([
+      {transform: "translate(-50%,-50%) rotate(0deg)", opacity: 1},
+      {transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${giro * .6}deg)`, opacity: 1, offset: .45},
+      {transform: `translate(calc(-50% + ${x * 1.2}px), calc(-50% + ${y + 190}px)) rotate(${giro}deg)`, opacity: 0}
+    ], {duration: 1600 + Math.random() * 800, easing: "cubic-bezier(.2,.7,.4,1)", fill: "forwards"}).onfinish = () => c.remove();
+  }
+}
+
+function terminar(minha){
+  if(minha !== rodada) return;
+  const n = ((D && D.arquivos) || []).length;
+  $("status").classList.add("ok"); $("statusTxt").textContent = n ? "Pronto" : "Nada para organizar";
+  if(n){
+    $("camera").classList.add("feito");
+    $("legenda").textContent = plural(n, "arquivo no lugar ✨", "arquivos no lugar ✨");
+    if(!reduz && Element.prototype.animate) confete();
+  }
+  $("denovo").disabled = false;
+}
+
+function tocar(){
+  $("denovo").disabled = true;
+  const {arqs, alvo} = montar();
+  const minha = rodada;
+  if(!arqs.length){ terminar(minha); return; }
+  if(reduz || !Element.prototype.animate){
+    arqs.forEach(a => chegar(a, alvo)); $("restam").textContent = 0; terminar(minha); return;
+  }
+  const palco = $("palco"), cam = $("camera");
+  // muitos arquivos: a animação inteira dura uns 60 segundos (200 arquivos = um a cada 0,3 s).
+  // poucos arquivos: cada um leva no máximo 0,9 s, para não arrastar.
+  const passo = Math.max(45, Math.min(900, 60000 / arqs.length));
+  const voo = passo >= 600 ? 1450 : passo >= 250 ? 1200 : 900;
+  let restam = arqs.length;
+  arqs.forEach((a, i) => {
+    setTimeout(() => {
+      if(minha !== rodada) return;
+      const r = el("div", "reel"); fundo(r, a); r.append(el("div", "leg", legenda(a.novo))); palco.append(r);
+      $("restam").textContent = arqs.length - i - 1;
+      $("legenda").textContent = "organizando " + (i + 1) + " de " + arqs.length + "…";
+      clique();
+      const base = r.getBoundingClientRect();
+      const t = alvo[a.pasta];
+      // mira a vaga onde a miniatura vai cair: coluna e linha da grade da pasta;
+      // depois de 40, mira o quadradinho "+N" (vaga 41)
+      let px = base.left + base.width / 2, py = base.top + base.height / 2;
+      if(t){
+        const caixa = t.minis.getBoundingClientRect();
+        const colunas = Math.max(1, Math.floor((caixa.width + 6) / 50));
+        const vaga = Math.min(t.lancados++, 40);
+        px = caixa.left + (vaga % colunas) * 50 + 22;
+        py = caixa.top + Math.floor(vaga / colunas) * 84 + 39;
+      }
+      const tx = px - (base.left + base.width / 2);
+      const ty = py - (base.top + base.height / 2);
+      const sobe = -(cam.offsetHeight / 2 + base.height / 2 - 30);
+      const giro = (Math.random() - .5) * 14;
+      r.animate([
+        {transform: "translate(0px, 0px) scale(.3)", opacity: 0},
+        {transform: `translate(0px, ${sobe}px) rotate(${giro}deg) scale(1)`, opacity: 1, offset: .32},
+        {transform: `translate(0px, ${sobe - 8}px) rotate(${giro}deg) scale(1.03)`, opacity: 1, offset: .46},
+        {transform: `translate(${tx}px, ${ty}px) rotate(0deg) scale(.45)`, opacity: .3}
+      ], {duration: voo, easing: "cubic-bezier(.45,0,.25,1)", fill: "forwards"}).onfinish = () => {
+        if(minha !== rodada) return;
+        r.remove(); chegar(a, alvo);
+        if(--restam === 0) setTimeout(() => terminar(minha), 300);
+      };
+    }, 900 + i * passo);
+  });
+}
+
+$("denovo").addEventListener("click", tocar);
+// Demonstração: a faixa do topo aparece quando a página abre sozinha; dentro da página de vendas, não
+if(window.self === window.top){
+  $("demo").hidden = false;
+} else {
+  // embutida: a página de vendas ajusta a altura do quadro pela altura daqui (sem rolagem dentro dele)
+  document.documentElement.classList.add("embutida");
+  // a altura do conteúdo (a da página nunca fica menor que o quadro, por isso o corpo)
+  const avisar = () => parent.postMessage({sortDemoAltura: Math.ceil(document.body.getBoundingClientRect().height)}, location.origin);
+  if("ResizeObserver" in window) new ResizeObserver(avisar).observe(document.body);
+  window.addEventListener("load", avisar);
+}
+// O botão do zip não baixa nada aqui
+$("zip").addEventListener("click", e => {
+  e.preventDefault();
+  $("zipVale").textContent = "· na sua organização, este botão baixa as pastas de verdade";
+});
+// A animação começa quando aparece na tela (na página de vendas, ela fica mais para baixo)
+window.addEventListener("load", () => {
+  if(!("IntersectionObserver" in window)){ tocar(); return; }
+  const obs = new IntersectionObserver(es => {
+    if(!es.some(e => e.isIntersecting)) return;
+    obs.disconnect(); tocar();
+  }, {threshold: 0.25});
+  obs.observe($("palco"));
+});
+</script>
+</body>
+</html>
