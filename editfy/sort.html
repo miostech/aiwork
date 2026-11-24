@@ -20,7 +20,8 @@
   PÁGINA DE VENDAS DO EDITEFY SORT (editefy.com/sort; a rota fica no vercel.json, pelo domínio)
   O Sort é vendido à parte do Editefy: acesso de 12 meses, pagamento único, sem gastar os minutos do Editefy.
   1. Preço e link do pagamento: CONFIG no final deste arquivo (o mesmo link de EDITEFY_SORT em api/_cursos.js).
-  2. Demonstração: editfy/sort-demo.html (editefy.com/sort/demonstracao), com arquivos inventados.
+  2. Demonstração: editfy/sort-demo.html (editefy.com/sort/demonstracao), com arquivos inventados. O quadro usa o
+     caminho do arquivo, que também abre na prévia da Vercel (lá as rotas do editefy.com não valem).
   3. Como conectar: a parte #conectar desta página (o e-mail da compra leva para cá). Os passos do ChatGPT e do Grok
      são os mesmos do Editefy (editfy/comecar.html), com o nome e o endereço do Sort.
   4. Textos: edite direto no HTML abaixo.
@@ -378,7 +379,7 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
       <h2 class="titulo-secao" id="titulo-demo">No fim, você recebe isto.</h2>
       <p class="sub-secao">Um link com os seus arquivos voando para as pastas e um zip com tudo pronto para baixar.</p>
       <div class="demo-caixa">
-        <iframe id="demo" src="/sort/demonstracao" title="Demonstração do Editefy Sort com arquivos de exemplo" loading="lazy" scrolling="no"></iframe>
+        <iframe id="demo" src="/editfy/sort-demo.html" title="Demonstração do Editefy Sort com arquivos de exemplo" loading="lazy" scrolling="no"></iframe>
       </div>
       <p class="demo-nota"><span>Demonstração com arquivos de exemplo.</span><a href="/sort/demonstracao" target="_blank" rel="noopener">Ver em tela cheia, com os nomes antigos e novos <span aria-hidden="true">↗</span></a></p>
     </div>
