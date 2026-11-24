@@ -195,8 +195,10 @@ export const EDITEFY_SORT = {
       id: "sort-12-meses",   // editefy_sort_acessos.pacote e compras.curso
       nome: "12 meses",
       meses: 12,
-      // US$ 98 (R$ 98 no Brasil), produto "Editefy Sort" no Stripe (buy.stripe.com/7sY7sN56e3CpdLhf1M67S0c)
-      linksPagamento: ["plink_1UfO11RY9p8vsUUss2DcyVuY", process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT].filter(Boolean),
+      // US$ 125 (R$ 125 no Brasil), produto "Editefy Sort" no Stripe (buy.stripe.com/7sY6oJgOWdcZ0Yv5rc67S0e, desde
+      // 24/11/2026); depois o antigo, de US$ 98 (buy.stripe.com/7sY7sN56e3CpdLhf1M67S0c), que continua liberando quem
+      // abriu o pagamento antes da troca
+      linksPagamento: ["plink_1UfPp4RY9p8vsUUsbG6mhPma", "plink_1UfO11RY9p8vsUUss2DcyVuY", process.env.STRIPE_PAYMENT_LINK_EDITEFY_SORT].filter(Boolean),
     },
   ],
 };
