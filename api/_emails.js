@@ -748,6 +748,48 @@ MODELOS.nova_senha_editefy = {
   }),
 };
 
+// ── Editefy Sort: e-mail de quem compra o acesso de 12 meses, com a marca do Editefy e o passo a passo para conectar ──
+// O endereço do conector do Sort (outro serviço no mesmo servidor). EDITEFY_SORT_CONECTOR, se definida, troca o padrão.
+const CONECTOR_SORT = process.env.EDITEFY_SORT_CONECTOR || "https://sort.editefy.com/mcp";
+const passosSort = (entrar) => [
+  "No app do Claude (ou em claude.ai), abra <strong>Configurações &rarr; Conectores</strong> e toque em <strong>Adicionar conector personalizado</strong>.",
+  `Em nome, escreva <strong>Editefy Sort</strong>. Em endereço, cole:<br><span style="font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:13px;color:#17141F;word-break:break-all;">${CONECTOR_SORT}</span>`,
+  `Toque em <strong>Conectar</strong> e ${entrar}.`,
+  "Numa conversa nova, escreva: <strong>Quero organizar meus arquivos com o Editefy Sort</strong>.",
+];
+
+MODELOS.compra_editefy_sort = {
+  marca: "editefy",
+  assunto: "Seu acesso ao Editefy Sort",
+  html: emailEditefy({
+    titulo: "Seu acesso ao Editefy Sort",
+    previa: "Seu Editefy Sort está liberado até {{{VENCE}}}. Veja como conectar no Claude em um minuto.",
+    chamada: "Bem-vindo(a) ao Editefy Sort, {{{NOME}}}!",
+    texto: "Seu acesso está liberado até <strong>{{{VENCE}}}</strong>. Nesse tempo, organize quantas pilhas de vídeos, fotos e áudios quiser. Para começar, conecte o Editefy Sort no Claude e entre com os dados abaixo.",
+    rotuloSenha: "Senha",
+    passos: passosSort("entre com o e-mail e a senha acima"),
+    botao: "Abrir os conectores do Claude",
+    nota: "<strong style=\"color:#17141F;\">Guarde este e-mail.</strong> Ele tem os seus dados de acesso. Quando o acesso estiver perto de acabar, é só renovar em editefy.com.",
+    rodape: "Você recebeu este e-mail porque comprou o Editefy Sort.",
+  }),
+};
+
+// Quem já tem conta (no Editefy ou na escola) e compra ou renova o Sort: sem senha (continua a mesma)
+MODELOS.acesso_editefy_sort = {
+  marca: "editefy",
+  assunto: "Seu Editefy Sort está liberado",
+  html: emailEditefy({
+    titulo: "Seu Editefy Sort está liberado",
+    previa: "Seu acesso ao Editefy Sort vai até {{{VENCE}}}.",
+    chamada: "Seu Editefy Sort está liberado, {{{NOME}}}!",
+    texto: "Seu acesso vai até <strong>{{{VENCE}}}</strong>. Se você renovou antes de acabar, os 12 meses foram somados ao tempo que ainda faltava. Para entrar, use o e-mail <strong>{{{EMAIL_ALUNO}}}</strong> e a senha que você já tem.",
+    passos: passosSort("entre com o seu e-mail e a senha de sempre"),
+    botao: "Abrir os conectores do Claude",
+    nota: "Sua senha continua a mesma. Se não lembrar, peça uma nova em <a href=\"https://www.editefy.com/conta\" style=\"color:#7C3AED;\">editefy.com/conta</a>.",
+    rodape: "Você recebeu este e-mail porque comprou o Editefy Sort.",
+  }),
+};
+
 const REMETENTE = process.env.EMAIL_REMETENTE || "IA Academy <onboarding@resend.dev>";
 // Mesmo endereço, com o nome da MIAI, enquanto o domínio da MIAI não estiver verificado no Resend
 const REMETENTE_MIAI = process.env.EMAIL_REMETENTE_MIAI || "MIAI Academy <" + (REMETENTE.match(/<([^>]+)>/) || [null, REMETENTE])[1] + ">";

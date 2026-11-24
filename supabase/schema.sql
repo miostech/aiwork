@@ -483,3 +483,29 @@ $$;
 
 revoke all on function public.editfy_saldo(uuid) from public, anon, authenticated;
 revoke all on function public.editfy_consumir(uuid, numeric) from public, anon, authenticated;
+
+-- ── Editefy Sort: quem comprou o acesso de 12 meses (cópia de supabase/editefy_sort.sql do miostech/editfy-servidor) ──
+-- O Sort é vendido à parte do Editefy. Cada compra (ou cortesia) é uma linha, com o vencimento 12 meses depois da
+-- compra. Tem acesso quem não está bloqueado e tem uma linha não reembolsada que ainda não venceu (vale a que vence
+-- por último). O site (aviso do Stripe) cria a linha na compra e preenche revogado_em no reembolso; o servidor só lê.
+-- Renovação: uma linha nova; se ainda faltar tempo, o site soma (vence_em = vencimento atual + 12 meses). A cada compra
+-- e reembolso o site refaz o vence_em das linhas do Stripe daquele aluno: para dar tempo a mais à mão, crie uma
+-- cortesia (as linhas "manual" o site não muda).
+-- Cortesia à mão: insert into editefy_sort_acessos (aluno_id, pacote, origem, referencia)
+--                 values ('<id do aluno>', 'cortesia', 'manual', 'cortesia: <motivo>');
+
+create table if not exists public.editefy_sort_acessos (
+  id          uuid primary key default gen_random_uuid(),
+  aluno_id    uuid not null references public.alunos (id) on delete cascade,
+  pacote      text not null,                    -- 'sort-12-meses' ou 'cortesia'
+  origem      text not null,                    -- 'stripe' ou 'manual'
+  referencia  text unique,                      -- sessão de pagamento do Stripe (cs_...) ou uma anotação da cortesia
+  criado_em   timestamptz not null default now(),
+  vence_em    timestamptz not null default (now() + interval '12 months'),
+  revogado_em timestamptz                       -- preenchido = reembolsado: o acesso acaba na hora
+);
+
+create index if not exists editefy_sort_acessos_aluno on public.editefy_sort_acessos (aluno_id);
+
+-- Só o servidor e o site (chave secreta) mexem nesta tabela
+alter table public.editefy_sort_acessos enable row level security;
