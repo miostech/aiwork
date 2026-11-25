@@ -2,10 +2,12 @@
 <html lang="pt-BR">
 <!--
   DEMONSTRAÇÃO DO EDITEFY SORT (editefy.com/sort/demonstracao, embutida em editfy/sort.html)
-  Cópia da página que a pessoa recebe no fim de uma organização (editfy_servidor/sort/pagina.html do editfy-servidor),
-  com arquivos INVENTADOS no lugar dos dados (nenhum arquivo real de cliente). Mudanças em relação à original:
-  a faixa "Demonstração" no topo, as miniaturas desenhadas (emoji num fundo), o botão do zip que não baixa nada e a
-  animação que só começa quando aparece na tela. Se a página do servidor mudar, copie de novo e refaça essas partes.
+  Cópia da página que a pessoa recebe no fim de uma organização (editfy_servidor/sort/pagina.html do editfy-servidor,
+  a versão de 24/11/2026 com o monte em cima da câmera, as pastinhas e a busca), com arquivos INVENTADOS no lugar dos
+  dados (nenhum arquivo real de cliente). Mudanças em relação à original: a faixa "Demonstração" no topo, as
+  miniaturas desenhadas (emoji num fundo), o botão do zip que não baixa nada, a animação que só começa quando aparece
+  na tela e, dentro da página de vendas, só a barra, a câmera, as pastas e a busca. Se a página do servidor mudar,
+  copie de novo e refaça essas partes.
 -->
 <head>
 <meta charset="utf-8">
@@ -28,14 +30,15 @@
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--fundo);color:var(--texto)}
-body{font:16px/1.55 var(--f);overflow-x:hidden;-webkit-font-smoothing:antialiased;
+body{display:flow-root;font:16px/1.55 var(--f);overflow-x:hidden;-webkit-font-smoothing:antialiased;
   background-image:radial-gradient(800px 480px at 12% -8%,rgba(139,92,246,.22),transparent 70%),
                    radial-gradient(700px 520px at 100% 40%,rgba(109,40,217,.16),transparent 70%);
   background-attachment:fixed}
-.wrap{max-width:1160px;margin:0 auto;padding:0 24px 72px}
+/* em telas grandes o JS aumenta a página inteira (ajustarTamanho) até ocupar a tela, sem passar dela */
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px 16px;transform-origin:50% 0}
 
 /* barra do topo, como no site */
-.barra{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--borda)}
+.barra{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--borda)}
 .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
 .logo svg{width:32px;height:32px;display:block}
 .logo span{color:var(--suave);font-weight:700}
@@ -53,130 +56,161 @@ button:disabled{background:var(--cartao-2);color:var(--apagado);cursor:default}
 #denovo:disabled{color:var(--apagado)}
 
 /* baixar as pastas (o zip) */
-.baixar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:22px 0 0}
+.baixar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:14px 0 0}
 .zip{display:inline-flex;align-items:center;gap:10px;font:700 16px/1 var(--f);color:#fff;text-decoration:none;
-  background:var(--roxo);border-radius:14px;padding:16px 22px;box-shadow:0 12px 30px rgba(139,92,246,.35);transition:background .2s,transform .15s}
+  background:var(--roxo);border-radius:14px;padding:14px 22px;box-shadow:0 12px 30px rgba(139,92,246,.35);transition:background .2s,transform .15s}
 .zip:hover{background:#7C4DEB;transform:translateY(-1px)}
 .zip svg{width:20px;height:20px}
 .zip-info{font-size:13px;color:var(--suave);line-height:1.5}
 .zip-info b{color:var(--texto);font-weight:700}
 
 /* chamada */
-.chamada{padding:44px 0 26px}
+.chamada{padding:14px 0 10px}
 .olho{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--roxo-claro)}
-h1{margin:12px 0 0;font-weight:800;font-size:64px;line-height:1.02;letter-spacing:-.03em}
+h1{margin:4px 0 0;font-weight:800;font-size:38px;line-height:1.02;letter-spacing:-.03em}
 h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{margin:14px 0 0;color:var(--suave);font-size:17px}
+.sub{margin:8px 0 0;color:var(--suave);font-size:15px}
 
 /* números */
-.numeros{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:8px 0 22px}
-.num{background:var(--cartao);border:1px solid var(--borda);border-radius:var(--raio);padding:16px 18px}
+.numeros{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:0 0 14px}
+.num{background:var(--cartao);border:1px solid var(--borda);border-radius:var(--raio);padding:10px 14px}
 .num small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--suave)}
-.num b{display:block;margin-top:8px;font-size:38px;font-weight:800;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.num b{display:block;margin-top:4px;font-size:26px;font-weight:800;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .num:first-child b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .num b.pula{animation:pula .35s ease}
 @keyframes pula{40%{transform:translateY(-4px)}}
 
-/* cena: a câmera no centro de toda a largura, sem caixa; as pastas embaixo */
-.cena{display:block}
-.palco{position:relative;height:420px;overflow:visible;isolation:isolate}
-.palco::before{content:"";position:absolute;left:50%;top:50%;width:620px;height:620px;margin:-310px 0 0 -310px;z-index:-1;pointer-events:none;
-  background:radial-gradient(circle,rgba(139,92,246,.34),transparent 62%)}
-.fila{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--suave);
-  background:var(--cartao-2);border:1px solid var(--borda);border-radius:999px;padding:6px 12px;white-space:nowrap}
-.fila b{color:var(--texto);font-weight:800;font-size:14px}
-.camera{position:absolute;left:50%;top:50%;width:200px;height:162px;margin:-81px 0 0 -100px;z-index:5;
+/* cena: pastas de fotos à esquerda, a câmera sempre no centro, pastas de vídeos à direita.
+   Primeiro todas as fotos saem da câmera e se juntam num monte em cima dela; depois cada uma voa para a sua pasta. */
+.cena{display:grid;grid-template-columns:minmax(0,1fr) 360px minmax(0,1fr);gap:20px;align-items:start}
+.lado{min-width:0;transition:opacity .4s}
+.lado.vazio{opacity:0}
+.titulo-lado{display:flex;align-items:center;gap:8px;margin:2px 0 10px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--suave)}
+.titulo-lado i{width:7px;height:7px;border-radius:50%;background:var(--roxo-claro)}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:8px;align-items:start}
+
+.palco{position:relative;z-index:3;height:400px;isolation:isolate}
+.palco::before{content:"";position:absolute;left:50%;top:50%;width:520px;height:520px;margin:-260px 0 0 -260px;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(139,92,246,.30),transparent 62%)}
+.camera{position:absolute;left:50%;top:72%;width:170px;height:138px;margin:-69px 0 0 -85px;z-index:5;
   filter:drop-shadow(0 20px 40px rgba(139,92,246,.45));animation:flutua 3.4s ease-in-out infinite}
 .camera svg{width:100%;height:100%;display:block;overflow:visible}
 .c-lampada{fill:#EDE9FE;transition:fill .12s}
 .camera.dispara .c-lampada{fill:#FFFFFF}
 .c-diafragma{transform-origin:100px 100px;transition:transform .3s ease}
 .camera.dispara .c-diafragma{transform:rotate(70deg) scale(.8)}
-.camera .ok{position:absolute;top:-12px;right:-6px;width:44px;height:44px;border-radius:50%;background:var(--verde);color:#062712;
-  font:800 22px/44px var(--f);text-align:center;transform:scale(0);transition:transform .5s cubic-bezier(.3,1.7,.5,1);box-shadow:0 8px 24px rgba(34,197,94,.45)}
+.camera .ok{position:absolute;top:-12px;right:-6px;width:40px;height:40px;border-radius:50%;background:var(--verde);color:#062712;
+  font:800 20px/40px var(--f);text-align:center;transform:scale(0);transition:transform .5s cubic-bezier(.3,1.7,.5,1);box-shadow:0 8px 24px rgba(34,197,94,.45)}
 .camera.feito .ok{transform:scale(1)}
-@keyframes flutua{50%{transform:translateY(-7px)}}
-.flash{position:absolute;left:50%;top:50%;width:520px;height:520px;margin:-260px 0 0 -260px;pointer-events:none;opacity:0;z-index:6;
+@keyframes flutua{50%{transform:translateY(-6px)}}
+.flash{position:absolute;left:50%;top:72%;width:300px;height:300px;margin:-150px 0 0 -150px;pointer-events:none;opacity:0;z-index:6;
   background:radial-gradient(circle,rgba(237,233,254,.9),rgba(237,233,254,0) 60%)}
-.legenda{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:14px;font-weight:600;color:var(--suave)}
-/* cada arquivo sai como um card de Reels */
-.reel{position:absolute;left:50%;top:50%;width:98px;height:174px;margin:-87px 0 0 -49px;border-radius:14px;overflow:hidden;
-  background:var(--cartao-2) center/cover no-repeat;border:1px solid rgba(255,255,255,.14);
-  box-shadow:0 16px 36px rgba(0,0,0,.5),0 0 0 1px rgba(139,92,246,.25);z-index:4;will-change:transform,opacity;opacity:0;
-  display:flex;align-items:center;justify-content:center;font-size:34px}
-.reel .leg{position:absolute;left:0;right:0;bottom:0;padding:22px 8px 8px;font-size:10.5px;font-weight:700;line-height:1.25;color:#fff;
-  background:linear-gradient(transparent,rgba(15,13,22,.92));display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.legenda{position:absolute;left:0;right:0;bottom:0;text-align:center;font-size:14px;font-weight:600;color:var(--suave);transition:opacity .3s}
+
+/* no fim a câmera sobe e aparece a busca: acha arquivos pelas palavras do nome (lulu, casal, praia…) */
+.camera{transition:top .6s cubic-bezier(.3,1.2,.4,1),opacity .3s}
+.palco.pronto .camera{top:40%}
+.palco.pronto .legenda{bottom:auto;top:calc(40% + 76px)}
+.busca{position:absolute;left:50%;bottom:44px;width:min(330px,94%);transform:translate(-50%,8px);opacity:0;pointer-events:none;
+  transition:opacity .4s,transform .4s;z-index:8}
+.palco.pronto .busca{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.busca label{display:flex;align-items:center;gap:10px;height:44px;padding:0 8px 0 14px;background:#0B0A10;border:1px solid var(--borda-forte);
+  border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.45);cursor:text}
+.busca label:focus-within{border-color:var(--roxo)}
+.busca svg{flex:none;width:16px;height:16px;color:var(--suave)}
+.busca input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--texto);font:500 14px var(--f);-webkit-appearance:none;appearance:none}
+.busca input::placeholder{color:var(--apagado)}
+.busca input::-webkit-search-cancel-button{display:none}
+.busca .limpar{display:none;flex:none;width:26px;height:26px;padding:0;border-radius:50%;background:var(--cartao-2);color:var(--suave);
+  font-size:15px;line-height:1;align-items:center;justify-content:center}
+.busca .limpar:hover{background:var(--borda-forte);color:var(--texto);transform:none}
+.sugestoes{position:absolute;left:0;right:0;bottom:6px;display:flex;justify-content:center;gap:6px;overflow:hidden;opacity:0;pointer-events:none;
+  transition:opacity .4s;z-index:8}
+.palco.pronto .sugestoes{opacity:1;pointer-events:auto}
+.sugestoes button{flex:none;font:600 12px/1 var(--f);padding:7px 11px;border-radius:999px;background:var(--cartao);border:1px solid var(--borda);color:var(--suave)}
+.sugestoes button:hover{background:var(--cartao-2);border-color:var(--borda-forte);color:var(--texto);transform:none}
+.achados{position:absolute;left:0;right:0;top:0;bottom:100px;display:none;flex-direction:column;z-index:7}
+.palco.buscando .achados{display:flex}
+.palco.buscando .camera,.palco.buscando .legenda{opacity:0;pointer-events:none}
+.achados .topo{min-height:20px;margin:0 0 8px;text-align:center;font-size:13px;font-weight:600;color:var(--suave);overflow-wrap:anywhere}
+.achados .topo b{color:var(--texto)}
+.grade-achados{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;align-content:start;padding:2px}
+.achado{aspect-ratio:1;border-radius:8px;background:var(--cartao-2) center/cover no-repeat;border:2px solid var(--borda-forte);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+.achado:hover,.achado.sel{border-color:var(--roxo-claro)}
+.pasta.apagada{opacity:.3}
+.pasta .achou{flex:none;font-size:10px;font-weight:800;line-height:1;color:#0F0D16;background:var(--cor);border-radius:999px;padding:3px 7px}
+.pasta li.fora{display:none}
+/* cada arquivo vira um quadradinho com moldura clara, como uma foto impressa */
+.foto{position:absolute;left:50%;top:72%;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:7px;z-index:4;opacity:0;
+  border:2px solid rgba(244,242,250,.92);background:var(--cartao-2) center/cover no-repeat;box-shadow:0 4px 12px rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;font-size:13px;will-change:transform}
 .confete{position:absolute;left:50%;top:50%;width:8px;height:13px;border-radius:2px;z-index:7;pointer-events:none}
 
-/* pastas */
-.pastas{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
-.pasta{background:var(--cartao);border:1px solid var(--borda);border-radius:24px;padding:18px 18px 12px;transition:transform .3s ease,border-color .3s,box-shadow .3s}
-.pasta.pulo{transform:translateY(-4px);border-color:var(--cor);box-shadow:0 12px 34px color-mix(in srgb,var(--cor) 25%,transparent)}
-.pasta .cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.pasta .nome{display:flex;align-items:center;gap:10px;min-width:0}
-.pasta .ico{flex:none;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  background:color-mix(in srgb,var(--cor) 18%,transparent);border:1px solid color-mix(in srgb,var(--cor) 35%,transparent)}
-.pasta .ico svg{width:17px;height:17px}
-.pasta h3{margin:0;font-size:18px;font-weight:800;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pasta .nova{flex:none;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--roxo-claro);
-  background:rgba(139,92,246,.14);border-radius:999px;padding:3px 8px}
-.pasta .qtd{font-size:32px;font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--cor);font-variant-numeric:tabular-nums}
-.minis{display:flex;flex-wrap:wrap;gap:6px;min-height:20px;margin:14px 0 10px}
-.mini{width:44px;height:78px;border-radius:9px;background:var(--cartao-2) center/cover no-repeat;border:1px solid var(--borda-forte);
-  display:flex;align-items:center;justify-content:center;font-size:18px;animation:pousa .45s cubic-bezier(.3,1.5,.5,1) both}
-.mini.extra{font-size:13px;font-weight:800;color:var(--suave);background:var(--cartao-2);animation:none}
-@keyframes pousa{from{opacity:0;transform:translateY(-12px) scale(.7)}to{opacity:1;transform:none}}
-.pasta ul{list-style:none;margin:0;padding:0}
-.pasta li{padding:9px 0;border-top:1px solid var(--borda);font-size:13px;animation:entra .4s ease both}
+/* pastinhas: ícone e nome, o número no canto e uma fileira de miniaturas encavaladas.
+   Cada pasta aparece quando o primeiro arquivo voa para ela; um toque abre os nomes. */
+.pasta{position:relative;background:var(--cartao);border:1px solid var(--borda);border-radius:16px;padding:10px 12px;cursor:pointer;
+  transition:transform .3s ease,border-color .3s,box-shadow .3s}
+.pasta:hover{border-color:var(--borda-forte)}
+.pasta.escondida{opacity:0;visibility:hidden}
+.pasta.pulo{transform:translateY(-2px);border-color:var(--cor);box-shadow:0 8px 24px color-mix(in srgb,var(--cor) 22%,transparent)}
+.pasta .cab{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pasta .nome{display:flex;align-items:center;gap:7px;min-width:0}
+.pasta .ico{flex:none;display:flex;color:var(--cor)}
+.pasta .ico svg{width:15px;height:15px}
+.pasta h3{margin:0;font-size:13.5px;font-weight:700;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pasta .nova{flex:none;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--roxo-claro);
+  background:rgba(139,92,246,.14);border-radius:999px;padding:2px 6px}
+.pasta .qtd{flex:none;font-size:16px;font-weight:800;line-height:1;color:var(--cor);font-variant-numeric:tabular-nums}
+.minis{display:flex;height:28px;margin-top:9px;overflow:hidden}
+.mini{flex:none;width:28px;height:28px;border-radius:7px;background:var(--cartao-2) center/cover no-repeat;border:2px solid var(--cartao);
+  box-shadow:0 2px 6px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:12px;
+  animation:pousa .4s cubic-bezier(.3,1.5,.5,1) both}
+.mini + .mini{margin-left:-8px}
+@keyframes pousa{from{opacity:0;transform:translateY(-8px) scale(.7)}to{opacity:1;transform:none}}
+.pasta ul{list-style:none;margin:8px 0 0;padding:0}
+.pasta:not(.aberta) ul{display:none}
+.pasta li{padding:6px 0;border-top:1px solid var(--borda);font-size:12px}
 .pasta li .novo{display:block;overflow-wrap:anywhere;font-weight:600}
-.pasta li .velho{display:block;color:var(--apagado);font-size:12px;overflow-wrap:anywhere}
-@keyframes entra{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-.pasta:not(.aberta) li:nth-child(n+7){display:none}
-.pasta .mais{display:none;width:100%;margin-top:2px;padding:10px 0 4px;background:none;border-top:1px solid var(--borda);border-radius:0;
-  color:var(--roxo-claro);font-size:13px;font-weight:700;text-align:left}
-.pasta .mais:hover{background:none;color:var(--texto);transform:none}
-.deixados{margin-top:16px;color:var(--suave);font-size:13px}
-.rodape{margin-top:44px;padding-top:20px;border-top:1px solid var(--borda);display:flex;justify-content:center;gap:8px;align-items:center;color:var(--apagado);font-size:13px}
+.pasta li .velho{display:block;color:var(--apagado);font-size:11px;overflow-wrap:anywhere}
+.dica,.deixados{margin-top:10px;color:var(--suave);font-size:13px;text-align:center}
+.rodape{margin-top:24px;padding-top:16px;border-top:1px solid var(--borda);display:flex;justify-content:center;gap:8px;align-items:center;color:var(--apagado);font-size:13px}
 .rodape i{width:7px;height:7px;border-radius:50%;background:var(--verde)}
 
-@media (max-width:900px){
-  .palco{height:380px}
+@media (max-width:999px){
+  .cena{grid-template-columns:minmax(0,1fr)}
+  .palco{order:-1;height:360px}
   .numeros{grid-template-columns:repeat(3,1fr)}
-  h1{font-size:52px}
 }
 @media (max-width:520px){
-  .wrap{padding:0 16px 60px}
+  .wrap{padding:0 16px 40px}
+  .barra .status{display:none}
+  .chamada{padding:14px 0 10px}
+  h1{font-size:32px}
+  .numeros{grid-template-columns:repeat(2,1fr);gap:10px}
+  .num:last-child{grid-column:1 / -1}
+  .num b{font-size:24px}
+  .palco{height:330px}
+  .palco::before{width:400px;height:400px;margin:-200px 0 0 -200px}
+  .camera{width:140px;height:114px;margin:-57px 0 0 -70px}
+  .palco.pronto .legenda{top:calc(40% + 64px)}
+  .achados{bottom:96px}
+  .grade{grid-template-columns:repeat(2,minmax(0,1fr))}
   .zip{width:100%;justify-content:center}
   /* no celular a câmera vem logo depois do botão do zip, para a animação aparecer sem rolar; os números vão depois */
   .wrap{display:flex;flex-direction:column}
-  .cena{order:1} .numeros{order:2;margin-top:18px} .rodape{order:3}
-  .barra .status{display:none}
-  .chamada{padding:30px 0 18px}
-  h1{font-size:40px}
-  .numeros{grid-template-columns:repeat(2,1fr);gap:10px}
-  .num:last-child{grid-column:1 / -1}
-  .num b{font-size:32px}
-  .palco{height:340px}
-  .palco::before{width:420px;height:420px;margin:-210px 0 0 -210px}
-  .camera{width:160px;height:130px;margin:-65px 0 0 -80px}
-  .reel{width:82px;height:146px;margin:-73px 0 0 -41px}
+  .cena,.dica,.deixados{order:1} .numeros{order:2;margin-top:18px} .rodape{order:3}
 }
 @media (prefers-reduced-motion: reduce){
-  .camera,.status i{animation:none} .mini,.pasta li{animation:none} .pasta{transition:none}
+  .camera,.status i{animation:none} .mini{animation:none} .pasta,.lado{transition:none}
 }
 .demo{position:sticky;top:0;z-index:20;padding:10px 16px;text-align:center;font-size:13px;font-weight:600;color:var(--texto);
   background:rgba(139,92,246,.22);border-bottom:1px solid var(--borda-forte);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .demo a{color:var(--roxo-claro)}
-/* dentro da página de vendas: só a barra, a câmera e as pastas (com as miniaturas), sem a lista de nomes */
+/* dentro da página de vendas: só a barra, a câmera, as pastas e a busca (sem o título, o zip e os números) */
 .embutida body{background-attachment:scroll}
 .embutida .chamada,.embutida .numeros,.embutida .rodape,.embutida .deixados{display:none}
-.embutida .pasta ul,.embutida .pasta .mais{display:none!important}
-.embutida .wrap{padding-bottom:24px}
-.embutida .pastas{grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
-.embutida .pasta{padding:14px 14px 6px;border-radius:18px}
-.embutida .pasta h3{font-size:15px}
-.embutida .pasta .qtd{font-size:24px}
-@media (max-width:520px){ .embutida .pasta .ico{display:none} .embutida .pasta h3{font-size:14.5px} }
+.embutida .wrap{padding-bottom:20px}
 </style>
 </head>
 <body>
@@ -219,9 +253,9 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
     <div class="num"><small>Renomeados</small><b id="nRenom">0</b></div>
   </div>
 
-  <div class="cena">
+  <div class="cena" id="cena">
+    <section class="lado vazio" id="ladoFotos"><div class="titulo-lado"><i></i>Fotos</div><div class="grade" id="gradeFotos"></div></section>
     <div class="palco" id="palco">
-      <div class="fila"><b id="restam">0</b> na fila</div>
       <div class="flash" id="flash"></div>
       <div class="camera" id="camera" aria-hidden="true">
         <svg viewBox="0 0 200 162">
@@ -254,23 +288,31 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
         <div class="ok">✓</div>
       </div>
       <div class="legenda" id="legenda"></div>
+      <div class="achados" id="achados"><div class="topo" id="topoAchados"></div><div class="grade-achados" id="gradeAchados"></div></div>
+      <div class="busca">
+        <label>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="q" type="search" autocomplete="off" spellcheck="false" aria-label="Buscar nos arquivos" placeholder="Busque por uma palavra" disabled>
+          <button type="button" class="limpar" id="limpar" aria-label="Limpar a busca">×</button>
+        </label>
+      </div>
+      <div class="sugestoes" id="sugestoes"></div>
     </div>
-    <div>
-      <div class="pastas" id="pastas"></div>
-      <div class="deixados" id="deixados"></div>
-    </div>
+    <section class="lado vazio" id="ladoVideos"><div class="titulo-lado"><i></i>Vídeos</div><div class="grade" id="gradeVideos"></div></section>
   </div>
+  <div class="dica" id="dica"></div>
+  <div class="deixados" id="deixados"></div>
 
   <div class="rodape"><i></i><span id="rodape">Editefy Sort</span></div>
 </div>
 <script>
 const D = (Object.assign({"pastas": [{"nome": "Falando", "cor": "#A78BFA", "nova": false}, {"nome": "Narração", "cor": "#F472B6", "nova": false}, {"nome": "B-roll", "cor": "#22C55E", "nova": false}, {"nome": "Fotos", "cor": "#60A5FA", "nova": false}, {"nome": "Prints", "cor": "#FBBF24", "nova": false}, {"nome": "Músicas", "cor": "#FB923C", "nova": false}, {"nome": "Sons", "cor": "#A78BFA", "nova": false}, {"nome": "Editados", "cor": "#F472B6", "nova": false}, {"nome": "Outros", "cor": "#A7A1B8", "nova": false}], "arquivos": [{"antigo": "IMG_4801.MOV", "novo": "2026-11-02_bom-dia-com-cafe-na-varanda.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "☕", "fundo": "#4c3f73"}, {"antigo": "IMG_4803.HEIC", "novo": "2026-11-02_cafe-da-manha-com-frutas.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🍓", "fundo": "#7c2d3a"}, {"antigo": "Screenshot 2026-11-03 at 09.12.png", "novo": "2026-11-03_print-comentario-de-seguidora.png", "pasta": "Prints", "tipo": "imagem", "emoji": "💬", "fundo": "#1f3a5f"}, {"antigo": "IMG_4812.MOV", "novo": "2026-11-03_dica-de-autoestima-pela-manha.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "🪞", "fundo": "#5b3a75"}, {"antigo": "Gravação 14.m4a", "novo": "2026-11-04_narracao-passeio-em-lisboa.m4a", "pasta": "Narração", "tipo": "áudio"}, {"antigo": "IMG_4820.MOV", "novo": "2026-11-04_bonde-amarelo-subindo-a-rua.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🚋", "fundo": "#7a5a12"}, {"antigo": "IMG_4821.MOV", "novo": "2026-11-04_por-do-sol-no-miradouro.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🌅", "fundo": "#7c3a1d"}, {"antigo": "IMG_4822.HEIC", "novo": "2026-11-04_selfie-no-miradouro.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🤳", "fundo": "#3a4f7c"}, {"antigo": "IMG_4830.HEIC", "novo": "2026-11-05_pasteis-de-nata-na-mesa.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🥮", "fundo": "#7a5a12"}, {"antigo": "final_v3_AGORA_VAI.mp4", "novo": "2026-11-05_reel-editado-autoestima.mp4", "pasta": "Editados", "tipo": "vídeo", "emoji": "🎬", "fundo": "#4c3f73"}, {"antigo": "IMG_4841.MOV", "novo": "2026-11-06_storytime-a-amiga-que-sumiu.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "🗣️", "fundo": "#5b3a75"}, {"antigo": "IMG_4845.MOV", "novo": "2026-11-06_maos-mexendo-a-massa-do-bolo.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🥣", "fundo": "#6b4a2a"}, {"antigo": "Gravação 15.m4a", "novo": "2026-11-06_narracao-receita-de-bolo.m4a", "pasta": "Narração", "tipo": "áudio"}, {"antigo": "IMG_4850.HEIC", "novo": "2026-11-07_bolo-de-cenoura-pronto.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🍰", "fundo": "#7c3a1d"}, {"antigo": "IMG_4851.PNG", "novo": "2026-11-07_print-metricas-do-reels.png", "pasta": "Prints", "tipo": "imagem", "emoji": "📊", "fundo": "#1f3a5f"}, {"antigo": "lofi calma (1).mp3", "novo": "2026-11-07_musica-lofi-calma.mp3", "pasta": "Músicas", "tipo": "áudio"}, {"antigo": "whoosh.wav", "novo": "2026-11-07_som-de-transicao-whoosh.wav", "pasta": "Sons", "tipo": "áudio"}, {"antigo": "IMG_4860.MOV", "novo": "2026-11-08_resposta-da-caixinha-sobre-dinheiro.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "💸", "fundo": "#2f5a3a"}, {"antigo": "IMG_4862.JPG", "novo": "2026-11-08_look-do-dia-no-espelho.jpg", "pasta": "Fotos", "tipo": "imagem", "emoji": "👗", "fundo": "#5b3a75"}, {"antigo": "IMG_4866.PNG", "novo": "2026-11-08_print-caixinha-de-perguntas.png", "pasta": "Prints", "tipo": "imagem", "emoji": "❓", "fundo": "#1f3a5f"}, {"antigo": "IMG_4870.MOV", "novo": "2026-11-09_chuva-na-janela-camera-lenta.mov", "pasta": "B-roll", "tipo": "vídeo", "emoji": "🌧️", "fundo": "#2c3e57"}, {"antigo": "IMG_4871.HEIC", "novo": "2026-11-09_jantar-com-as-amigas.heic", "pasta": "Fotos", "tipo": "imagem", "emoji": "🥂", "fundo": "#7c2d3a"}, {"antigo": "roteiro.pdf", "novo": "2026-11-09_roteiro-da-semana.pdf", "pasta": "Outros", "tipo": "outro"}, {"antigo": "IMG_4880.MOV", "novo": "2026-11-10_gancho-ninguem-te-conta-isso.mov", "pasta": "Falando", "tipo": "vídeo", "emoji": "🤫", "fundo": "#4c3f73"}], "deixados": []}, {quando: Date.now(), expira: Math.floor(Date.now() / 1000) + 7 * 86400, zip: {link: '#demonstracao', nome: '', mb: 2870}})) || {quando: 0, pastas: [], arquivos: [], deixados: [], zip: null, expira: 0};
-// Demonstração: miniaturas desenhadas (um emoji num fundo colorido, em 9:16) no lugar das fotos de verdade
+// Demonstração: miniaturas desenhadas (um emoji num fundo colorido) no lugar das fotos de verdade
 D.arquivos.forEach(a => {
   if(!a.emoji) return;
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 160"><defs><linearGradient id="f" x1="0" y1="0" x2="0" y2="1">'
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90"><defs><linearGradient id="f" x1="0" y1="0" x2="0" y2="1">'
     + '<stop offset="0" stop-color="' + a.fundo + '"/><stop offset="1" stop-color="#0F0D16"/></linearGradient></defs>'
-    + '<rect width="90" height="160" fill="url(#f)"/><text x="45" y="92" font-size="42" text-anchor="middle">' + a.emoji + '</text></svg>';
+    + '<rect width="90" height="90" fill="url(#f)"/><text x="45" y="60" font-size="44" text-anchor="middle">' + a.emoji + '</text></svg>';
   // parênteses e aspas também codificados: a miniatura entra num url(...) do CSS sem aspas
   a.mini = "data:image/svg+xml," + encodeURIComponent(svg).replace(/[()']/g, c => "%" + c.charCodeAt(0).toString(16).toUpperCase());
 });
@@ -279,13 +321,19 @@ const CORES_CONFETE = ["#A78BFA","#8B5CF6","#C4B5FD","#F0ABFC","#22C55E","#F4F2F
 const ICONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2.2h7.5A2.5 2.5 0 0 1 21 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>';
 const reduz = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 const $ = id => document.getElementById(id);
+const VISIVEIS = 7;        // miniaturas que cada pasta mostra
+const LADO = 28, SOBRE = 8; // tamanho da miniatura e quanto uma cobre a outra
+const CAM_Y = .72;          // altura da câmera dentro do palco (a mesma do CSS)
 let rodada = 0;
 const cont = {nTotal:0, nFotos:0, nVideos:0, nPastas:0, nRenom:0};
 
 function el(tag, cls, txt){ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; }
 function fundo(e, a){ if(a.mini){ e.style.backgroundImage = "url(" + a.mini + ")"; } else { e.prepend(document.createTextNode(EMOJI[a.tipo] || "📄")); } }
-function legenda(nome){ return nome.replace(/^\d{4}-\d\d-\d\d_/, "").replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "); }
 function plural(n, um, varios){ return n + " " + (n === 1 ? um : varios); }
+function soma(id, q){
+  cont[id] += q; const b = $(id); b.textContent = cont[id];
+  if(!reduz){ b.classList.remove("pula"); void b.offsetWidth; b.classList.add("pula"); }
+}
 function data(ms, hora){
   if(!ms) return "";
   const o = hora ? {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"} : {day:"2-digit", month:"2-digit"};
@@ -305,9 +353,12 @@ function mb(m){ return m >= 1024 ? (m / 1024).toFixed(1).replace(".", ",") + " G
   }
   $("rodape").textContent = "Editefy Sort" + (vale ? " · os arquivos ficam guardados até " + vale + " e depois são apagados" : "");
 })();
-function soma(id, q){
-  cont[id] += q; const b = $(id); b.textContent = cont[id];
-  if(!reduz){ b.classList.remove("pula"); void b.offsetWidth; b.classList.add("pula"); }
+
+// a pasta vai para o lado das fotos ou dos vídeos conforme a maioria dos arquivos dela
+function ladoDa(nome){
+  let f = 0, v = 0;
+  ((D && D.arquivos) || []).forEach(a => { if(a.pasta !== nome) return; if(a.tipo === "vídeo" || a.tipo === "áudio") v++; else f++; });
+  return v > f ? "Videos" : "Fotos";
 }
 
 function montar(){
@@ -318,49 +369,71 @@ function montar(){
                                      : "Nada novo desta vez.";
   $("status").classList.remove("ok"); $("statusTxt").textContent = arqs.length ? "Organizando…" : "Nada para organizar";
   $("camera").classList.remove("feito", "dispara");
-  $("restam").textContent = arqs.length;
   $("legenda").textContent = arqs.length ? "preparando seus arquivos…" : "nada para organizar desta vez";
-  $("palco").querySelectorAll(".reel,.confete").forEach(c => c.remove());
-  const caixa = $("pastas"); caixa.innerHTML = "";
+  $("dica").textContent = "";
+  $("palco").classList.remove("pronto", "buscando");
+  $("q").value = ""; $("q").disabled = true; $("limpar").style.display = "none";
+  $("gradeAchados").innerHTML = ""; $("topoAchados").textContent = ""; $("sugestoes").innerHTML = "";
+  arqs.forEach(a => { a._txt = normaliza(palavras(a.novo || "") + " " + a.pasta + " " + palavras(a.antigo || "")); });
+  $("palco").querySelectorAll(".foto,.confete").forEach(c => c.remove());
+  ["Fotos", "Videos"].forEach(k => { $("grade" + k).innerHTML = ""; $("lado" + k).classList.add("vazio"); });
   const alvo = {};
   (D.pastas || []).forEach(p => {
-    const box = el("div", "pasta"); box.style.setProperty("--cor", p.cor);
+    const lado = ladoDa(p.nome);
+    const box = el("div", "pasta escondida"); box.style.setProperty("--cor", p.cor);
+    box.title = "Toque para ver os nomes";
     const cab = el("div", "cab"); const nome = el("div", "nome");
-    const ico = el("div", "ico"); ico.innerHTML = ICONE; ico.style.color = p.cor;
+    const ico = el("span", "ico"); ico.innerHTML = ICONE;
     nome.append(ico, el("h3", null, p.nome));
     if(p.nova) nome.append(el("span", "nova", "nova"));
     const qtd = el("div", "qtd", "0"); cab.append(nome, qtd);
     const minis = el("div", "minis"); const ul = el("ul");
-    const mais = el("button", "mais");
-    const t = {box, qtd, minis, ul, mais, n: 0, lancados: 0};
-    mais.addEventListener("click", () => { box.classList.toggle("aberta"); rotuloMais(t); });
-    box.append(cab, minis, ul, mais); caixa.append(box);
-    alvo[p.nome] = t;
+    box.append(cab, minis, ul);
+    box.addEventListener("click", () => box.classList.toggle("aberta"));
+    $("grade" + lado).append(box);
+    alvo[p.nome] = {box, nome, qtd, minis, ul, lado, n: 0, lancados: 0};
   });
+  ALVO = alvo;
   const d = D.deixados || [];
   $("deixados").textContent = d.length ? ("Ficaram onde estavam: " + d.join(", ")) : "";
+  ajustarTamanho();
   return {arqs, alvo};
 }
 
-// a lista de nomes mostra 6; o resto abre no botão
-function rotuloMais(t){
-  t.mais.style.display = t.n > 6 ? "block" : "none";
-  t.mais.textContent = t.box.classList.contains("aberta") ? "mostrar menos" : ("ver todos os " + t.n + " nomes");
+// no computador a página se ajusta à tela: cresce até encher (telas grandes) ou encolhe um pouco (até 80%) para caber
+// sem rolar. As pastas escondidas já ocupam o lugar delas, então a altura medida aqui é a do final.
+function ajustarTamanho(){
+  const w = document.querySelector(".wrap");
+  w.style.transform = ""; w.style.marginBottom = "";
+  if(innerWidth < 1000) return;
+  $("dica").textContent = $("dica").textContent || "\u00a0";
+  const h = w.offsetHeight;
+  const s = Math.max(.8, Math.min(innerWidth / (w.offsetWidth + 32), (innerHeight - 12) / h, 1.8));
+  if(Math.abs(s - 1) < .02) return;
+  w.style.transform = "scale(" + s.toFixed(3) + ")";
+  if(s < 1) w.style.marginBottom = Math.round((s - 1) * h) + "px";   // encolhida, a página também fica mais curta
+}
+let rz = 0;
+window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(ajustarTamanho, 150); });
+
+// a pasta (e o título do lado dela) aparece quando o primeiro arquivo vai para ela
+function mostrar(t, anima){
+  if(!t.box.classList.contains("escondida")) return;
+  t.box.classList.remove("escondida");
+  $("lado" + t.lado).classList.remove("vazio");
+  if(anima && !reduz && t.box.animate){
+    t.box.animate([{opacity: 0, transform: "scale(.85)"}, {opacity: 1, transform: "scale(1)"}],
+                  {duration: 420, easing: "cubic-bezier(.3,1.5,.5,1)"});
+  }
 }
 
 function chegar(a, alvo){
   const t = alvo[a.pasta]; if(!t) return;
+  mostrar(t, false);
   t.n++; t.qtd.textContent = t.n;
-  rotuloMais(t);
-  // até 40 miniaturas por pasta; depois um quadradinho "+N"
-  if(t.n <= 40){
-    const m = el("div", "mini"); fundo(m, a); m.title = a.novo; t.minis.append(m);
-  } else {
-    if(!t.extra){ t.extra = el("div", "mini extra"); t.minis.append(t.extra); }
-    t.extra.textContent = "+" + (t.n - 40);
-  }
-  const li = el("li"); li.append(el("span", "novo", a.novo), el("span", "velho", "era " + a.antigo)); t.ul.append(li);
-  if(!reduz){ t.box.classList.add("pulo"); setTimeout(() => t.box.classList.remove("pulo"), 340); }
+  if(t.n <= VISIVEIS){ const m = el("div", "mini"); fundo(m, a); m.title = a.novo; t.minis.append(m); }
+  const li = el("li"); li.append(el("span", "novo", a.novo), el("span", "velho", "era " + a.antigo)); li._txt = a._txt; t.ul.append(li);
+  if(!reduz){ t.box.classList.add("pulo"); clearTimeout(t.tp); t.tp = setTimeout(() => t.box.classList.remove("pulo"), 300); }
   soma("nTotal", 1);
   if(a.tipo === "imagem") soma("nFotos", 1);
   if(a.tipo === "vídeo" || a.tipo === "áudio") soma("nVideos", 1);
@@ -369,15 +442,17 @@ function chegar(a, alvo){
 }
 
 // o flash pisca no máximo 2 vezes por segundo, mesmo em rajada (seguro para quem é sensível a luz piscando)
-let ultimoFlash = 0;
+let ultimoFlash = 0, ultimoClique = 0;
 function clique(){
-  const cam = $("camera");
-  cam.classList.add("dispara"); setTimeout(() => cam.classList.remove("dispara"), 180);
-  cam.querySelector("svg").animate([{transform:"scale(1)"},{transform:"scale(.94,.92)"},{transform:"scale(1)"}], {duration: 220, easing: "ease-out"});
   const agora = performance.now();
+  if(agora - ultimoClique < 120) return;
+  ultimoClique = agora;
+  const cam = $("camera");
+  cam.classList.add("dispara"); setTimeout(() => cam.classList.remove("dispara"), 160);
+  cam.querySelector("svg").animate([{transform:"scale(1)"},{transform:"scale(.94,.92)"},{transform:"scale(1)"}], {duration: 200, easing: "ease-out"});
   if(agora - ultimoFlash >= 500){
     ultimoFlash = agora;
-    $("flash").animate([{opacity: 0}, {opacity: .9, offset: .18}, {opacity: 0}], {duration: 420, easing: "ease-out"});
+    $("flash").animate([{opacity: 0}, {opacity: .8, offset: .18}, {opacity: 0}], {duration: 420, easing: "ease-out"});
   }
 }
 
@@ -405,9 +480,88 @@ function terminar(minha){
   if(n){
     $("camera").classList.add("feito");
     $("legenda").textContent = plural(n, "arquivo no lugar ✨", "arquivos no lugar ✨");
+    $("dica").textContent = "Toque numa pasta para ver os nomes.";
     if(!reduz && Element.prototype.animate) confete();
+    // a câmera sobe e a busca aparece, com algumas palavras prontas para tocar
+    const sug = sugestoes();
+    $("q").placeholder = sug.length ? ("Busque por palavra, ex.: " + sug[0]) : "Busque por uma palavra";
+    $("q").disabled = false;
+    const caixa = $("sugestoes"); caixa.innerHTML = "";
+    sug.forEach(w => {
+      const b = el("button", null, w); b.type = "button";
+      b.addEventListener("click", () => { $("q").value = w; buscar(w); });
+      caixa.append(b);
+    });
+    $("palco").classList.add("pronto");
   }
   $("denovo").disabled = false;
+}
+
+// ---------- busca ----------
+let ALVO = {};
+const PARADAS = new Set(("de da do das dos na no nas nos com sem em um uma uns umas para pra por pela pelo pelos pelas " +
+  "e o a os as ao aos que mais muito muita foto fotos print prints tela imagem video videos img dia").split(" "));
+// palavras que todo mundo tem nos nomes: dá para buscar, mas não viram sugestão
+const GENERICAS = new Set("mulher homem pessoa pessoas sorrindo olhando posando sentada sentado frente costas lado perto".split(" "));
+function normaliza(s){ return (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+function palavras(nome){ return nome.replace(/^\d{4}-\d\d-\d\d_/, "").replace(/\.[^.]+$/, "").replace(/-\d+$/, "").replace(/[-_]+/g, " "); }
+
+// as palavras que mais aparecem nos nomes viram sugestões
+function sugestoes(){
+  const conta = {};
+  ((D && D.arquivos) || []).forEach(a => {
+    new Set(normaliza(palavras(a.novo || "")).split(/\s+/)).forEach(w => {
+      if(w.length >= 4 && !PARADAS.has(w) && !GENERICAS.has(w) && !/\d/.test(w)) conta[w] = (conta[w] || 0) + 1;
+    });
+  });
+  return Object.entries(conta).filter(([, n]) => n >= 2).sort((x, y) => y[1] - x[1]).slice(0, 5).map(([w]) => w);
+}
+
+function buscar(texto){
+  const termos = normaliza(texto).split(/\s+/).filter(Boolean);
+  const ativo = termos.length > 0;
+  const bate = s => termos.every(t => (s || "").includes(t));
+  $("palco").classList.toggle("buscando", ativo);
+  $("limpar").style.display = ativo ? "flex" : "none";
+  const grade = $("gradeAchados"), topo = $("topoAchados");
+  grade.innerHTML = ""; topo.textContent = "";
+  const porPasta = {};
+  if(ativo){
+    const achados = ((D && D.arquivos) || []).filter(a => bate(a._txt));
+    achados.forEach(a => { porPasta[a.pasta] = (porPasta[a.pasta] || 0) + 1; });
+    if(achados.length){
+      topo.append(el("b", null, plural(achados.length, "arquivo", "arquivos")), " com “" + texto.trim() + "”");
+    } else {
+      topo.textContent = "Nada com “" + texto.trim() + "”. Tente outra palavra.";
+    }
+    achados.slice(0, 400).forEach(a => {
+      const e = el("div", "achado"); fundo(e, a); e.title = a.pasta + " › " + a.novo;
+      e.addEventListener("click", () => {
+        grade.querySelectorAll(".sel").forEach(x => x.classList.remove("sel")); e.classList.add("sel");
+        topo.textContent = a.pasta + " › " + a.novo;
+      });
+      grade.append(e);
+    });
+  }
+  // marca as pastas que têm o que foi buscado e apaga as outras; dentro da pasta, a lista mostra só os nomes achados
+  Object.keys(ALVO).forEach(nome => {
+    const t = ALVO[nome], n = porPasta[nome] || 0;
+    t.box.classList.toggle("apagada", ativo && !n);
+    if(t.achou){ t.achou.remove(); t.achou = null; }
+    if(ativo && n){ t.achou = el("span", "achou", String(n)); t.nome.append(t.achou); }
+    t.ul.querySelectorAll("li").forEach(li => li.classList.toggle("fora", ativo && !bate(li._txt)));
+  });
+}
+$("q").addEventListener("input", e => buscar(e.target.value));
+$("q").addEventListener("keydown", e => { if(e.key === "Escape"){ e.target.value = ""; buscar(""); } });
+$("limpar").addEventListener("click", () => { $("q").value = ""; buscar(""); });
+
+// lugar de cada foto no monte, em cima da câmera (x e y contados a partir da lente)
+function lugarNoMonte(n, altura){
+  const raio = Math.max(50, Math.min(150, 9 * Math.sqrt(n) + 40, altura * .36));   // em tela baixa o monte fica menor e não sobe no texto
+  const ang = Math.random() * Math.PI * 2, r = raio * Math.sqrt(Math.random());
+  const centro = -altura * (CAM_Y - .36);
+  return {x: Math.cos(ang) * r, y: centro + Math.sin(ang) * r * .85, giro: (Math.random() - .5) * 50};
 }
 
 function tocar(){
@@ -415,61 +569,79 @@ function tocar(){
   const {arqs, alvo} = montar();
   const minha = rodada;
   if(!arqs.length){ terminar(minha); return; }
-  if(reduz || !Element.prototype.animate){
-    arqs.forEach(a => chegar(a, alvo)); $("restam").textContent = 0; terminar(minha); return;
-  }
-  const palco = $("palco"), cam = $("camera");
-  // muitos arquivos: a animação inteira dura uns 60 segundos (200 arquivos = um a cada 0,3 s).
-  // poucos arquivos: cada um leva no máximo 0,9 s, para não arrastar.
-  const passo = Math.max(45, Math.min(900, 60000 / arqs.length));
-  const voo = passo >= 600 ? 1450 : passo >= 250 ? 1200 : 900;
-  let restam = arqs.length;
+  if(reduz || !Element.prototype.animate){ arqs.forEach(a => chegar(a, alvo)); terminar(minha); return; }
+  const palco = $("palco"), n = arqs.length;
+  // 1) juntar: em uns 4,5 s todas as fotos saem da câmera e caem no monte
+  // 2) guardar: em uns 6 s cada uma sai do monte e voa para a sua pasta (com muitos arquivos, em rajada)
+  const passo1 = Math.max(6, Math.min(260, 4500 / n));
+  const passo2 = Math.max(6, Math.min(420, 6000 / n));
+  const voo1 = 700, voo2 = 850, comeco = 500;
+  const fotos = [];
   arqs.forEach((a, i) => {
     setTimeout(() => {
       if(minha !== rodada) return;
-      const r = el("div", "reel"); fundo(r, a); r.append(el("div", "leg", legenda(a.novo))); palco.append(r);
-      $("restam").textContent = arqs.length - i - 1;
-      $("legenda").textContent = "organizando " + (i + 1) + " de " + arqs.length + "…";
+      const f = el("div", "foto"); fundo(f, a); palco.append(f);
+      const s = lugarNoMonte(n, palco.offsetHeight);
+      f.animate([
+        {transform: "translate(0px,0px) scale(.2)", opacity: 0},
+        {transform: `translate(${s.x * .55}px,${s.y - 46}px) rotate(${s.giro / 2}deg) scale(1.1)`, opacity: 1, offset: .55},
+        {transform: `translate(${s.x}px,${s.y}px) rotate(${s.giro}deg) scale(1)`, opacity: 1}
+      ], {duration: voo1, easing: "cubic-bezier(.25,.8,.35,1)", fill: "forwards"});
+      fotos[i] = {f, s, a};
       clique();
-      const base = r.getBoundingClientRect();
-      const t = alvo[a.pasta];
-      // mira a vaga onde a miniatura vai cair: coluna e linha da grade da pasta;
-      // depois de 40, mira o quadradinho "+N" (vaga 41)
-      let px = base.left + base.width / 2, py = base.top + base.height / 2;
+      $("legenda").textContent = "juntando " + (i + 1) + " de " + n + "…";
+    }, comeco + i * passo1);
+  });
+
+  const ordem = arqs.map((_, i) => i);
+  for(let i = ordem.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [ordem[i], ordem[j]] = [ordem[j], ordem[i]]; }
+  const comeco2 = comeco + n * passo1 + voo1 + 450;
+  let restam = n;
+  const fim = () => { if(--restam === 0) setTimeout(() => terminar(minha), 300); };
+  ordem.forEach((idx, j) => {
+    setTimeout(() => {
+      if(minha !== rodada) return;
+      const it = fotos[idx];
+      if(!it){ chegar(arqs[idx], alvo); fim(); return; }
+      const {f, s, a} = it, t = alvo[a.pasta];
+      $("legenda").textContent = "guardando " + (j + 1) + " de " + n + "…";
+      // posições na tela divididas por k (o quanto a página foi aumentada) viram medidas de dentro do palco
+      const pr = palco.getBoundingClientRect(), k = pr.width / palco.offsetWidth || 1;
+      const ox = pr.left + pr.width / 2, oy = pr.top + pr.height * CAM_Y;
+      let tx = s.x, ty = s.y - 260, esc = .6;
       if(t){
+        mostrar(t, true);
         const caixa = t.minis.getBoundingClientRect();
-        const colunas = Math.max(1, Math.floor((caixa.width + 6) / 50));
-        const vaga = Math.min(t.lancados++, 40);
-        px = caixa.left + (vaga % colunas) * 50 + 22;
-        py = caixa.top + Math.floor(vaga / colunas) * 84 + 39;
+        const vaga = Math.min(t.lancados++, VISIVEIS - 1);
+        tx = (caixa.left - ox) / k + LADO / 2 + vaga * (LADO - SOBRE);
+        ty = (caixa.top - oy) / k + LADO / 2;
+        esc = LADO / 30;
       }
-      const tx = px - (base.left + base.width / 2);
-      const ty = py - (base.top + base.height / 2);
-      const sobe = -(cam.offsetHeight / 2 + base.height / 2 - 30);
-      const giro = (Math.random() - .5) * 14;
-      r.animate([
-        {transform: "translate(0px, 0px) scale(.3)", opacity: 0},
-        {transform: `translate(0px, ${sobe}px) rotate(${giro}deg) scale(1)`, opacity: 1, offset: .32},
-        {transform: `translate(0px, ${sobe - 8}px) rotate(${giro}deg) scale(1.03)`, opacity: 1, offset: .46},
-        {transform: `translate(${tx}px, ${ty}px) rotate(0deg) scale(.45)`, opacity: .3}
-      ], {duration: voo, easing: "cubic-bezier(.45,0,.25,1)", fill: "forwards"}).onfinish = () => {
+      // fixa a foto onde ela está no monte antes de trocar de animação
+      f.style.transform = `translate(${s.x}px,${s.y}px) rotate(${s.giro}deg)`; f.style.opacity = 1;
+      f.getAnimations().forEach(x => x.cancel());
+      f.style.zIndex = 6;
+      f.animate([
+        {transform: `translate(${s.x}px,${s.y}px) rotate(${s.giro}deg) scale(1)`},
+        {transform: `translate(${s.x + (tx - s.x) * .12}px,${s.y - 26}px) rotate(${s.giro / 2}deg) scale(1.15)`, offset: .22},
+        {transform: `translate(${tx}px,${ty}px) rotate(0deg) scale(${esc})`, opacity: .9}
+      ], {duration: voo2, easing: "cubic-bezier(.45,0,.25,1)", fill: "forwards"}).onfinish = () => {
         if(minha !== rodada) return;
-        r.remove(); chegar(a, alvo);
-        if(--restam === 0) setTimeout(() => terminar(minha), 300);
+        f.remove(); chegar(a, alvo); fim();
       };
-    }, 900 + i * passo);
+    }, comeco2 + j * passo2);
   });
 }
 
 $("denovo").addEventListener("click", tocar);
-// Demonstração: a faixa do topo aparece quando a página abre sozinha; dentro da página de vendas, não
+// Demonstração: a faixa do topo aparece quando a página abre sozinha; dentro da página de vendas, só o essencial
 if(window.self === window.top){
   $("demo").hidden = false;
 } else {
-  // embutida: a página de vendas ajusta a altura do quadro pela altura daqui (sem rolagem dentro dele)
   document.documentElement.classList.add("embutida");
-  // a altura do conteúdo (a da página nunca fica menor que o quadro, por isso o corpo)
-  const avisar = () => parent.postMessage({sortDemoAltura: Math.ceil(document.body.getBoundingClientRect().height)}, location.origin);
+  // no celular (quadro estreito) a página de vendas acompanha a altura daqui; no computador o quadro tem altura
+  // fixa e a página se ajusta a ele sozinha (ajustarTamanho)
+  const avisar = () => { if(innerWidth < 1000) parent.postMessage({sortDemoAltura: Math.ceil(document.body.getBoundingClientRect().height)}, location.origin); };
   if("ResizeObserver" in window) new ResizeObserver(avisar).observe(document.body);
   window.addEventListener("load", avisar);
 }
