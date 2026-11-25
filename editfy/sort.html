@@ -281,6 +281,7 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
 .plano__preco small { display: inline-block; }
 .plano__onde { display: flex; align-items: center; gap: 10px; }
 .plano__onde span { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgba(139, 92, 246, .14); color: var(--roxo-claro); }
+.plano { display: flex; flex-direction: column; }
 .plano .botao { margin-top: auto; }
 .plano__selo--claro { background: var(--cartao-2); color: var(--roxo-claro); border: 1px solid var(--borda-forte); }
 .plano__aviso { color: var(--suave); font-size: 14px; text-align: center; }
@@ -457,39 +458,41 @@ section[id] { scroll-margin-top: 72px; }   /* o topo fixo não cobre o título q
       <div class="centro">
         <span class="etiqueta">Preço</span>
         <h2 class="titulo-secao" id="titulo-preco">Escolha onde organizar.</h2>
-        <p class="sub-secao">Pagamento único, sem mensalidade. As duas versões são vendidas à parte.</p>
+        <p class="sub-secao">Pagamento único, sem mensalidade. Escolha a que combina com o jeito que você edita: as duas versões são vendidas à parte.</p>
       </div>
       <div class="planos">
-        <div class="plano plano--destaque" id="plano-sort">
-          <span class="plano__selo">Acesso de 12 meses</span>
-          <div class="plano__onde"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg></span><h3>Pelo celular</h3></div>
-          <p class="plano__detalhe">Para quem grava e organiza pelo celular. No Claude, no ChatGPT ou no Grok, sem instalar nada.</p>
-          <p class="plano__preco"><span class="plano__valor">R$ 125</span><small>pagamento único</small></p>
-          <ul>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Quantas organizações quiser por 12 meses</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Até 200 arquivos e 20 GB de cada vez</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Funciona no celular e no navegador</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Não gasta os seus minutos do Editefy</li>
-          </ul>
-          <a class="botao botao--largo botao--grande" id="comprar" href="#preco">Quero pelo celular <span aria-hidden="true">→</span></a>
-        </div>
-        <div class="plano" id="plano-computador">
-          <span class="plano__selo plano__selo--claro">Para sempre</span>
+        <div class="plano plano--destaque" id="plano-computador">
+          <span class="plano__selo">Mais vendido</span>
           <div class="plano__onde"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><h3>No computador</h3></div>
-          <p class="plano__detalhe">Para quem edita no computador, no Mac ou no Windows. Os arquivos não saem da sua máquina.</p>
+          <p class="plano__detalhe">Pague uma vez e nunca mais procure um take. O Sort arruma direto na pasta onde você edita, e as suas gravações não saem do seu computador.</p>
           <p class="plano__preco"><span class="plano__valor">R$ 89</span><small>pagamento único</small></p>
           <ul>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Organize quantas vezes quiser, para sempre</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Direto na pasta do seu computador</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Pelo Claude Code, com uma assinatura do Claude</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><b>Para sempre:</b> organize quantas vezes quiser, sem mensalidade</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Arruma direto na pasta das suas gravações</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Seus arquivos nunca saem do seu computador</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Mac ou Windows, pelo Claude Code (precisa de uma assinatura do Claude)</li>
             <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Não gasta os seus minutos do Editefy</li>
           </ul>
           <a class="botao botao--largo botao--grande" id="comprar-computador" href="#preco">Quero no computador <span aria-hidden="true">→</span></a>
           <p class="plano__aviso" id="aviso-computador" hidden>A versão para computador abre em breve.</p>
         </div>
+        <div class="plano" id="plano-sort">
+          <span class="plano__selo plano__selo--claro">Não precisa de computador</span>
+          <div class="plano__onde"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/></svg></span><h3>Pelo celular</h3></div>
+          <p class="plano__detalhe">Gravou no celular? Organize ali mesmo. Mande os arquivos numa conversa e receba tudo com nome novo e separado em pastas, sem instalar nada.</p>
+          <p class="plano__preco"><span class="plano__valor">R$ 125</span><small>pagamento único</small></p>
+          <ul>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No ChatGPT, no Grok ou no Claude, sem instalar nada</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Funciona até no plano gratuito do ChatGPT e do Grok</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Até 200 arquivos e 20 GB de cada vez</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg><span><b>12 meses</b> para organizar quantas vezes quiser</span></li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Não gasta os seus minutos do Editefy</li>
+          </ul>
+          <a class="botao botao--largo botao--grande" id="comprar" href="#preco">Quero pelo celular <span aria-hidden="true">→</span></a>
+        </div>
       </div>
       <p class="aviso-checkout" id="aviso-checkout" hidden>As vendas abrem em breve.</p>
-      <p class="planos__nota">Pagamento seguro pela Hotmart, sem cobrança automática. Depois do pagamento, tudo chega no seu e-mail: no celular, o acesso e o passo a passo para conectar; no computador, os comandos de instalação.</p>
+      <p class="planos__nota">Pagamento seguro pela Hotmart, sem cobrança automática. Depois do pagamento, tudo chega no seu e-mail: no computador, os comandos de instalação; no celular, o acesso e o passo a passo para conectar.</p>
     </div>
   </section>
 
@@ -763,7 +766,7 @@ window.CONFIG = {
       surgem[2].classList.add('on');
       const inicio = performance.now(), duracao = 3200;
       const passo = (agora) => {
-        const f = Math.min(1, (agora - inicio) / duracao);
+        const f = Math.max(0, Math.min(1, (agora - inicio) / duracao));   // o 1º quadro pode vir antes do "inicio"
         pintar(f < 1 ? 1 - Math.pow(1 - f, 2) : 1);
         if (f < 1) requestAnimationFrame(passo); else setTimeout(cena, 4500);
       };
