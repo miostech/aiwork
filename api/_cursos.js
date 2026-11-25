@@ -222,7 +222,7 @@ function produtosHotmartExtras() {
 }
 export const PRODUTOS_HOTMART = {
   // Criados em 24/11/2026 (formato "Programa para baixar", parcelado com os juros do cliente, recuperador desligado)
-  9062647: "sort-12-meses",              // Editefy Sort (no celular, 12 meses), R$ 125
+  9062647: "sort-12-meses",              // Editefy Sort (no celular, 12 meses), R$ 197
   9062680: "editefy-sort-computador",    // Editefy Sort para computador, R$ 89
   9062701: "editefy-30",                 // Editefy: 30 minutos de vídeo, R$ 62
   9062717: "editefy-60",                 // Editefy: 60 minutos de vídeo, R$ 97
