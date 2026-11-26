@@ -414,6 +414,10 @@
       "destination": "/miai/autorizar.html"
     },
     {
+      "source": "/aulas/:codigo([a-z0-9]+)",
+      "destination": "/aulas-abertas.html"
+    },
+    {
       "source": "/",
       "has": [
         {
