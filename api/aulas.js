@@ -7,6 +7,11 @@
 // O GET marca quando o aluno entrou no curso e devolve o progresso salvo ("progresso.concluidas") e
 // quais cursos o aluno tem ("cursos"), para a página mostrar o atalho para o outro.
 // Esses dados alimentam o painel (/painel): quem entrou no curso e quem concluiu todas as aulas.
+//
+//   GET  /api/aulas?aberta=<código> → a Formação sem login, para a página aberta (aulas-abertas.html, no endereço
+//                                     escondido www.iaacademy.bio/aulas/<código>), sem as aulas com "aberta: false".
+//                                     Não guarda progresso nem conta visita.
+import { createHash } from "node:crypto";
 import { banco } from "./_supabase.js";
 import { CURSO as CURSO_GRATUITO } from "./_aulas.js";
 import { CURSOS_MIAI, cursoPorEndereco, totalDeAulas } from "./_cursos.js";
@@ -14,12 +19,32 @@ import { CURSOS_MIAI, cursoPorEndereco, totalDeAulas } from "./_cursos.js";
 // Aulas de cada curso pelo nome no banco (acessos.curso). Os produtos sem aulas (marca "editefy") ficam de fora.
 const CURSOS = { gratuito: CURSO_GRATUITO, ...Object.fromEntries(CURSOS_MIAI.filter((c) => c.aulas).map((c) => [c.id, c.aulas])) };
 
+// Links escondidos da página aberta (www.iaacademy.bio/aulas/<código>). O repositório é público, então aqui fica só
+// o resumo (SHA-256) de cada código, nunca o código. Para criar um link novo, rode no Terminal:
+//   node -e 'const c=require("node:crypto");const L="abcdefghjkmnpqrstuvwxyz23456789";let s="";for(let i=0;i<10;i++)s+=L[c.randomInt(L.length)];console.log(s,c.createHash("sha256").update(s).digest("hex"))'
+// O primeiro texto é o código do link; o segundo, o resumo que entra nesta lista. Para desligar um link, apague o resumo dele.
+const LINKS_ABERTOS = [
+  "c8ea088dec485fb3752bf94aea9261669eecc9a3d6c64a6d4709f655febbaf32", // primeiro link, criado em 26/11/2026
+];
+
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") {
     res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ erro: "Use GET ou POST." });
   }
   res.setHeader("Cache-Control", "no-store");
+
+  // Página aberta: a Formação inteira para quem tem o link escondido, sem login
+  if (req.method === "GET" && req.query && req.query.aberta !== undefined) {
+    const codigo = String(req.query.aberta).trim().toLowerCase().slice(0, 64);
+    const resumo = createHash("sha256").update(codigo).digest("hex");
+    if (!codigo || !LINKS_ABERTOS.includes(resumo)) return res.status(404).json({ erro: "Link não encontrado." });
+    // Sem as aulas marcadas com "aberta: false" em api/_aulas.js (e sem os módulos que ficarem vazios)
+    const modulos = CURSO_GRATUITO.modulos
+      .map((modulo) => ({ ...modulo, aulas: modulo.aulas.filter((aula) => aula.aberta !== false) }))
+      .filter((modulo) => modulo.aulas.length);
+    return res.status(200).json({ curso: { ...CURSO_GRATUITO, modulos } });
+  }
 
   const pedido = String((req.query && req.query.curso) || "");
   const doEndereco = cursoPorEndereco(pedido);

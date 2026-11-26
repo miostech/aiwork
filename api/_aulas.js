@@ -17,6 +17,8 @@
 //
 // As aulas ficam dentro de módulos. Para criar um módulo novo, copie um bloco { titulo, aulas: [...] }.
 // descricao: texto curto embaixo do título da aula. Vazio = não mostra.
+// aberta:    false = a aula fica só na área do aluno (/curso) e não aparece na página aberta
+//            (www.iaacademy.bio/aulas/<código>, ver LINKS_ABERTOS em api/aulas.js). Sem o campo, aparece nas duas.
 export const CURSO = {
   titulo: "Primeiros passos no treinamento de IA",
   formatoVideo: "16/9", // use '9/16' se as aulas forem gravadas na vertical
@@ -167,6 +169,7 @@ export const CURSO = {
         },
         {
           titulo: "O próximo nível: empresas que pagam acima de US$ 20 por hora",
+          aberta: false, // só para quem comprou: fica fora da página aberta
           descricao: "",
           duracao: "10 min",
           video: "https://cursiversostorage.blob.core.windows.net/iaacademy/Aula%209%20-%20iaacademy.mp4",
